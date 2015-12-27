@@ -9,7 +9,9 @@ import com.github.underscore.lodash.$;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +19,7 @@ import java.util.Map;
  * @author valik
  */
 public class Form1 extends javax.swing.JFrame {
-
+    private final List<Map<String, Object>> database = new ArrayList<>();
     /**
      * Creates new form Form1
      */
@@ -456,8 +458,9 @@ public class Form1 extends javax.swing.JFrame {
         data.put("firstName", jTextField2.getText());
         data.put("middleName", jTextField3.getText());
         data.put("surname", jTextField4.getText());
+        database.add(data);
         try {
-        Files.write(Paths.get("./database.json"), $.toJson(data).getBytes("UTF-8"));
+        Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
         }
     }//GEN-LAST:event_jButton1ActionPerformed

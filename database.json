@@ -1,6 +1,20 @@
-{
-  "orderNumber": "1",
-  "firstName": "Иван",
-  "middleName": "Иванович",
-  "surname": "Петоров"
-}
+[
+  {
+    "orderNumber": "1",
+    "firstName": "Иван",
+    "middleName": "Иванович",
+    "surname": ""
+  },
+  {
+    "orderNumber": "1",
+    "firstName": "Иван2",
+    "middleName": "Иванович",
+    "surname": ""
+  },
+  {
+    "orderNumber": "1",
+    "firstName": "Иван2",
+    "middleName": "Иванович3",
+    "surname": ""
+  }
+]
