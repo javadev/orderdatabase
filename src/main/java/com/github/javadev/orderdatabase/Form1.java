@@ -6,6 +6,8 @@
 package com.github.javadev.orderdatabase;
 
 import com.github.underscore.lodash.$;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,6 +15,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,8 +29,21 @@ public class Form1 extends javax.swing.JFrame {
      */
     public Form1() {
         initComponents();
+        try {
+            database.addAll((List<Map<String, Object>>) $.fromJson(
+                    new String(Files.readAllBytes(Paths.get("./database.json")), "UTF-8")));
+        } catch (IOException ex) {
+            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    private void focusNextElementOnPressEnter(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+            manager.getFocusOwner().transferFocus();
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -138,6 +155,7 @@ public class Form1 extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton1.setText("Записать");
+        jButton1.setNextFocusableComponent(jTextField7);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -145,37 +163,61 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jTextField1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField1.setNextFocusableComponent(jTextField2);
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField1KeyPressed(evt);
+            }
+        });
 
         jTextField2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField2.setNextFocusableComponent(jTextField3);
+        jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField2KeyPressed(evt);
+            }
+        });
 
         jTextField3.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField3.setNextFocusableComponent(jTextField4);
 
         jTextField4.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField4.setNextFocusableComponent(jTextField5);
 
         jTextField5.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField5.setNextFocusableComponent(jTextField6);
 
         jTextField6.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField6.setNextFocusableComponent(jComboBox1);
 
         jTextField9.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField9.setNextFocusableComponent(jTextField10);
 
         jTextField10.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField10.setNextFocusableComponent(jTextField11);
 
         jTextField11.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField11.setNextFocusableComponent(jTextField12);
 
         jTextField12.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField12.setNextFocusableComponent(jTextField13);
 
         jTextField13.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField13.setNextFocusableComponent(jTextPane1);
 
         jTextPane1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextPane1.setNextFocusableComponent(jButton1);
         jScrollPane1.setViewportView(jTextPane1);
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         jComboBox1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setNextFocusableComponent(jComboBox2);
 
         jComboBox2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.setNextFocusableComponent(jTextField9);
 
         jLabel16.setFont(new java.awt.Font("Times New Roman", 2, 24)); // NOI18N
         jLabel16.setText("<html><u>Поиск</u></html>");
@@ -204,25 +246,34 @@ public class Form1 extends javax.swing.JFrame {
         jLabel23.setText("<html><u>Статус заявки:</u><html>");
 
         jTextField7.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField7.setNextFocusableComponent(jTextField8);
 
         jTextField8.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField8.setNextFocusableComponent(jTextField14);
 
         jTextField14.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField14.setNextFocusableComponent(jTextField15);
 
         jTextField15.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField15.setNextFocusableComponent(jTextField16);
 
         jTextField16.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField16.setNextFocusableComponent(jTextField17);
 
         jTextField17.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jTextField17.setNextFocusableComponent(jComboBox3);
 
         jComboBox3.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox3.setNextFocusableComponent(jButton2);
 
         jButton2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton2.setText("Досье покупателя");
+        jButton2.setNextFocusableComponent(jButton3);
 
         jButton3.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton3.setText("Поиск");
+        jButton3.setNextFocusableComponent(jButton4);
 
         jButton4.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton4.setText("Сохранить");
@@ -298,7 +349,7 @@ public class Form1 extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(9, 9, 9)
                         .addComponent(jLabel17)
-                        .addGap(90, 90, 90)
+                        .addGap(81, 81, 81)
                         .addComponent(jTextField7))
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -307,18 +358,18 @@ public class Form1 extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel18)
                                     .addComponent(jLabel19))
-                                .addGap(64, 64, 64)
+                                .addGap(55, 55, 55)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField14)
-                                    .addComponent(jTextField8)))
+                                    .addComponent(jTextField8)
+                                    .addComponent(jTextField14)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel20)
                                     .addComponent(jLabel21))
-                                .addGap(15, 15, 15)
+                                .addGap(6, 6, 6)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField16)
-                                    .addComponent(jTextField15)))
+                                    .addComponent(jTextField15)
+                                    .addComponent(jTextField16)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -335,10 +386,10 @@ public class Form1 extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel22)
                                     .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(50, 50, 50)
+                                .addGap(41, 41, 41)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTextField17))))))
+                                    .addComponent(jTextField17)
+                                    .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -464,6 +515,14 @@ public class Form1 extends javax.swing.JFrame {
         } catch (IOException ex) {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
+        focusNextElementOnPressEnter(evt);
+    }//GEN-LAST:event_jTextField1KeyPressed
+
+    private void jTextField2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyPressed
+        focusNextElementOnPressEnter(evt);
+    }//GEN-LAST:event_jTextField2KeyPressed
 
     /**
      * @param args the command line arguments
