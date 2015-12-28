@@ -20,7 +20,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.javadev.orderdatabase.Form1</mainClass>
+                            <mainClass>com.github.javadev.orderdatabase.MainForm</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
