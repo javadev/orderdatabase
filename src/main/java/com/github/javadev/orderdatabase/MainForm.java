@@ -5,6 +5,7 @@
  */
 package com.github.javadev.orderdatabase;
 
+import com.github.underscore.Function1;
 import com.github.underscore.lodash.$;
 import java.awt.Component;
 import java.awt.Container;
@@ -17,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,37 @@ public class MainForm extends javax.swing.JFrame {
                 Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        if (database.get("data") == null) {
+            database.put("data", new ArrayList<Map<String, Object>>());
+        }
+        Map<String, List<Map<String, Object>>> orders =
+                $.groupBy((List<Map<String, Object>>) database.get("data"), 
+                new Function1<Map<String, Object>, String>() {
+                    public String apply(Map<String, Object> item) {
+                        return (String) item.get("orderNumber");
+                    }
+                });
+        List<Map<String, Object>> filteredOrders = new ArrayList<Map<String, Object>>();
+        for (Map.Entry<String, List<Map<String, Object>>> entry : orders.entrySet()) {
+            List<Map<String, Object>> sorted = $.sortBy(entry.getValue(), new Function1<Map<String, Object>, Long>() {
+               public Long apply(final Map<String, Object> item) {
+                   return item.get("created") == null ? 0L : (Long) item.get("created");
+               } 
+            });
+            if (!sorted.isEmpty()) {
+                filteredOrders.add(sorted.get(0));
+            }
+        }
+        $.sortBy(filteredOrders, new Function1<Map<String, Object>, Long>() {
+            public Long apply(Map<String, Object> item) {
+                return item.get("created") == null ? 0L : (Long) item.get("created");
+            }
+        });
+        Map<String, Object> lastOrder = $.last(filteredOrders);
+        jTextField1.setText((String) lastOrder.get("orderNumber"));
+        jTextField2.setText((String) lastOrder.get("firstName"));
+        jTextField3.setText((String) lastOrder.get("middleName"));
+        jTextField4.setText((String) lastOrder.get("surname"));
     }
     
     private void focusNextElementOnPressEnter(java.awt.event.KeyEvent evt) {
@@ -689,6 +722,7 @@ public class MainForm extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         Map<String, Object> data = new LinkedHashMap<String, Object>();
+        data.put("created", new Date().getTime());
         data.put("orderNumber", jTextField1.getText());
         data.put("firstName", jTextField2.getText());
         data.put("middleName", jTextField3.getText());
