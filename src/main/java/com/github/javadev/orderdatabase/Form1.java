@@ -169,9 +169,13 @@ public class Form1 extends javax.swing.JFrame {
                 .filter(new Predicate<Map<String, Object>>() {
                     @Override
                     public Boolean apply(Map<String, Object> arg) {
-                        boolean orderNumber = jTextField7.getText().isEmpty()
-                                || ((String) arg.get("orderNumber")).indexOf(jTextField7.getText()) >= 0;
-                        return orderNumber;
+                        boolean orderNumber = jTextField8.getText().isEmpty()
+                                || ((String) arg.get("orderNumber")).indexOf(jTextField8.getText()) >= 0;
+                        boolean firstName = jTextField14.getText().isEmpty()
+                                || ((String) arg.get("firstName")).indexOf(jTextField14.getText()) >= 0;
+                        boolean middleName = jTextField15.getText().isEmpty()
+                                || ((String) arg.get("middleName")).indexOf(jTextField15.getText()) >= 0;
+                        return orderNumber && firstName && middleName;
                     }
                 })
                 .value();
