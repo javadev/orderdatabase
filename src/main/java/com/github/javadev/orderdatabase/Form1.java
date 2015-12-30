@@ -1,6 +1,7 @@
 package com.github.javadev.orderdatabase;
 
 import com.github.underscore.Function1;
+import com.github.underscore.Predicate;
 import com.github.underscore.lodash.$;
 import java.awt.Component;
 import java.awt.Container;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -57,12 +59,12 @@ public class Form1 extends javax.swing.JFrame {
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent evt) {
-                if (evt.getValueIsAdjusting()) {
-                    fillOrderForm(foundOrders.get(evt.getFirstIndex()));
-                } else {
-                    fillOrderForm(foundOrders.get(evt.getLastIndex()));
+                if (!evt.getValueIsAdjusting()) {
+                    int index = ((DefaultListSelectionModel) evt.getSource()).getAnchorSelectionIndex();
+                    if (index >= 0) {
+                        fillOrderForm(foundOrders.get(index));
+                    }
                 }
-                System.out.println(evt);
             }
         });
     }
@@ -155,8 +157,6 @@ public class Form1 extends javax.swing.JFrame {
                 case 2:
                     return list.get(rowIndex).get("firstName");
                 case 3:
-                    return list.get(rowIndex).get("lastName");
-                case 4:
                     return list.get(rowIndex).get("middleName");
             }
             return null;
@@ -165,7 +165,17 @@ public class Form1 extends javax.swing.JFrame {
 
     private void searchOrders() {
         foundOrders.clear();
-        foundOrders.addAll($.chain(getFilteredOrders()).value());
+        List<Map<String, Object>> selectedOrders = $.chain(getFilteredOrders())
+                .filter(new Predicate<Map<String, Object>>() {
+                    @Override
+                    public Boolean apply(Map<String, Object> arg) {
+                        boolean orderNumber = jTextField7.getText().isEmpty()
+                                || ((String) arg.get("orderNumber")).indexOf(jTextField7.getText()) >= 0;
+                        return orderNumber;
+                    }
+                })
+                .value();
+        foundOrders.addAll(selectedOrders);
         jTable1.setModel(new MyModel(foundOrders));
     }
 
@@ -725,16 +735,16 @@ public class Form1 extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(9, 9, 9)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel17)
                                 .addGap(90, 90, 90)
-                                .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
