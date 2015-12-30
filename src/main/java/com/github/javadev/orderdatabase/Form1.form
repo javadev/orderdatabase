@@ -451,6 +451,7 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jButton1KeyPressed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField1">
@@ -462,6 +463,9 @@
           <ComponentRef name="jTextField2"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField1KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField2">
       <Properties>
@@ -472,6 +476,9 @@
           <ComponentRef name="jTextField3"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField2KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField3">
       <Properties>
@@ -482,6 +489,9 @@
           <ComponentRef name="jTextField4"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField3KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField4">
       <Properties>
@@ -492,6 +502,9 @@
           <ComponentRef name="jTextField5"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField4KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField5">
       <Properties>
@@ -502,6 +515,9 @@
           <ComponentRef name="jTextField6"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField5KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField6">
       <Properties>
@@ -512,6 +528,9 @@
           <ComponentRef name="jComboBox1"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField6KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField9">
       <Properties>
@@ -522,6 +541,9 @@
           <ComponentRef name="jTextField10"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField9KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField10">
       <Properties>
@@ -532,6 +554,9 @@
           <ComponentRef name="jTextField11"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField10KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField11">
       <Properties>
@@ -542,6 +567,9 @@
           <ComponentRef name="jTextField12"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField11KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField12">
       <Properties>
@@ -552,6 +580,9 @@
           <ComponentRef name="jTextField13"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField12KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField13">
       <Properties>
@@ -562,6 +593,9 @@
           <ComponentRef name="jTextPane1"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField13KeyPressed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
@@ -579,6 +613,9 @@
               <ComponentRef name="jButton1"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextPane1KeyPressed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -604,6 +641,9 @@
           <ComponentRef name="jComboBox2"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jComboBox1KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="jComboBox2">
       <Properties>
@@ -622,6 +662,9 @@
           <ComponentRef name="jTextField9"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jComboBox2KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel16">
       <Properties>
@@ -698,6 +741,9 @@
           <ComponentRef name="jTextField8"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField7KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField8">
       <Properties>
@@ -708,6 +754,9 @@
           <ComponentRef name="jTextField14"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField8KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField14">
       <Properties>
@@ -718,6 +767,9 @@
           <ComponentRef name="jTextField15"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField14KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField15">
       <Properties>
@@ -728,6 +780,9 @@
           <ComponentRef name="jTextField16"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField15KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField16">
       <Properties>
@@ -738,6 +793,9 @@
           <ComponentRef name="jTextField17"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField16KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField17">
       <Properties>
@@ -748,6 +806,9 @@
           <ComponentRef name="jComboBox3"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField17KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="jComboBox3">
       <Properties>
@@ -766,6 +827,9 @@
           <ComponentRef name="jButton2"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jComboBox3KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton2">
       <Properties>
@@ -777,6 +841,9 @@
           <ComponentRef name="jButton3"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jButton2KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton3">
       <Properties>
@@ -788,6 +855,9 @@
           <ComponentRef name="jButton4"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jButton3KeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton4">
       <Properties>
@@ -799,6 +869,9 @@
           <ComponentRef name="jTextField1"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jButton4KeyPressed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">
 
