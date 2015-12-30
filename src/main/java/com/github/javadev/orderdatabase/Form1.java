@@ -13,6 +13,7 @@ import java.awt.FocusTraversalPolicy;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,6 +53,12 @@ public class Form1 extends javax.swing.JFrame {
         jTextField2.setText((String) lastOrder.get("firstName"));
         jTextField3.setText((String) lastOrder.get("middleName"));
         jTextField4.setText((String) lastOrder.get("surname"));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent winEvt) {
+                saveData();
+            }
+        });
     }
     
     private List<Map<String, Object>> getFilteredOrders() {
