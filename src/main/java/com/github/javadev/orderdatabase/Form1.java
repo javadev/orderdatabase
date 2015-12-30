@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.javadev.orderdatabase;
 
 import com.github.underscore.Function1;
@@ -25,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -32,6 +30,7 @@ import java.util.logging.Logger;
  */
 public class Form1 extends javax.swing.JFrame {
     private final Map<String, Object> database = new LinkedHashMap<String, Object>();
+    private final List<Map<String, Object>> foundOrders = new ArrayList<Map<String, Object>>(); 
     
     /**
      * Creates new form Form1
@@ -48,17 +47,31 @@ public class Form1 extends javax.swing.JFrame {
             }
         }
         List<Map<String, Object>> filteredOrders = getFilteredOrders();
-        Map<String, Object> lastOrder = $.last(filteredOrders);
-        jTextField1.setText((String) lastOrder.get("orderNumber"));
-        jTextField2.setText((String) lastOrder.get("firstName"));
-        jTextField3.setText((String) lastOrder.get("middleName"));
-        jTextField4.setText((String) lastOrder.get("surname"));
+        fillOrderForm($.last(filteredOrders));
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
                 saveData();
             }
         });
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent evt) {
+                if (evt.getValueIsAdjusting()) {
+                    fillOrderForm(foundOrders.get(evt.getFirstIndex()));
+                } else {
+                    fillOrderForm(foundOrders.get(evt.getLastIndex()));
+                }
+                System.out.println(evt);
+            }
+        });
+    }
+
+    private void fillOrderForm(Map<String, Object> order) {
+        jTextField1.setText((String) order.get("orderNumber"));
+        jTextField2.setText((String) order.get("firstName"));
+        jTextField3.setText((String) order.get("middleName"));
+        jTextField4.setText((String) order.get("surname"));
     }
     
     private List<Map<String, Object>> getFilteredOrders() {
@@ -108,6 +121,54 @@ public class Form1 extends javax.swing.JFrame {
         }        
     }
     
+    private static class MyModel extends AbstractTableModel {
+
+        private static final String[] columnNames = {"Номер", "Фамилия", "Имя", "Отчество"};
+        private final List<Map<String, Object>> list;
+
+        private MyModel(List<Map<String, Object>> list) {
+            this.list = list;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public String getColumnName(int index) {
+            return columnNames[index];
+        }
+
+        @Override
+        public int getRowCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            switch(columnIndex) {
+                case 0:
+                    return list.get(rowIndex).get("orderNumber");
+                case 1:
+                    return list.get(rowIndex).get("surname");
+                case 2:
+                    return list.get(rowIndex).get("firstName");
+                case 3:
+                    return list.get(rowIndex).get("lastName");
+                case 4:
+                    return list.get(rowIndex).get("middleName");
+            }
+            return null;
+        }
+    }
+
+    private void searchOrders() {
+        foundOrders.clear();
+        foundOrders.addAll($.chain(getFilteredOrders()).value());
+        jTable1.setModel(new MyModel(foundOrders));
+    }
+
     private void focusNextElementOnPressEnter(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_TAB) {
             KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -469,6 +530,11 @@ public class Form1 extends javax.swing.JFrame {
         jButton3.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton3.setText("Поиск");
         jButton3.setNextFocusableComponent(jButton4);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         jButton3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jButton3KeyPressed(evt);
@@ -891,6 +957,10 @@ public class Form1 extends javax.swing.JFrame {
     private void jTextField13KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField13KeyPressed
         focusNextElementOnPressEnter(evt);
     }//GEN-LAST:event_jTextField13KeyPressed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        searchOrders();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
