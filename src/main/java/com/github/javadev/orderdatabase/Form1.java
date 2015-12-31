@@ -11,6 +11,7 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,9 +24,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -34,7 +36,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class Form1 extends javax.swing.JFrame {
     private final Map<String, Object> database = new LinkedHashMap<String, Object>();
-    private final List<Map<String, Object>> foundOrders = new ArrayList<Map<String, Object>>(); 
+    private final List<Map<String, Object>> foundOrders = new ArrayList<Map<String, Object>>();
+    private final JFileChooser chooser1 = new JFileChooser();
     
     /**
      * Creates new form Form1
@@ -69,6 +72,8 @@ public class Form1 extends javax.swing.JFrame {
                 }
             }
         });
+        chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Xml file", "xml"));
+        chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Json file", ".json")); 
     }
 
     private void fillOrderForm(Map<String, Object> order) {
@@ -122,6 +127,7 @@ public class Form1 extends javax.swing.JFrame {
         try {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
+            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
         }        
     }
     
@@ -202,6 +208,18 @@ public class Form1 extends javax.swing.JFrame {
             }
             evt.consume();
         }
+    }
+    
+    public void writeDataFile(String fileName) {
+        try {
+            if (fileName.endsWith(".xml")) {
+                Files.write(Paths.get(fileName), $.toXml(foundOrders).getBytes("UTF-8"));
+            } else if (fileName.endsWith(".json")) {
+                Files.write(Paths.get(fileName), $.toJson(foundOrders).getBytes("UTF-8"));
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+        }        
     }
 
     /**
@@ -560,6 +578,11 @@ public class Form1 extends javax.swing.JFrame {
         jButton4.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton4.setText("Сохранить");
         jButton4.setNextFocusableComponent(jTextField1);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         jButton4.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jButton4KeyPressed(evt);
@@ -989,6 +1012,14 @@ public class Form1 extends javax.swing.JFrame {
         dialog.setLocation(location.x + 40, location.y);
         dialog.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        chooser1.setSelectedFile(new File("search-result.xml"));
+        int result = chooser1.showSaveDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            writeDataFile(chooser1.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
