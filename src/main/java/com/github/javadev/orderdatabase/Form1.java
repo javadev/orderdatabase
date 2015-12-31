@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFileChooser;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -83,6 +84,7 @@ public class Form1 extends javax.swing.JFrame {
         jTextField2.setText((String) order.get("firstName"));
         jTextField3.setText((String) order.get("middleName"));
         jTextField4.setText((String) order.get("surname"));
+        jTextField5.setText((String) order.get("phoneNumber"));
     }
     
     private List<Map<String, Object>> getFilteredOrders() {
@@ -122,6 +124,7 @@ public class Form1 extends javax.swing.JFrame {
         data.put("firstName", jTextField2.getText());
         data.put("middleName", jTextField3.getText());
         data.put("surname", jTextField4.getText());
+        data.put("phoneNumber", jTextField5.getText());
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
         }
@@ -178,19 +181,23 @@ public class Form1 extends javax.swing.JFrame {
         List<Map<String, Object>> selectedOrders = $.chain(getFilteredOrders())
                 .filter(new Predicate<Map<String, Object>>() {
                     @Override
-                    public Boolean apply(Map<String, Object> arg) {
-                        boolean orderNumber = jTextField8.getText().isEmpty()
-                                || ((String) arg.get("orderNumber")).indexOf(jTextField8.getText()) >= 0;
-                        boolean firstName = jTextField14.getText().isEmpty()
-                                || ((String) arg.get("firstName")).indexOf(jTextField14.getText()) >= 0;
-                        boolean middleName = jTextField15.getText().isEmpty()
-                                || ((String) arg.get("middleName")).indexOf(jTextField15.getText()) >= 0;
-                        return orderNumber && firstName && middleName;
+                    public Boolean apply(Map<String, Object> map) {
+                        boolean orderNumber = checkMap(map, jTextField8, "orderNumber");
+                        boolean firstName = checkMap(map, jTextField14, "firstName");
+                        boolean middleName = checkMap(map, jTextField15, "middleName");
+                        boolean surname = checkMap(map, jTextField16, "surname");
+                        boolean phoneNumber = checkMap(map, jTextField17, "phoneNumber");
+                        return orderNumber && firstName && middleName && surname && phoneNumber;
                     }
                 })
                 .value();
         foundOrders.addAll(selectedOrders);
         jTable1.setModel(new MyModel(foundOrders));
+    }
+    
+    private boolean checkMap(Map<String, Object> map, JTextField jTextField, String key) {
+        return jTextField.getText().trim().isEmpty()
+            || (map.containsKey(key) && ((String) map.get(key)).indexOf(jTextField.getText().trim()) >= 0);
     }
 
     private void focusNextElementOnPressEnter(java.awt.event.KeyEvent evt) {
