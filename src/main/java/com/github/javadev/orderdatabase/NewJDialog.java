@@ -1,8 +1,12 @@
 package com.github.javadev.orderdatabase;
 
 import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 
 public class NewJDialog extends javax.swing.JDialog {
+    private final DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
+    private boolean isApproved;
 
     /**
      * Creates new form NewJDialog
@@ -10,7 +14,27 @@ public class NewJDialog extends javax.swing.JDialog {
     public NewJDialog(java.awt.Frame parent, String title, boolean modal, ComboBoxModel model) {
         super(parent, title, modal);
         initComponents();
-        jList1.setModel(model);
+        for (int index = 0; index < model.getSize(); index += 1) {
+            comboBoxModel.addElement(model.getElementAt(index));
+        }
+        jList1.setModel(comboBoxModel);
+    }
+
+    private void swapElements(int from, int to) {
+        Object aObject = comboBoxModel.getElementAt(from);
+        Object bObject = comboBoxModel.getElementAt(to);
+        comboBoxModel.removeElementAt(from);
+        comboBoxModel.insertElementAt(bObject, from);
+        comboBoxModel.removeElementAt(to);
+        comboBoxModel.insertElementAt(aObject, to);
+    }
+    
+    public boolean isApproved() {
+        return isApproved;
+    }
+    
+    public ComboBoxModel getNewModel() {
+        return comboBoxModel;
     }
 
     /**
@@ -54,14 +78,29 @@ public class NewJDialog extends javax.swing.JDialog {
         jButton2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton2.setText("Удалить");
         jButton2.setEnabled(false);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton3.setText("Переместить вверх");
         jButton3.setEnabled(false);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton4.setText("Переместить вниз");
         jButton4.setEnabled(false);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton5.setText("ОК");
@@ -133,6 +172,7 @@ public class NewJDialog extends javax.swing.JDialog {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         setVisible(false);
+        isApproved = true;
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -145,6 +185,42 @@ public class NewJDialog extends javax.swing.JDialog {
         jButton4.setEnabled(true);
         jButton5.setEnabled(true);
     }//GEN-LAST:event_jList1ValueChanged
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        DefaultComboBoxModel model = (DefaultComboBoxModel) jList1.getModel();
+        int selectedIndex = jList1.getSelectedIndex();
+        if (selectedIndex != -1) {
+            model.removeElementAt(selectedIndex);
+            if (comboBoxModel.getSize() > 0) {
+                jList1.setSelectedIndex(Math.min(selectedIndex, comboBoxModel.getSize() - 1));
+                jList1.ensureIndexIsVisible(Math.min(selectedIndex, comboBoxModel.getSize() - 1));
+            } else {
+                jButton2.setEnabled(false);
+            }
+            if (comboBoxModel.getSize() <= 1) {
+                jButton3.setEnabled(false);
+                jButton4.setEnabled(false);
+            }
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int moveMe = jList1.getSelectedIndex();
+        if (moveMe != 0) {
+            swapElements(moveMe, moveMe - 1);
+            jList1.setSelectedIndex(moveMe - 1);
+            jList1.ensureIndexIsVisible(moveMe - 1);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        int moveMe = jList1.getSelectedIndex();
+        if (moveMe != comboBoxModel.getSize() - 1) {
+            swapElements(moveMe, moveMe + 1);
+            jList1.setSelectedIndex(moveMe + 1);
+            jList1.ensureIndexIsVisible(moveMe + 1);
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

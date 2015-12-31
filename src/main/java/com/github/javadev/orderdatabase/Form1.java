@@ -649,6 +649,11 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jButton6.setText("...");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jButton7.setText("...");
 
@@ -1013,6 +1018,9 @@ public class Form1 extends javax.swing.JFrame {
         final java.awt.Point location = ((Component) evt.getSource()).getLocation();
         dialog.setLocation(location.x + 40, location.y);
         dialog.setVisible(true);
+        if (dialog.isApproved()) {
+            jComboBox1.setModel(dialog.getNewModel());
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -1021,6 +1029,16 @@ public class Form1 extends javax.swing.JFrame {
             writeDataFile(chooser1.getSelectedFile().getAbsolutePath());
         }
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        NewJDialog dialog = new NewJDialog(this, "Настройка справочника", true, jComboBox2.getModel());
+        final java.awt.Point location = ((Component) evt.getSource()).getLocation();
+        dialog.setLocation(location.x + 40, location.y);
+        dialog.setVisible(true);
+        if (dialog.isApproved()) {
+            jComboBox2.setModel(dialog.getNewModel());
+        }
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments
