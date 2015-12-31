@@ -5,6 +5,7 @@ import com.github.underscore.Predicate;
 import com.github.underscore.lodash.$;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.FocusTraversalPolicy;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.InputEvent;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JDialog;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -615,6 +617,11 @@ public class Form1 extends javax.swing.JFrame {
         );
 
         jButton5.setText("...");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("...");
 
@@ -975,6 +982,13 @@ public class Form1 extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         searchOrders();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        NewJDialog dialog = new NewJDialog(this, "Настройка справочника", true, jComboBox1.getModel());
+        final java.awt.Point location = ((Component) evt.getSource()).getLocation();
+        dialog.setLocation(location.x + 40, location.y);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
