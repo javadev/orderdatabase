@@ -2,7 +2,7 @@ package com.github.javadev.orderdatabase;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 public class NewJDialog extends javax.swing.JDialog {
     private final DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
@@ -74,6 +74,11 @@ public class NewJDialog extends javax.swing.JDialog {
 
         jButton1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton1.setText("Добавить ...");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton2.setText("Удалить");
@@ -221,6 +226,16 @@ public class NewJDialog extends javax.swing.JDialog {
             jList1.ensureIndexIsVisible(moveMe + 1);
         }
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String newValue = (String) JOptionPane.showInputDialog(
+                    this, "Новое значение:\n",
+                    "",
+                    JOptionPane.PLAIN_MESSAGE);
+        if (newValue != null && !newValue.isEmpty()) {
+            comboBoxModel.addElement(newValue);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

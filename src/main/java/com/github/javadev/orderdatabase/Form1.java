@@ -454,7 +454,6 @@ public class Form1 extends javax.swing.JFrame {
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         jComboBox1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.setNextFocusableComponent(jComboBox2);
         jComboBox1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -463,7 +462,6 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jComboBox2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox2.setNextFocusableComponent(jTextField9);
         jComboBox2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -546,7 +544,6 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jComboBox3.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox3.setNextFocusableComponent(jButton2);
         jComboBox3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -656,6 +653,11 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jButton7.setText("...");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1039,6 +1041,16 @@ public class Form1 extends javax.swing.JFrame {
             jComboBox2.setModel(dialog.getNewModel());
         }
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        NewJDialog dialog = new NewJDialog(this, "Настройка справочника", true, jComboBox3.getModel());
+        final java.awt.Point location = ((Component) evt.getSource()).getLocation();
+        dialog.setLocation(location.x + 40, location.y);
+        dialog.setVisible(true);
+        if (dialog.isApproved()) {
+            jComboBox3.setModel(dialog.getNewModel());
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
