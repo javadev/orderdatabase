@@ -33,6 +33,7 @@ public class NewJDialog extends javax.swing.JDialog {
         jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel1.setText("Список значений:");
@@ -40,6 +41,11 @@ public class NewJDialog extends javax.swing.JDialog {
         jScrollPane1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
 
         jList1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(jList1);
 
         jButton1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
@@ -47,12 +53,15 @@ public class NewJDialog extends javax.swing.JDialog {
 
         jButton2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton2.setText("Удалить");
+        jButton2.setEnabled(false);
 
         jButton3.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton3.setText("Переместить вверх");
+        jButton3.setEnabled(false);
 
         jButton4.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton4.setText("Переместить вниз");
+        jButton4.setEnabled(false);
 
         jButton5.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton5.setText("ОК");
@@ -129,6 +138,13 @@ public class NewJDialog extends javax.swing.JDialog {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         setVisible(false);
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+        jButton2.setEnabled(true);
+        jButton3.setEnabled(true);
+        jButton4.setEnabled(true);
+        jButton5.setEnabled(true);
+    }//GEN-LAST:event_jList1ValueChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
