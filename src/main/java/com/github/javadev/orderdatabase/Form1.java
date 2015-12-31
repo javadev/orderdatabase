@@ -72,8 +72,10 @@ public class Form1 extends javax.swing.JFrame {
                 }
             }
         });
+        chooser1.setAcceptAllFileFilterUsed(false);
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Xml file", "xml"));
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Json file", ".json")); 
+        chooser1.setSelectedFile(new File("search-result.xml"));
     }
 
     private void fillOrderForm(Map<String, Object> order) {
@@ -1014,7 +1016,6 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        chooser1.setSelectedFile(new File("search-result.xml"));
         int result = chooser1.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             writeDataFile(chooser1.getSelectedFile().getAbsolutePath());
