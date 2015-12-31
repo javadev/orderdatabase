@@ -5,7 +5,6 @@ import com.github.underscore.Predicate;
 import com.github.underscore.lodash.$;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.FocusTraversalPolicy;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.InputEvent;
@@ -85,6 +84,7 @@ public class Form1 extends javax.swing.JFrame {
         jTextField3.setText((String) order.get("middleName"));
         jTextField4.setText((String) order.get("surname"));
         jTextField5.setText((String) order.get("phoneNumber"));
+        jTextField6.setText((String) order.get("email"));
     }
     
     private List<Map<String, Object>> getFilteredOrders() {
@@ -120,15 +120,33 @@ public class Form1 extends javax.swing.JFrame {
     private void saveData() {
         Map<String, Object> data = new LinkedHashMap<String, Object>();
         data.put("created", new Date().getTime());
-        data.put("orderNumber", jTextField1.getText());
-        data.put("firstName", jTextField2.getText());
-        data.put("middleName", jTextField3.getText());
-        data.put("surname", jTextField4.getText());
-        data.put("phoneNumber", jTextField5.getText());
+        data.put("orderNumber", jTextField1.getText().trim());
+        data.put("firstName", jTextField2.getText().trim());
+        data.put("middleName", jTextField3.getText().trim());
+        data.put("surname", jTextField4.getText().trim());
+        data.put("phoneNumber", jTextField5.getText().trim());
+        data.put("email", jTextField6.getText().trim());
+        data.put("paymentMethod", jComboBox1.getSelectedItem() == null ? null
+                : String.valueOf(jComboBox1.getSelectedItem()).trim());
+        data.put("deliveryMethod", jComboBox2.getSelectedItem() == null ? null
+                : String.valueOf(jComboBox2.getSelectedItem()).trim());
+        data.put("city", jTextField9.getText().trim());
+        data.put("street", jTextField10.getText().trim());
+        data.put("houseNumber", jTextField11.getText().trim());
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
         }
         ((List<Map<String, Object>>) database.get("data")).add(data);
+        database.put("paymentMethodData", new ArrayList<String>());
+        for (int index = 0; index < jComboBox1.getModel().getSize(); index += 1) {
+            ((List<String>) database.get("paymentMethodData")).add(
+                String.valueOf(jComboBox1.getModel().getElementAt(index)).trim());
+        }
+        database.put("deliveryMethodData", new ArrayList<String>());
+        for (int index = 0; index < jComboBox2.getModel().getSize(); index += 1) {
+            ((List<String>) database.get("deliveryMethodData")).add(
+                String.valueOf(jComboBox2.getModel().getElementAt(index)).trim());
+        }
         try {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
