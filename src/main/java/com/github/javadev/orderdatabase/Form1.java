@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
@@ -54,13 +56,15 @@ public class Form1 extends javax.swing.JFrame {
             }
         }
         List<Map<String, Object>> filteredOrders = getFilteredOrders();
-        fillOrderForm($.last(filteredOrders));
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
                 saveData();
             }
         });
+        fillComboBoxModel("paymentMethodData", jComboBox1);
+        fillComboBoxModel("deliveryMethodData", jComboBox2);
+        fillOrderForm($.last(filteredOrders));
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent evt) {
@@ -77,6 +81,20 @@ public class Form1 extends javax.swing.JFrame {
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Json file", ".json")); 
         chooser1.setSelectedFile(new File("search-result.xml"));
     }
+    
+    private void fillComboBoxModel(String key, JComboBox jComboBox) {
+        final List<String> databaseData;
+        if (database.get(key) == null || !(database.get(key) instanceof List)) {
+            databaseData = new ArrayList<String>();
+        } else {
+            databaseData = (List<String>) database.get(key);
+        }
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for (String data : databaseData) {
+            model.addElement(data);
+        }
+        jComboBox.setModel(model);
+    }
 
     private void fillOrderForm(Map<String, Object> order) {
         jTextField1.setText((String) order.get("orderNumber"));
@@ -85,8 +103,34 @@ public class Form1 extends javax.swing.JFrame {
         jTextField4.setText((String) order.get("surname"));
         jTextField5.setText((String) order.get("phoneNumber"));
         jTextField6.setText((String) order.get("email"));
+        fillComboBoxSelectedItem(jComboBox1, (String) order.get("paymentMethod"), "paymentMethodData");
+        fillComboBoxSelectedItem(jComboBox2, (String) order.get("deliveryMethod"), "deliveryMethodData");
     }
     
+    private void fillComboBoxSelectedItem(JComboBox jComboBox, String data, String dictKey) {
+        if (jComboBox.getModel() == null) {
+            return;
+        }
+        if (data == null) {
+            jComboBox.getModel().setSelectedItem(null);
+            return;
+        }
+        String modelElement = null;
+        fillComboBoxModel(dictKey, jComboBox);
+        for (int index = 0; index < jComboBox.getModel().getSize(); index += 1) {
+            if (jComboBox.getModel().getElementAt(index).equals(data)) {
+                modelElement = (String) jComboBox.getModel().getElementAt(index);
+                break;
+            }
+        }
+        if (modelElement == null) {
+            ((DefaultComboBoxModel) jComboBox.getModel()).addElement(data);
+            jComboBox.getModel().setSelectedItem(data);
+        } else {
+            jComboBox.getModel().setSelectedItem(modelElement);
+        }
+    }
+
     private List<Map<String, Object>> getFilteredOrders() {
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
