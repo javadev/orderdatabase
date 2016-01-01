@@ -41,6 +41,7 @@ public class Form1 extends javax.swing.JFrame {
     private final Map<String, Object> database = new LinkedHashMap<String, Object>();
     private final List<Map<String, Object>> foundOrders = new ArrayList<Map<String, Object>>();
     private final JFileChooser chooser1 = new JFileChooser();
+    private final NewJDialog1 dossieDialog;
     
     /**
      * Creates new form Form1
@@ -71,7 +72,11 @@ public class Form1 extends javax.swing.JFrame {
             setLocation(Math.min(screenSize.width - 50, ((Long) database.get("locationX")).intValue()),
                     Math.min(screenSize.height - 50, ((Long) database.get("locationY")).intValue()));
         }
-        fillOrderForm($.last(filteredOrders));
+        dossieDialog = new NewJDialog1(this, "Досье покупателя", false, database);
+        dossieDialog.setLocationRelativeTo(this);
+        if (!filteredOrders.isEmpty()) {
+            fillOrderForm($.last(filteredOrders));
+        }
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent evt) {
@@ -87,6 +92,7 @@ public class Form1 extends javax.swing.JFrame {
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Xml file", "xml"));
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Json file", ".json")); 
         chooser1.setSelectedFile(new File("search-result.xml"));
+        jTextField1.requestFocusInWindow();
     }
     
     private void fillComboBoxModel(String key, JComboBox jComboBox) {
@@ -104,6 +110,8 @@ public class Form1 extends javax.swing.JFrame {
     }
 
     private void fillOrderForm(Map<String, Object> order) {
+        database.put("currentOrder", order);
+        dossieDialog.reload();
         jTextField1.setText((String) order.get("orderNumber"));
         jTextField2.setText((String) order.get("firstName"));
         jTextField3.setText((String) order.get("middleName"));
@@ -199,6 +207,8 @@ public class Form1 extends javax.swing.JFrame {
             database.put("data", new ArrayList<Map<String, Object>>());
         }
         ((List<Map<String, Object>>) database.get("data")).add(data);
+        database.put("currentOrder", data);
+        dossieDialog.reload();
         database.put("paymentMethodData", new ArrayList<String>());
         for (int index = 0; index < jComboBox1.getModel().getSize(); index += 1) {
             ((List<String>) database.get("paymentMethodData")).add(
@@ -405,6 +415,11 @@ public class Form1 extends javax.swing.JFrame {
         jButton7 = new javax.swing.JButton();
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -669,6 +684,11 @@ public class Form1 extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton2.setText("Досье покупателя");
         jButton2.setNextFocusableComponent(jButton3);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jButton2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jButton2KeyPressed(evt);
@@ -735,6 +755,7 @@ public class Form1 extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -776,7 +797,34 @@ public class Form1 extends javax.swing.JFrame {
 
         jLabel24.setText("Номер для записи в базе");
 
+        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel25.setText(" ");
+
+        jMenu1.setText("Файл");
+
+        jMenuItem1.setText("Выход");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Справка");
+
+        jMenuItem2.setText("О программе");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -787,7 +835,7 @@ public class Form1 extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(60, 60, 60)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel24, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel25, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -911,7 +959,7 @@ public class Form1 extends javax.swing.JFrame {
                                 .addComponent(jLabel17)
                                 .addGap(90, 90, 90)
                                 .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1145,8 +1193,7 @@ public class Form1 extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         NewJDialog dialog = new NewJDialog(this, "Настройка справочника", true, jComboBox1.getModel());
-        final java.awt.Point location = ((Component) evt.getSource()).getLocation();
-        dialog.setLocation(location.x + 40, location.y);
+        dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {
             jComboBox1.setModel(dialog.getNewModel());
@@ -1162,8 +1209,7 @@ public class Form1 extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         NewJDialog dialog = new NewJDialog(this, "Настройка справочника", true, jComboBox2.getModel());
-        final java.awt.Point location = ((Component) evt.getSource()).getLocation();
-        dialog.setLocation(location.x + 40, location.y);
+        dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {
             jComboBox2.setModel(dialog.getNewModel());
@@ -1172,13 +1218,27 @@ public class Form1 extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         NewJDialog dialog = new NewJDialog(this, "Настройка справочника", true, jComboBox3.getModel());
-        final java.awt.Point location = ((Component) evt.getSource()).getLocation();
-        dialog.setLocation(location.x + 40, location.y);
+        dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {
             jComboBox3.setModel(dialog.getNewModel());
         }
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        dossieDialog.reload();
+        dossieDialog.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        About dialog = new About(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1251,6 +1311,11 @@ public class Form1 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
