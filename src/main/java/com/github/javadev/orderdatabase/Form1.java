@@ -105,6 +105,12 @@ public class Form1 extends javax.swing.JFrame {
         jTextField6.setText((String) order.get("email"));
         fillComboBoxSelectedItem(jComboBox1, (String) order.get("paymentMethod"), "paymentMethodData");
         fillComboBoxSelectedItem(jComboBox2, (String) order.get("deliveryMethod"), "deliveryMethodData");
+        jTextField9.setText((String) order.get("city"));
+        jTextField10.setText((String) order.get("street"));
+        jTextField11.setText((String) order.get("houseNumber"));
+        jTextField12.setText((String) order.get("houseNumber2"));
+        jTextField13.setText((String) order.get("appartmentNumber"));
+        jTextPane1.setText((String) order.get("comment"));
     }
     
     private void fillComboBoxSelectedItem(JComboBox jComboBox, String data, String dictKey) {
@@ -177,6 +183,9 @@ public class Form1 extends javax.swing.JFrame {
         data.put("city", jTextField9.getText().trim());
         data.put("street", jTextField10.getText().trim());
         data.put("houseNumber", jTextField11.getText().trim());
+        data.put("houseNumber2", jTextField12.getText().trim());
+        data.put("appartmentNumber", jTextField13.getText().trim());
+        data.put("comment", jTextPane1.getText().trim());
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
         }

@@ -773,6 +773,23 @@
       "city": "Город",
       "street": "",
       "houseNumber": ""
+    },
+    {
+      "created": 1451644805910,
+      "orderNumber": "5",
+      "firstName": "Имя",
+      "middleName": "33",
+      "surname": "55",
+      "phoneNumber": "",
+      "email": "",
+      "paymentMethod": "Способ оплаты 2",
+      "deliveryMethod": null,
+      "city": "Город",
+      "street": "1",
+      "houseNumber": "2",
+      "houseNumber2": "3",
+      "appartmentNumber": "4",
+      "comment": "5"
     }
   ],
   "paymentMethodData": [
