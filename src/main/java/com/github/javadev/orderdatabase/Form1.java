@@ -298,12 +298,13 @@ public class Form1 extends javax.swing.JFrame {
                 .filter(new Predicate<Map<String, Object>>() {
                     @Override
                     public Boolean apply(Map<String, Object> map) {
+                        boolean idNumber = checkStrictMap(map, jTextField7, "_id");
                         boolean orderNumber = checkMap(map, jTextField8, "orderNumber");
                         boolean firstName = checkMap(map, jTextField14, "firstName");
                         boolean middleName = checkMap(map, jTextField15, "middleName");
                         boolean surname = checkMap(map, jTextField16, "surname");
                         boolean phoneNumber = checkMap(map, jTextField17, "phoneNumber");
-                        return orderNumber && firstName && middleName && surname && phoneNumber;
+                        return idNumber && orderNumber && firstName && middleName && surname && phoneNumber;
                     }
                 })
                 .value();
@@ -314,6 +315,11 @@ public class Form1 extends javax.swing.JFrame {
     private boolean checkMap(Map<String, Object> map, JTextField jTextField, String key) {
         return jTextField.getText().trim().isEmpty()
             || (map.containsKey(key) && ((String) map.get(key)).indexOf(jTextField.getText().trim()) >= 0);
+    }
+    
+    private boolean checkStrictMap(Map<String, Object> map, JTextField jTextField, String key) {
+        return jTextField.getText().trim().isEmpty()
+            || (map.containsKey(key) && ((String) map.get(key)).equals(jTextField.getText().trim()));
     }
 
     private void focusNextElementOnPressEnter(java.awt.event.KeyEvent evt) {
