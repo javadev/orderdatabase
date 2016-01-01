@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -170,6 +171,7 @@ public class Form1 extends javax.swing.JFrame {
     private void saveData() {
         Map<String, Object> data = new LinkedHashMap<String, Object>();
         data.put("created", new Date().getTime());
+        data.put("_id", uniqueId());
         data.put("orderNumber", jTextField1.getText().trim());
         data.put("firstName", jTextField2.getText().trim());
         data.put("middleName", jTextField3.getText().trim());
@@ -206,6 +208,24 @@ public class Form1 extends javax.swing.JFrame {
             Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
         }        
     }
+    
+    public String uniqueId() {
+        final String[] passwords = new String[] {
+            "ALKJVBPIQYTUIWEBVPQALZVKQRWORTUYOYISHFLKAJMZNXBVMNFGAHKJSDFALAPOQIERIUYTGSFGKMZNXBVJAHGFAKX",
+            "1234567890",
+            "qpowiealksdjzmxnvbfghsdjtreiuowiruksfhksajmzxncbvlaksjdhgqwetytopskjhfgvbcnmzxalksjdfhgbvzm"
+        };
+        final StringBuilder result = new StringBuilder();
+        final long passwordLength = 12;
+        for (int index = 0; index < passwordLength; index += 1) {
+            final int passIndex = (int) (passwords.length * index / passwordLength);
+            final int charIndex = (int) Math.abs(
+                UUID.randomUUID().getLeastSignificantBits() % passwords[passIndex].length());
+            result.append(passwords[passIndex].charAt(charIndex));
+        }
+        return result.toString();
+    }
+
     
     private static class MyModel extends AbstractTableModel {
 
