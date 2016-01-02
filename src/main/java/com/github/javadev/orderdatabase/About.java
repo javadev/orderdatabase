@@ -5,19 +5,8 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * About.
- *
- * @author Valentyn Kolesnikov
- * @version $Revision$ $Date$
- */
 public class About extends javax.swing.JDialog {
 
-    /**
-     * Creates new form About.
-     * @param parent the parent frame
-     * @param modal is modal mode
-     */
     public About(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -60,7 +49,7 @@ public class About extends javax.swing.JDialog {
         });
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Версия 1.0, автор Колесников В. В.");
+        jLabel3.setText("Версия 1.1, автор Колесников В. В.");
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("<html>Создать сообщение об ошибке: <font color=\"#0000CF\"><u>https://github.com/javadev/orderdatabase/issues</u></font></html>");
