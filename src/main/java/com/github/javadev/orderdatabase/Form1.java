@@ -33,19 +33,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author valik
- */
 public class Form1 extends javax.swing.JFrame {
     private final Map<String, Object> database = new LinkedHashMap<String, Object>();
     private final List<Map<String, Object>> foundOrders = new ArrayList<Map<String, Object>>();
     private final JFileChooser chooser1 = new JFileChooser();
     private final NewJDialog1 dossieDialog;
     
-    /**
-     * Creates new form Form1
-     */
     public Form1() {
         initComponents();
         Path path = Paths.get("./database.json");
@@ -61,7 +54,11 @@ public class Form1 extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
-                saveData();
+                Map<String, Object> data = createOrderData();
+                if (!$.omit(data, "_id", "created").toString().equals(
+                        $.omit((Map<String, Object>) database.get("currentOrder"), "_id", "created").toString())) {
+                    saveData(data);
+                }
             }
         });
         fillComboBoxModel("paymentMethodData", jComboBox1);
@@ -183,7 +180,7 @@ public class Form1 extends javax.swing.JFrame {
         return filteredOrders;
     }
     
-    private void saveData() {
+    private Map<String, Object> createOrderData() {
         Map<String, Object> data = new LinkedHashMap<String, Object>();
         data.put("created", new Date().getTime());
         data.put("_id", uniqueId());
@@ -203,6 +200,10 @@ public class Form1 extends javax.swing.JFrame {
         data.put("houseNumber2", jTextField12.getText().trim());
         data.put("appartmentNumber", jTextField13.getText().trim());
         data.put("comment", jTextPane1.getText().trim());
+        return data;
+    }
+    
+    private void saveData(Map<String, Object> data) {
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
         }
@@ -1085,7 +1086,7 @@ public class Form1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        saveData();
+        saveData(createOrderData());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed

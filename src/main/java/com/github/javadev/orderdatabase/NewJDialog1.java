@@ -1,31 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.javadev.orderdatabase;
 
 import com.github.underscore.Function1;
 import com.github.underscore.Predicate;
 import com.github.underscore.lodash.$;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author valik
- */
 public class NewJDialog1 extends javax.swing.JDialog {
     private final Map<String, Object> database;
-    /**
-     * Creates new form NewJDialog1
-     */
     public NewJDialog1(java.awt.Frame parent, String title, boolean modal, Map<String, Object> database) {
         super(parent, title, modal);
         this.database = database;
@@ -107,7 +93,7 @@ public class NewJDialog1 extends javax.swing.JDialog {
                     return list.get(rowIndex).get("orderNumber");
                 case 2:
                     if (list.get(rowIndex).get("created") != null) {
-                        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(
                             new Date((Long) list.get(rowIndex).get("created")));
                     }
                     return "";

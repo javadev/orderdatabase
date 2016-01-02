@@ -8,9 +8,6 @@ public class NewJDialog extends javax.swing.JDialog {
     private final DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
     private boolean isApproved;
 
-    /**
-     * Creates new form NewJDialog
-     */
     public NewJDialog(java.awt.Frame parent, String title, boolean modal, ComboBoxModel model) {
         super(parent, title, modal);
         initComponents();
