@@ -55,7 +55,8 @@ public class Form1 extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent winEvt) {
                 Map<String, Object> data = createOrderData();
-                if (!$.omit(data, "_id", "created").toString().equals(
+                if (database.get("currentOrder") == null
+                        || !$.omit(data, "_id", "created").toString().equals(
                         $.omit((Map<String, Object>) database.get("currentOrder"), "_id", "created").toString())) {
                     saveData(data);
                 }

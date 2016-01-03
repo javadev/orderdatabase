@@ -15,6 +15,15 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <debug>true</debug>
+                    <debuglevel>none</debuglevel>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
@@ -41,7 +50,6 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/maven/**</exclude>
-                                        <exclude>META-INF/services/**</exclude>
                                         <exclude>META-INF/COPYRIGHT.html</exclude>
                                         <exclude>META-INF/LICENSE*</exclude>
                                         <exclude>META-INF/NOTICE*</exclude>
@@ -70,7 +78,9 @@
                 <configuration>
                     <options>
                         <option>-allowaccessmodification</option>
-                        <option>-keep class org.jdesktop.**, com.github.javadev.orderdatabase.**, com.github.underscore.**</option>
+                        <option>-keep public class org.jdesktop.**, com.github.javadev.orderdatabase.**, com.github.underscore.**</option>
+                        <option>-keep public class com.mysql.** {*;}</option>
+                        <option>-dontwarn com.mysql.**</option>
                         <option>-keepclassmembers class * { *** main(java.lang.String[]); }</option>
                     </options>
                     <libs>
@@ -90,6 +100,11 @@
             <groupId>com.github.javadev</groupId>
             <artifactId>underscore-lodash</artifactId>
             <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.32</version>
         </dependency>
     </dependencies>
 </project>
