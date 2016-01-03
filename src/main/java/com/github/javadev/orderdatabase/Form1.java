@@ -55,10 +55,12 @@ public class Form1 extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent winEvt) {
                 Map<String, Object> data = createOrderData();
-                if (database.get("currentOrder") == null
-                        || !$.omit(data, "_id", "created").toString().equals(
+                if (database.get("currentOrder") != null
+                        && !$.omit(data, "_id", "created").toString().equals(
                         $.omit((Map<String, Object>) database.get("currentOrder"), "_id", "created").toString())) {
                     saveData(data);
+                } else {
+                    saveData(null);
                 }
             }
         });
@@ -208,8 +210,11 @@ public class Form1 extends javax.swing.JFrame {
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
         }
-        ((List<Map<String, Object>>) database.get("data")).add(data);
-        database.put("currentOrder", data);
+        if (data != null) {
+            ((List<Map<String, Object>>) database.get("data")).add(data);
+            jLabel25.setText((String) data.get("_id"));
+            database.put("currentOrder", data);
+        }
         dossieDialog.reload();
         database.put("paymentMethodData", new ArrayList<String>());
         for (int index = 0; index < jComboBox1.getModel().getSize(); index += 1) {
@@ -232,8 +237,7 @@ public class Form1 extends javax.swing.JFrame {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
             Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-        jLabel25.setText((String) data.get("_id"));
+        }
     }
     
     public String uniqueId() {
