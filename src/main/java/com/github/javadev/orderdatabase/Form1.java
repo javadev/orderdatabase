@@ -50,7 +50,7 @@ public class Form1 extends javax.swing.JFrame {
                 Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        List<Map<String, Object>> filteredOrders = getFilteredOrders();
+        List<Map<String, Object>> filteredOrders = getFilteredOrders(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
@@ -153,26 +153,31 @@ public class Form1 extends javax.swing.JFrame {
         }
     }
 
-    private List<Map<String, Object>> getFilteredOrders() {
+    private List<Map<String, Object>> getFilteredOrders(boolean filterById) {
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
         }
-        Map<String, List<Map<String, Object>>> orders =
-                $.groupBy((List<Map<String, Object>>) database.get("data"), 
-                new Function1<Map<String, Object>, String>() {
-                    public String apply(Map<String, Object> item) {
-                        return (String) item.get("orderNumber");
-                    }
-                });
         List<Map<String, Object>> filteredOrders = new ArrayList<Map<String, Object>>();
-        for (Map.Entry<String, List<Map<String, Object>>> entry : orders.entrySet()) {
-            List<Map<String, Object>> sorted = $.sortBy(entry.getValue(), new Function1<Map<String, Object>, Long>() {
-               public Long apply(final Map<String, Object> item) {
-                   return item.get("created") == null ? 0L : (Long) item.get("created");
-               } 
-            });
-            if (!sorted.isEmpty()) {
-                filteredOrders.add($.last(sorted));
+        if (filterById) {
+            filteredOrders = (List<Map<String, Object>>) database.get("data");
+        } else {
+            Map<String, List<Map<String, Object>>> orders =
+                    $.groupBy((List<Map<String, Object>>) database.get("data"), 
+                    new Function1<Map<String, Object>, String>() {
+                        public String apply(Map<String, Object> item) {
+                            return (String) item.get("orderNumber");
+                        }
+                    });
+            for (Map.Entry<String, List<Map<String, Object>>> entry : orders.entrySet()) {
+                List<Map<String, Object>> sorted = $.sortBy(entry.getValue(),
+                   new Function1<Map<String, Object>, Long>() {
+                   public Long apply(final Map<String, Object> item) {
+                       return item.get("created") == null ? 0L : (Long) item.get("created");
+                   } 
+                });
+                if (!sorted.isEmpty()) {
+                    filteredOrders.add($.last(sorted));
+                }
             }
         }
         $.sortBy(filteredOrders, new Function1<Map<String, Object>, Long>() {
@@ -300,7 +305,8 @@ public class Form1 extends javax.swing.JFrame {
 
     private void searchOrders() {
         foundOrders.clear();
-        List<Map<String, Object>> selectedOrders = $.chain(getFilteredOrders())
+        List<Map<String, Object>> selectedOrders = $.chain(
+                getFilteredOrders(!jTextField7.getText().isEmpty()))
                 .filter(new Predicate<Map<String, Object>>() {
                     @Override
                     public Boolean apply(Map<String, Object> map) {
