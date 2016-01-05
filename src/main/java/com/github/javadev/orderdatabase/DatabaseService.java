@@ -31,27 +31,30 @@ public class DatabaseService {
             String sql = "SELECT id, first, last, age FROM orderdata";
             try (ResultSet resultSet = stmt.executeQuery(sql)) {
                 while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    int age = resultSet.getInt("age");
-                    String first = resultSet.getString("first");
-                    String last = resultSet.getString("last");
+                    String id = resultSet.getString("_id");
+                    String firstName = resultSet.getString("firstName");
+                    String middleName = resultSet.getString("middleName");
+                    String surname = resultSet.getString("surname");
                     
-                    //Display values
                     System.out.print("ID: " + id);
-                    System.out.print(", Age: " + age);
-                    System.out.print(", First: " + first);
-                    System.out.println(", Last: " + last);
+                    System.out.print(", First: " + firstName);
+                    System.out.print(", Middle: " + middleName);
+                    System.out.println(", surname: " + surname);
                 }
             }
-        } catch (SQLException | ClassNotFoundException  se) {
+        } catch (SQLException | ClassNotFoundException se) {
             if (se instanceof MySQLSyntaxErrorException) {
                 String detailMessage = ((MySQLSyntaxErrorException) se).getMessage();
                 if (detailMessage.contains("orderdata' doesn't exist")) {
-//                    createTable();
-                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, "I am here");
+                    try {
+                        createTable(stmt);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, se);                    
                 }
             }
-            Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, se);
         } finally {
             try {
                 if (stmt != null) {
@@ -67,5 +70,25 @@ public class DatabaseService {
             }
         }
         return result;
+    }
+    
+    private void createTable(Statement stmt) throws SQLException {
+        String sql = "CREATE TABLE orderdata "
+                   + "(_id VARCHAR(16) not NULL, "
+                   + " firstName VARCHAR(255), "
+                   + " middleName VARCHAR(255), "
+                   + " surname VARCHAR(255), "
+                   + " PRIMARY KEY ( _id ))"; 
+        stmt.executeUpdate(sql);
+        String restrictionUpdate =
+            "CREATE TRIGGER orderdata_upd BEFORE UPDATE ON orderdata FOR EACH ROW\n"
+            + "  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot update record';\n"
+            + ";";
+        stmt.executeUpdate(restrictionUpdate);
+        String restrictionDelete =
+            "CREATE TRIGGER orderdata_del BEFORE DELETE ON orderdata FOR EACH ROW\n"
+            + "  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete record';\n"
+            + ";";
+        stmt.executeUpdate(restrictionDelete);
     }
 }
