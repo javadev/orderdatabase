@@ -7,7 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -15,30 +16,27 @@ import java.util.logging.Logger;
 
 public class DatabaseService {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/orderdb";
+    static final String DB_URL = "jdbc:mysql://localhost/orderdb?useUnicode=true&characterEncoding=utf-8";
 
     static final String USER = "root";
     static final String PASS = "";
 
     public List<Map<String, Object>> readAll() {
-        List<Map<String, Object>> result = Collections.emptyList();
+        List<Map<String, Object>> result = new ArrayList<>();
         Connection conn = null;
         Statement stmt = null;
         try {
             conn = createConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT id, first, last, age FROM orderdata";
+            String sql = "SELECT _id, firstName, middleName, surname FROM orderdata";
             try (ResultSet resultSet = stmt.executeQuery(sql)) {
                 while (resultSet.next()) {
-                    String id = resultSet.getString("_id");
-                    String firstName = resultSet.getString("firstName");
-                    String middleName = resultSet.getString("middleName");
-                    String surname = resultSet.getString("surname");
-                    
-                    System.out.print("ID: " + id);
-                    System.out.print(", First: " + firstName);
-                    System.out.print(", Middle: " + middleName);
-                    System.out.println(", surname: " + surname);
+                    Map<String, Object> data = new LinkedHashMap<String, Object>();
+                    data.put("_id", resultSet.getString("_id"));
+                    data.put("firstName", resultSet.getString("firstName"));
+                    data.put("middleName", resultSet.getString("middleName"));
+                    data.put("surname", resultSet.getString("surname"));
+                    result.add(data);
                 }
             }
         } catch (SQLException | ClassNotFoundException se) {
@@ -92,6 +90,7 @@ public class DatabaseService {
                             + "(_id, firstName, middleName, surname) VALUES"
                             + "(?,?,?,?)";
             stmt = conn.prepareStatement(insertTableSQL);
+            stmt.getConnection().setAutoCommit(false);
             for (Map<String, Object> data : dataList) {
                 stmt.setString(1, (String) data.get("_id"));
                 stmt.setString(2, (String) data.get("firstName"));
@@ -99,6 +98,7 @@ public class DatabaseService {
                 stmt.setString(4, (String) data.get("surname"));
                 stmt.executeUpdate();
             }
+            stmt.getConnection().commit();
         } catch (SQLException | ClassNotFoundException se) {
             checkExceptionAndCreateTable(se, stmt);
         } finally {

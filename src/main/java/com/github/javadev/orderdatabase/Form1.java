@@ -15,11 +15,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,16 +156,31 @@ public class Form1 extends javax.swing.JFrame {
         }
     }
 
+    private List<Map<String, Object>> getDatabaseData() {
+        Set<String> ids = new HashSet<String>();
+        List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
+        for (Map<String, Object> data : dataList) {
+            ids.add((String) data.get("_id"));
+        }
+        List<Map<String, Object>> dbDataList = new DatabaseService().readAll();
+        for (Map<String, Object> data : dbDataList) {
+            if (!ids.contains((String) data.get("_id"))) {
+                dataList.add(data);
+            }
+        }
+        return dataList;
+    }
+
     private List<Map<String, Object>> getFilteredOrders(boolean filterById) {
         if (database.get("data") == null) {
             database.put("data", new ArrayList<Map<String, Object>>());
         }
         List<Map<String, Object>> filteredOrders = new ArrayList<Map<String, Object>>();
         if (filterById) {
-            filteredOrders = (List<Map<String, Object>>) database.get("data");
+            filteredOrders = getDatabaseData();
         } else {
             Map<String, List<Map<String, Object>>> orders =
-                    $.groupBy((List<Map<String, Object>>) database.get("data"), 
+                    $.groupBy(getDatabaseData(), 
                     new Function1<Map<String, Object>, String>() {
                         public String apply(Map<String, Object> item) {
                             return (String) item.get("orderNumber");
@@ -217,6 +235,7 @@ public class Form1 extends javax.swing.JFrame {
         }
         if (data != null) {
             ((List<Map<String, Object>>) database.get("data")).add(data);
+            new DatabaseService().insertData(Arrays.asList(data));
             jLabel25.setText((String) data.get("_id"));
             database.put("currentOrder", data);
         }
