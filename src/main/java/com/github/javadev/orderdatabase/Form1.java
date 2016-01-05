@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -41,6 +40,10 @@ public class Form1 extends javax.swing.JFrame {
     private final List<Map<String, Object>> foundOrders = new ArrayList<Map<String, Object>>();
     private final JFileChooser chooser1 = new JFileChooser();
     private final NewJDialog1 dossieDialog;
+    private String hostName;
+    private String dbName;
+    private String user;
+    private String pass;
     
     public Form1() {
         initComponents();
@@ -75,6 +78,12 @@ public class Form1 extends javax.swing.JFrame {
             setLocation(Math.min(screenSize.width - 50, ((Long) database.get("locationX")).intValue()),
                     Math.min(screenSize.height - 50, ((Long) database.get("locationY")).intValue()));
         }
+        hostName = (String) database.get("hostName");
+        dbName = (String) database.get("dbName");
+        user = (String) database.get("user");
+        pass = database.get("pass") == null ? null
+                : new String(xor(((String) database.get("pass")).getBytes(), "UTF-8".getBytes()));
+
         dossieDialog = new NewJDialog1(this, "Досье покупателя", false, database);
         dossieDialog.setLocationRelativeTo(this);
         if (!filteredOrders.isEmpty()) {
@@ -162,7 +171,7 @@ public class Form1 extends javax.swing.JFrame {
         for (Map<String, Object> data : dataList) {
             ids.add((String) data.get("_id"));
         }
-        List<Map<String, Object>> dbDataList = new DatabaseService(null, null, null, null).readAll();
+        List<Map<String, Object>> dbDataList = new DatabaseService(hostName, dbName, user, pass).readAll();
         for (Map<String, Object> data : dbDataList) {
             if (!ids.contains((String) data.get("_id"))) {
                 dataList.add(data);
@@ -172,7 +181,7 @@ public class Form1 extends javax.swing.JFrame {
     }
 
     private void saveDatabaseData() {
-        DatabaseService databaseService = new DatabaseService(null, null, null, null);
+        DatabaseService databaseService = new DatabaseService(hostName, dbName, user, pass);
         Set<String> ids = new HashSet<String>();
         List<Map<String, Object>> dbDataList = databaseService.readAll();
         for (Map<String, Object> data : dbDataList) {
@@ -274,11 +283,31 @@ public class Form1 extends javax.swing.JFrame {
         }
         database.put("locationX", getLocation().x);
         database.put("locationY", getLocation().y);
+        database.put("hostName", hostName);
+        database.put("dbName", dbName);
+        database.put("user", user);
+        database.put("pass", pass == null ? null : new String(xor(pass.getBytes(), "UTF-8".getBytes())));
         try {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
             Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private static byte[] xor(final byte[] input, final byte[] secret) {
+        final byte[] output = new byte[input.length];
+        if (secret.length == 0) {
+            throw new IllegalArgumentException("empty security key");
+        }
+        int spos = 0;
+        for (int pos = 0; pos < input.length; ++pos) {
+            output[pos] = (byte) (input[pos] ^ secret[spos]);
+            ++spos;
+            if (spos >= secret.length) {
+                spos = 0;
+            }
+        }
+        return output;
     }
     
     public String uniqueId() {
@@ -472,6 +501,8 @@ public class Form1 extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
 
@@ -866,6 +897,18 @@ public class Form1 extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu3.setText("Сервис");
+
+        jMenuItem3.setText("Параметры...");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem3);
+
+        jMenuBar1.add(jMenu3);
+
         jMenu2.setText("Справка");
 
         jMenuItem2.setText("О программе");
@@ -1255,6 +1298,19 @@ public class Form1 extends javax.swing.JFrame {
         dialog.setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        NewJDialog2 dialog = new NewJDialog2(this, true, hostName, dbName, user);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+        if (dialog.isApproved()) {
+            dialog.getDbName();
+            hostName = dialog.getHostName();
+            dbName = dialog.getDbName();
+            user = dialog.getUser();
+            pass = dialog.getPass();
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1328,9 +1384,11 @@ public class Form1 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
