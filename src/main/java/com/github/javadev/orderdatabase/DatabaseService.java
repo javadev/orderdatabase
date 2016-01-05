@@ -64,6 +64,7 @@ public class DatabaseService {
             }
             try {
                 if (conn != null) {
+                    conn.rollback();
                     conn.close();
                 }
             } catch (SQLException se) {
@@ -73,6 +74,7 @@ public class DatabaseService {
     }
     
     private void createTable(Statement stmt) throws SQLException {
+        stmt.getConnection().setAutoCommit(false);
         String sql = "CREATE TABLE orderdata "
                    + "(_id VARCHAR(16) not NULL, "
                    + " firstName VARCHAR(255), "
@@ -90,5 +92,6 @@ public class DatabaseService {
             + "  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete record';\n"
             + ";";
         stmt.executeUpdate(restrictionDelete);
+        stmt.getConnection().commit();
     }
 }
