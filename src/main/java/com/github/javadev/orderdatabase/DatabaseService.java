@@ -1,5 +1,6 @@
 package com.github.javadev.orderdatabase;
 
+import com.github.underscore.lodash.$;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,11 +16,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DatabaseService {
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/orderdb?useUnicode=true&characterEncoding=utf-8";
+    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    private final String hostName;
+    private final String dbName;
+    private final String user;
+    private final String pass;
 
-    static final String USER = "root";
-    static final String PASS = "";
+    public DatabaseService(String hostName, String dbName, String user, String pass) {
+        this.hostName = hostName == null ? "localhost" : $.escape(hostName);
+        this.dbName = dbName == null ? "orderdb" : $.escape(dbName);
+        this.user = user == null ? "root" : user;
+        this.pass = pass == null ? "" : pass;
+    }
+
+    private String getDbUrl() {
+        return "jdbc:mysql://" + hostName + "/" + dbName + "?useUnicode=true&characterEncoding=utf-8";
+    }
 
     public List<Map<String, Object>> readAll() {
         List<Map<String, Object>> result = new ArrayList<>();
@@ -136,7 +148,7 @@ public class DatabaseService {
     private Connection createConnection() throws ClassNotFoundException, SQLException {
         Connection conn;
         Class.forName("com.mysql.jdbc.Driver");
-        conn = DriverManager.getConnection(DB_URL, USER, PASS);
+        conn = DriverManager.getConnection(getDbUrl(), user, pass);
         return conn;
     }
 }

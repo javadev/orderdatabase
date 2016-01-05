@@ -162,13 +162,30 @@ public class Form1 extends javax.swing.JFrame {
         for (Map<String, Object> data : dataList) {
             ids.add((String) data.get("_id"));
         }
-        List<Map<String, Object>> dbDataList = new DatabaseService().readAll();
+        List<Map<String, Object>> dbDataList = new DatabaseService(null, null, null, null).readAll();
         for (Map<String, Object> data : dbDataList) {
             if (!ids.contains((String) data.get("_id"))) {
                 dataList.add(data);
             }
         }
         return dataList;
+    }
+
+    private void saveDatabaseData() {
+        DatabaseService databaseService = new DatabaseService(null, null, null, null);
+        Set<String> ids = new HashSet<String>();
+        List<Map<String, Object>> dbDataList = databaseService.readAll();
+        for (Map<String, Object> data : dbDataList) {
+            ids.add((String) data.get("_id"));
+        }
+        List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
+        List<Map<String, Object>> dataToSaveList = new ArrayList<>();
+        for (Map<String, Object> data : dataList) {
+            if (!ids.contains((String) data.get("_id"))) {
+                dataToSaveList.add(data);
+            }
+        }
+        databaseService.insertData(dataToSaveList);
     }
 
     private List<Map<String, Object>> getFilteredOrders(boolean filterById) {
@@ -235,7 +252,7 @@ public class Form1 extends javax.swing.JFrame {
         }
         if (data != null) {
             ((List<Map<String, Object>>) database.get("data")).add(data);
-            new DatabaseService().insertData(Arrays.asList(data));
+            saveDatabaseData();
             jLabel25.setText((String) data.get("_id"));
             database.put("currentOrder", data);
         }
