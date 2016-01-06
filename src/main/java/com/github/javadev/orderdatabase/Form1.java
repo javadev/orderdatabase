@@ -910,8 +910,10 @@ public class Form1 extends javax.swing.JFrame {
         jLabel25.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel25.setText(" ");
 
+        jMenu1.setMnemonic('\u0430');
         jMenu1.setText("Файл");
 
+        jMenuItem1.setMnemonic('\u044b');
         jMenuItem1.setText("Выход");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -922,8 +924,10 @@ public class Form1 extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu3.setMnemonic('\u0435');
         jMenu3.setText("Сервис");
 
+        jMenuItem3.setMnemonic('\u043f');
         jMenuItem3.setText("Параметры...");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -934,8 +938,10 @@ public class Form1 extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu3);
 
+        jMenu2.setMnemonic('\u0441');
         jMenu2.setText("Справка");
 
+        jMenuItem2.setMnemonic('\u043e');
         jMenuItem2.setText("О программе");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

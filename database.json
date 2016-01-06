@@ -119,5 +119,9 @@
 
   ],
   "locationX": 0,
-  "locationY": 23
+  "locationY": 23,
+  "hostName": null,
+  "dbName": null,
+  "user": null,
+  "pass": null
 }
