@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +17,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DatabaseService {
+    private final static List<String> FIELD_NAMES = Arrays.asList(
+        "created",
+        "_id",
+        "orderNumber",
+        "firstName",
+        "middleName",
+        "surname",
+        "phoneNumber",
+        "email",
+        "paymentMethod",
+        "deliveryMethod",
+        "city",
+        "street",
+        "houseNumber",
+        "houseNumber2",
+        "appartmentNumber",
+        "comment"
+    );
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final String hostName;
     private final String dbName;
@@ -23,10 +42,10 @@ public class DatabaseService {
     private final String pass;
 
     public DatabaseService(String hostName, String dbName, String user, String pass) {
-        this.hostName = hostName == null ? "localhost" : $.escape(hostName);
-        this.dbName = dbName == null ? "orderdb" : $.escape(dbName);
-        this.user = user == null ? "root" : user;
-        this.pass = pass == null ? "" : pass;
+        this.hostName = !$.isString(hostName) || hostName.trim().isEmpty() ? "localhost" : $.escape(hostName);
+        this.dbName = !$.isString(dbName) || dbName.trim().isEmpty() ? "orderdb" : $.escape(dbName);
+        this.user = !$.isString(user) || user.trim().isEmpty() ? "root" : user;
+        this.pass = !$.isString(pass) || pass.trim().isEmpty() ? "" : pass;
     }
 
     private String getDbUrl() {
@@ -40,14 +59,13 @@ public class DatabaseService {
         try {
             conn = createConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT _id, firstName, middleName, surname FROM orderdata";
+            String sql = "SELECT " + $.join(FIELD_NAMES, ", ") + " FROM orderdata";
             try (ResultSet resultSet = stmt.executeQuery(sql)) {
                 while (resultSet.next()) {
                     Map<String, Object> data = new LinkedHashMap<String, Object>();
-                    data.put("_id", resultSet.getString("_id"));
-                    data.put("firstName", resultSet.getString("firstName"));
-                    data.put("middleName", resultSet.getString("middleName"));
-                    data.put("surname", resultSet.getString("surname"));
+                    for (String field : FIELD_NAMES) {
+                        data.put(field, "created".equals(field) ? resultSet.getLong(field) : resultSet.getString(field));
+                    }
                     result.add(data);
                 }
             }
@@ -75,10 +93,9 @@ public class DatabaseService {
         stmt.getConnection().setAutoCommit(false);
         String sql = "CREATE TABLE orderdata "
                    + "(_id VARCHAR(16) not NULL,"
-                   + " firstName VARCHAR(255),"
-                   + " middleName VARCHAR(255),"
-                   + " surname VARCHAR(255),"
-                   + " PRIMARY KEY ( _id ))"; 
+                   + "created BIGINT,"
+                   + $.join($.without(FIELD_NAMES, "_id", "created"), " VARCHAR(255),")
+                   + " TEXT, PRIMARY KEY ( _id ))";
         stmt.executeUpdate(sql);
         String restrictionUpdate =
             "CREATE TRIGGER orderdata_upd BEFORE UPDATE ON orderdata FOR EACH ROW\n"
@@ -99,15 +116,20 @@ public class DatabaseService {
         try {
             conn = createConnection();
             String insertTableSQL = "INSERT INTO orderdata"
-                            + "(_id, firstName, middleName, surname) VALUES"
-                            + "(?,?,?,?)";
+                            + "(" + $.join(FIELD_NAMES, ", ") + ") VALUES"
+                            + "(" + $.repeat("?,", FIELD_NAMES.size() - 1) + "?)";
             stmt = conn.prepareStatement(insertTableSQL);
             stmt.getConnection().setAutoCommit(false);
             for (Map<String, Object> data : dataList) {
-                stmt.setString(1, (String) data.get("_id"));
-                stmt.setString(2, (String) data.get("firstName"));
-                stmt.setString(3, (String) data.get("middleName"));
-                stmt.setString(4, (String) data.get("surname"));
+                int index = 1;
+                for (String field : FIELD_NAMES) {
+                    if ("created".equals(field)) {
+                        stmt.setLong(index, (Long) data.get(field));
+                    } else {
+                        stmt.setString(index, (String) data.get(field));
+                    }
+                    index += 1;
+                }
                 stmt.executeUpdate();
             }
             stmt.getConnection().commit();
