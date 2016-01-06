@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -40,6 +41,7 @@ public class Form1 extends javax.swing.JFrame {
     private final List<Map<String, Object>> foundOrders = new ArrayList<Map<String, Object>>();
     private final JFileChooser chooser1 = new JFileChooser();
     private final NewJDialog1 dossieDialog;
+    private final Locale localeRu = new Locale("ru", "RU");
     private String hostName;
     private String dbName;
     private String user;
@@ -380,7 +382,7 @@ public class Form1 extends javax.swing.JFrame {
                         boolean firstName = checkMap(map, jTextField14, "firstName");
                         boolean middleName = checkMap(map, jTextField15, "middleName");
                         boolean surname = checkMap(map, jTextField16, "surname");
-                        boolean phoneNumber = checkMap(map, jTextField17, "phoneNumber");
+                        boolean phoneNumber = checkNumbersMap(map, jTextField17, "phoneNumber");
                         return idNumber && orderNumber && firstName && middleName && surname && phoneNumber;
                     }
                 })
@@ -391,7 +393,30 @@ public class Form1 extends javax.swing.JFrame {
     
     private boolean checkMap(Map<String, Object> map, JTextField jTextField, String key) {
         return jTextField.getText().trim().isEmpty()
-            || (map.containsKey(key) && ((String) map.get(key)).indexOf(jTextField.getText().trim()) >= 0);
+            || (map.containsKey(key) && (((String) map.get(key)).toLowerCase(localeRu)).contains(
+                jTextField.getText().trim().toLowerCase(localeRu)));
+    }
+    
+    private boolean checkNumbersMap(Map<String, Object> map, JTextField jTextField, String key) {
+        if (jTextField.getText().trim().isEmpty()) {
+            return true;
+        }
+        if (map.containsKey(key)) {
+            StringBuilder fieldBuilder = new StringBuilder();
+            for (char character : jTextField.getText().toCharArray()) {
+                if (character >= '0' && character <= '9') {
+                    fieldBuilder.append(character);
+                }
+            }
+            StringBuilder valueBuilder = new StringBuilder();
+            for (char character : ((String) map.get(key)).toCharArray()) {
+                if (character >= '0' && character <= '9') {
+                    valueBuilder.append(character);
+                }
+            }
+            return (valueBuilder.toString()).contains(fieldBuilder.toString());
+        }
+        return false;
     }
     
     private boolean checkStrictMap(Map<String, Object> map, JTextField jTextField, String key) {
@@ -1299,7 +1324,7 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        NewJDialog2 dialog = new NewJDialog2(this, true, hostName, dbName, user);
+        NewJDialog2 dialog = new NewJDialog2(this, true, hostName, dbName, user, pass);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {

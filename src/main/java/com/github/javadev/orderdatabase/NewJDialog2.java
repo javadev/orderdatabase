@@ -7,12 +7,13 @@ public class NewJDialog2 extends javax.swing.JDialog {
      * Creates new form NewJDialog2
      */
     public NewJDialog2(java.awt.Frame parent, boolean modal,
-            String hostName, String dbName, String user) {
+            String hostName, String dbName, String user, String pass) {
         super(parent, modal);
         initComponents();
         jTextField1.setText(dbName);
         jTextField2.setText(user);
         jTextField3.setText(hostName);
+        jPasswordField1.setText(pass);
     }
     
     public boolean isApproved() {
