@@ -56,7 +56,6 @@ public class Form1 extends javax.swing.JFrame {
                 Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        List<Map<String, Object>> filteredOrders = getFilteredOrders(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
@@ -86,6 +85,7 @@ public class Form1 extends javax.swing.JFrame {
 
         dossieDialog = new NewJDialog1(this, "Досье покупателя", false, database);
         dossieDialog.setLocationRelativeTo(this);
+        List<Map<String, Object>> filteredOrders = getFilteredOrders(false);
         if (!filteredOrders.isEmpty()) {
             fillOrderForm($.last(filteredOrders));
         }
