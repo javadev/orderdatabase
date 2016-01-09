@@ -33,6 +33,8 @@ public class DatabaseService {
         "houseNumber",
         "houseNumber2",
         "appartmentNumber",
+        "status",
+        "user",
         "comment"
     );
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -87,6 +89,15 @@ public class DatabaseService {
             }
         }
         return result;
+    }
+    
+    private void alterTable(Statement stmt) throws SQLException {
+        stmt.getConnection().setAutoCommit(false);
+        String sqlAlter1 = "ALTER TABLE orderdata ADD status VARCHAR(255);";
+        stmt.executeUpdate(sqlAlter1);
+        String sqlAlter2 = "ALTER TABLE orderdata ADD user VARCHAR(255);";
+        stmt.executeUpdate(sqlAlter2);
+        stmt.getConnection().commit();    
     }
     
     private void createTable(Statement stmt) throws SQLException {
@@ -158,6 +169,13 @@ public class DatabaseService {
             if (detailMessage.contains("orderdata' doesn't exist")) {
                 try {
                     createTable(stmt);
+                    return;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if (detailMessage.contains("Unknown column 'status'")) {
+                try {
+                    alterTable(stmt);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
