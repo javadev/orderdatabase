@@ -84,6 +84,11 @@ public class Form1 extends javax.swing.JFrame {
         fillComboBoxModel("deliveryMethodData", jComboBox2);
         fillComboBoxModel("statusData", jComboBox3);
         fillComboBoxModel("searchData", jComboBox4);
+        hostName = (String) database.get("hostName");
+        dbName = (String) database.get("dbName");
+        user = (String) database.get("user");
+        pass = database.get("pass") == null ? null
+                : new String(xor(((String) database.get("pass")).getBytes(), "UTF-8".getBytes()));
         ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).setText((String) database.get("searchDataText"));
         if ($.isNumber(database.get("periodIndex"))) {
             jComboBox5.setSelectedIndex(((Long) database.get("periodIndex")).intValue());
@@ -96,11 +101,6 @@ public class Form1 extends javax.swing.JFrame {
             setLocation(Math.min(screenSize.width - 50, ((Long) database.get("locationX")).intValue()),
                     Math.min(screenSize.height - 50, ((Long) database.get("locationY")).intValue()));
         }
-        hostName = (String) database.get("hostName");
-        dbName = (String) database.get("dbName");
-        user = (String) database.get("user");
-        pass = database.get("pass") == null ? null
-                : new String(xor(((String) database.get("pass")).getBytes(), "UTF-8".getBytes()));
 
         dossieDialog = new NewJDialog1(this, "Досье покупателя", false, database);
         dossieDialog.setLocationRelativeTo(this);
@@ -1424,9 +1424,7 @@ public class Form1 extends javax.swing.JFrame {
                     java.awt.EventQueue.invokeLater(new Runnable() {
                         public void run() {
                             jLabel21.setText(new SimpleDateFormat("HH:mm:ss").format(new Date()));
-                            int rowIndex = jTable1.getSelectedRow();
                             searchOrders();
-                            jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
                         }
                     });
                 } catch(Exception ex) {
