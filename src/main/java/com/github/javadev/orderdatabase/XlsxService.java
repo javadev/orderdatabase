@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -71,7 +72,11 @@ public class XlsxService {
                             case Cell.CELL_TYPE_NUMERIC:
                                 Double cellNumValue = cell.getNumericCellValue();
                                 if (columnIndexToDbName.containsKey(cell.getColumnIndex())) {
-                                    data.put(columnIndexToDbName.get(cell.getColumnIndex()), cellNumValue);
+                                    if ("created".equals(columnIndexToDbName.get(cell.getColumnIndex()))) {
+                                        data.put(columnIndexToDbName.get(cell.getColumnIndex()), cellNumValue.longValue());
+                                    } else {
+                                        data.put(columnIndexToDbName.get(cell.getColumnIndex()), cellNumValue.toString());
+                                    }
                                 }
                                 break;
                             case Cell.CELL_TYPE_STRING:
@@ -92,6 +97,9 @@ public class XlsxService {
                         }
                     }
                     if (row.getRowNum() > 0) {
+                        if (data.get("created") == null) {
+                            data.put("created", new Date().getTime());
+                        }
                         result.add(data);
                     }
                 }
