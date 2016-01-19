@@ -1,25 +1,55 @@
 package com.github.javadev.orderdatabase;
 
+import java.io.File;
+import javax.swing.JFileChooser;
+
 public class NewJDialog2 extends javax.swing.JDialog {
     private boolean isApproved;
+    private JFileChooser chooser1 = new JFileChooser();
+
+    public static class FilterXlsx extends javax.swing.filechooser.FileFilter {
+        public String getDescription() {
+            return "XLSX files";
+        }
+        
+        public boolean accept(File file) {
+            if (file.isDirectory()) {
+                return true;
+            }
+            String name = file.getName();
+            name = name.toLowerCase();
+            return name.endsWith(".xlsx");
+        }
+    }
 
     /**
      * Creates new form NewJDialog2
      */
     public NewJDialog2(java.awt.Frame parent, boolean modal,
-            String hostName, String dbName, String user, String pass) {
+            boolean useMysql, String hostName, String dbName, String user, String pass,
+            boolean useXlsx, String xlsxPath) {
         super(parent, modal);
         initComponents();
+        jCheckBox1.setSelected(useMysql);
         jTextField1.setText(dbName);
         jTextField2.setText(user);
         jTextField3.setText(hostName);
         jPasswordField1.setText(pass);
+        jCheckBox2.setSelected(useXlsx);
+        jTextField4.setText(xlsxPath);
+        chooser1.setDialogTitle("Select XLSX file");
+        chooser1.setCurrentDirectory(new File("."));
+        chooser1.setFileFilter(new FilterXlsx());
     }
     
     public boolean isApproved() {
         return isApproved;
     }
     
+    public boolean getUseMySql() {
+        return jCheckBox1.isSelected();
+    }
+
     public String getHostName() {
         return jTextField3.getText();
     }
@@ -36,6 +66,14 @@ public class NewJDialog2 extends javax.swing.JDialog {
         return String.valueOf(jPasswordField1.getPassword());
     }
     
+    public boolean getUseXlsx() {
+        return jCheckBox2.isSelected();
+    }
+
+    public String getXlsxPath() {
+        return jTextField4.getText();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,6 +93,11 @@ public class NewJDialog2 extends javax.swing.JDialog {
         jButton6 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Параметры...");
@@ -86,6 +129,20 @@ public class NewJDialog2 extends javax.swing.JDialog {
 
         jLabel4.setText("Имя сервера:");
 
+        jCheckBox1.setSelected(true);
+        jCheckBox1.setText("Синхронизировать данные с базой MySQL");
+
+        jCheckBox2.setText("Синхронизировать данные с таблицей Excel");
+
+        jLabel5.setText("Путь к файлу:");
+
+        jButton1.setText("Выбрать файл");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -96,14 +153,25 @@ public class NewJDialog2 extends javax.swing.JDialog {
                     .add(jLabel1)
                     .add(jLabel2)
                     .add(jLabel3)
-                    .add(jLabel4))
+                    .add(jLabel4)
+                    .add(jLabel5))
                 .add(18, 18, 18)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jTextField3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+                    .add(jTextField3)
                     .add(jTextField1)
                     .add(jTextField2)
-                    .add(jPasswordField1))
+                    .add(jPasswordField1)
+                    .add(layout.createSequentialGroup()
+                        .add(jTextField4)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jButton1)))
                 .addContainerGap())
+            .add(layout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jCheckBox1)
+                    .add(jCheckBox2))
+                .add(196, 196, 196))
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jButton5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -114,7 +182,9 @@ public class NewJDialog2 extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap(11, Short.MAX_VALUE)
+                .addContainerGap()
+                .add(jCheckBox1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel4)
                     .add(jTextField3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -130,7 +200,14 @@ public class NewJDialog2 extends javax.swing.JDialog {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel3)
                     .add(jPasswordField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jCheckBox2)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel5)
+                    .add(jTextField4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jButton1))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 7, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jButton5)
                     .add(jButton6))
@@ -149,16 +226,28 @@ public class NewJDialog2 extends javax.swing.JDialog {
         setVisible(false);
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (chooser1.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        jTextField4.setText(chooser1.getSelectedFile().getPath());
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }

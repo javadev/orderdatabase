@@ -99,6 +99,18 @@
                         <option>-keep public class com.mysql.** {*;}</option>
                         <option>-dontwarn com.mysql.**</option>
                         <option>-keepclassmembers class * { *** main(java.lang.String[]); }</option>
+                        <option>-dontoptimize</option>
+                        <option>-dontobfuscate</option>
+                        <option>-ignorewarnings</option>
+                        <option>-keep class org.apache.poi.xssf.** { *; }</option>
+                        <option>-keep class org.apache.poi.ss.** { *; }</option>
+                        <option>-keep class org.apache.poi.hssf.** { *; }</option>
+                        <option>-keep class org.apache.xmlbeans.** { *; }</option>
+                        <option>-keep class schemaorg_apache_xmlbeans.** { *; }</option>
+                        <option>-keep class schemasMicrosoftComOfficeExcel.** { *; }</option>
+                        <option>-keep class schemasMicrosoftComOfficeOffice.** { *; }</option>
+                        <option>-keep class schemasMicrosoftComVml.** { *; }</option>
+                        <option>-keep class org.openxmlformats.schemas.** { *; }</option>
                     </options>
                     <libs>
                         <lib>${java.home}/lib/rt.jar</lib>
@@ -123,6 +135,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.32</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.8</version>
         </dependency>
     </dependencies>
 </project>

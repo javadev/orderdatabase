@@ -36,7 +36,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -51,10 +50,13 @@ public class Form1 extends javax.swing.JFrame {
     private final Locale localeRu = new Locale("ru", "RU");
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> taskHandle;
+    private boolean useMySql;
     private String hostName;
     private String dbName;
     private String user;
     private String pass;
+    private boolean useXlsx;
+    private String xlsxPath;
     
     public Form1() {
         initComponents();
@@ -84,11 +86,14 @@ public class Form1 extends javax.swing.JFrame {
         fillComboBoxModel("deliveryMethodData", jComboBox2);
         fillComboBoxModel("statusData", jComboBox3);
         fillComboBoxModel("searchData", jComboBox4);
+        useMySql = database.get("useMySql") == null ? true : (Boolean) database.get("useMySql");
         hostName = (String) database.get("hostName");
         dbName = (String) database.get("dbName");
         user = (String) database.get("user");
         pass = database.get("pass") == null ? null
                 : new String(xor(((String) database.get("pass")).getBytes(), "UTF-8".getBytes()));
+        useXlsx = database.get("useXlsx") == null ? true : (Boolean) database.get("useXlsx");
+        xlsxPath = (String) database.get("xlsxPath");
         ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).setText((String) database.get("searchDataText"));
         if ($.isNumber(database.get("periodIndex"))) {
             jComboBox5.setSelectedIndex(((Long) database.get("periodIndex")).intValue());
@@ -205,33 +210,67 @@ public class Form1 extends javax.swing.JFrame {
         }
         Set<String> ids = new HashSet<String>();
         List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
-        for (Map<String, Object> data : dataList) {
-            ids.add((String) data.get("_id"));
+        if (useMySql) {
+            for (Map<String, Object> data : dataList) {
+                ids.add((String) data.get("_id"));
+            }
+            List<Map<String, Object>> dbDataList = new DatabaseService(hostName, dbName, user, pass).readAll();
+            for (Map<String, Object> data : dbDataList) {
+                if (!ids.contains((String) data.get("_id"))) {
+                    dataList.add(data);
+                }
+            }
         }
-        List<Map<String, Object>> dbDataList = new DatabaseService(hostName, dbName, user, pass).readAll();
-        for (Map<String, Object> data : dbDataList) {
-            if (!ids.contains((String) data.get("_id"))) {
-                dataList.add(data);
+        if (useXlsx) {
+            XlsxService xlsxService = new XlsxService(xlsxPath);
+            Map<String, Map<String, Object>> orderNumbers = new LinkedHashMap<>();
+            List<Map<String, Object>> xlsxDataList = xlsxService.readAll();
+            for (Map<String, Object> data : dataList) {
+                orderNumbers.put((String) data.get("orderNumber"), data);
+            }
+            for (Map<String, Object> data : xlsxDataList) {
+                if (orderNumbers.get((String) data.get("orderNumber")) == null) {
+                    data.put("_id", uniqueId());
+                    orderNumbers.put((String) data.get("orderNumber"), data);
+                    dataList.add(data);
+                }
             }
         }
         return dataList;
     }
 
     private void saveDatabaseData() {
-        DatabaseService databaseService = new DatabaseService(hostName, dbName, user, pass);
-        Set<String> ids = new HashSet<String>();
-        List<Map<String, Object>> dbDataList = databaseService.readAll();
-        for (Map<String, Object> data : dbDataList) {
-            ids.add((String) data.get("_id"));
-        }
-        List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
-        List<Map<String, Object>> dataToSaveList = new ArrayList<>();
-        for (Map<String, Object> data : dataList) {
-            if (!ids.contains((String) data.get("_id"))) {
-                dataToSaveList.add(data);
+        if (useMySql) {
+            DatabaseService databaseService = new DatabaseService(hostName, dbName, user, pass);
+            Set<String> ids = new HashSet<String>();
+            List<Map<String, Object>> dbDataList = databaseService.readAll();
+            for (Map<String, Object> data : dbDataList) {
+                ids.add((String) data.get("_id"));
             }
+            List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
+            List<Map<String, Object>> dataToSaveList = new ArrayList<>();
+            for (Map<String, Object> data : dataList) {
+                if (!ids.contains((String) data.get("_id"))) {
+                    dataToSaveList.add(data);
+                }
+            }
+            databaseService.insertData(dataToSaveList);
         }
-        databaseService.insertData(dataToSaveList);
+        if (useXlsx) {
+            XlsxService xlsxService = new XlsxService(xlsxPath);
+            Map<String, Map<String, Object>> orderNumbers = new LinkedHashMap<>();
+            List<Map<String, Object>> xlsxDataList = xlsxService.readAll();
+            for (Map<String, Object> data : xlsxDataList) {
+                orderNumbers.put((String) data.get("orderNumber"), data);
+            }
+            List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
+            List<Map<String, Object>> filteredOrders = getFilteredOrders(dataList);
+            xlsxService.updateData($.sortBy(filteredOrders, new Function1<Map<String, Object>, Long>() {
+                public Long apply(Map<String, Object> item) {
+                    return item.get("created") == null ? 0L : (Long) item.get("created");
+                }
+            }));
+        }
     }
 
     private List<Map<String, Object>> getFilteredOrders(List<Map<String, Object>> databaseData) {
@@ -324,10 +363,14 @@ public class Form1 extends javax.swing.JFrame {
         database.put("autoLoadIndex", jComboBox6.getSelectedIndex());
         database.put("locationX", getLocation().x);
         database.put("locationY", getLocation().y);
+        database.put("useMySql", useMySql);
         database.put("hostName", hostName);
         database.put("dbName", dbName);
         database.put("user", user);
         database.put("pass", pass == null ? null : new String(xor(pass.getBytes(), "UTF-8".getBytes())));
+        database.put("useXlsx", useXlsx);
+        database.put("xlsxPath", xlsxPath);
+        
         try {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
@@ -475,6 +518,11 @@ public class Form1 extends javax.swing.JFrame {
                     return result;
                 }
             })
+            .sortBy(new Function1<Map<String, Object>, Long>() {
+                public Long apply(Map<String, Object> item) {
+                    return item.get("created") == null ? 0L : (Long) item.get("created");
+                }
+            })    
             .value();
         foundOrders.addAll(selectedOrders);
         foundOrders.addAll(selectedOrders2);
@@ -1362,15 +1410,28 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        NewJDialog2 dialog = new NewJDialog2(this, true, hostName, dbName, user, pass);
+        NewJDialog2 dialog = new NewJDialog2Builder()
+                .setParent(this)
+                .setModal(true)
+                .setUseMysql(useMySql)
+                .setHostName(hostName)
+                .setDbName(dbName)
+                .setUser(user)
+                .setPass(pass)
+                .setUseXlsx(useXlsx)
+                .setXlsxPath(xlsxPath)
+                .createNewJDialog2();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {
             dialog.getDbName();
+            useMySql = dialog.getUseMySql();
             hostName = dialog.getHostName();
             dbName = dialog.getDbName();
             user = dialog.getUser();
             pass = dialog.getPass();
+            useXlsx = dialog.getUseXlsx();
+            xlsxPath = dialog.getXlsxPath();
         }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 

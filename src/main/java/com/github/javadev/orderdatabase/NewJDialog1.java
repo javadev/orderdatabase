@@ -56,7 +56,7 @@ public class NewJDialog1 extends javax.swing.JDialog {
     }
     
     private boolean checkMap(Map<String, Object> map, Map<String, Object> value, String key) {
-        return value.containsKey(key)
+        return value.get(key) != null
             && (map.containsKey(key) && ((String) map.get(key)).equals(((String) value.get(key)).trim()));
     }
     
