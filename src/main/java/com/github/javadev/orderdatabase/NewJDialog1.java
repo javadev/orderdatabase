@@ -57,7 +57,7 @@ public class NewJDialog1 extends javax.swing.JDialog {
     
     private boolean checkMap(Map<String, Object> map, Map<String, Object> value, String key) {
         return value.get(key) != null
-            && (map.containsKey(key) && ((String) map.get(key)).equals(((String) value.get(key)).trim()));
+            && (map.get(key) != null && ((String) map.get(key)).equals(((String) value.get(key)).trim()));
     }
     
     private static class MyModel extends AbstractTableModel {
@@ -131,16 +131,16 @@ public class NewJDialog1 extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        jLabel1.setText("Имя покупателя:");
+        jLabel1.setText("Имя покупателя");
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        jLabel2.setText("Отчество покупателя:");
+        jLabel2.setText("Отчество покупателя");
 
         jLabel3.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        jLabel3.setText("Фамилия покупателя:");
+        jLabel3.setText("Фамилия покупателя");
 
         jLabel4.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        jLabel4.setText("Телефон для связи:");
+        jLabel4.setText("Телефон для связи");
 
         jTable1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -188,24 +188,28 @@ public class NewJDialog1 extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(56, 56, 56)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
+                        .addGap(7, 7, 7)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(42, 42, 42)
+                        .addGap(7, 7, 7)
                         .addComponent(jTextField4))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
                         .addGap(7, 7, 7)
                         .addComponent(jTextField2))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(21, 21, 21)
+                        .addGap(8, 8, 8)
                         .addComponent(jTextField3)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -103,11 +103,11 @@ public class NewJDialog2 extends javax.swing.JDialog {
         setTitle("Параметры...");
         setResizable(false);
 
-        jLabel1.setText("Имя базы данных:");
+        jLabel1.setText("Имя базы данных");
 
-        jLabel2.setText("Имя пользователя:");
+        jLabel2.setText("Имя пользователя");
 
-        jLabel3.setText("Пароль:");
+        jLabel3.setText("Пароль");
 
         jPasswordField1.setText("jPasswordField1");
 
@@ -127,14 +127,14 @@ public class NewJDialog2 extends javax.swing.JDialog {
             }
         });
 
-        jLabel4.setText("Имя сервера:");
+        jLabel4.setText("Имя сервера");
 
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Синхронизировать данные с базой MySQL");
 
         jCheckBox2.setText("Синхронизировать данные с таблицей Excel");
 
-        jLabel5.setText("Путь к файлу:");
+        jLabel5.setText("Путь к файлу");
 
         jButton1.setText("Выбрать файл");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -150,11 +150,11 @@ public class NewJDialog2 extends javax.swing.JDialog {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jLabel1)
-                    .add(jLabel2)
-                    .add(jLabel3)
-                    .add(jLabel4)
-                    .add(jLabel5))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel4)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel1)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel2)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel3)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel5))
                 .add(18, 18, 18)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jTextField3)
