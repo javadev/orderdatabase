@@ -252,20 +252,25 @@ public class Form1 extends javax.swing.JFrame {
     }
 
     private void fillOrderNumber() {
-        String name = $.join($.map($.compact($.chain(
-                jTextField4.getText(), jTextField3.getText(), jTextField2.getText()).value()),
-            new Function1<String, String>() {
-                public String apply(String f) {
-                    return f.trim().isEmpty() ? "" : f.trim().substring(0, 1);
-                }
-        }), "");
-        String city = $.join($.map($.words(jTextField9.getText()),
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                String name = $.join($.map($.compact($.chain(
+                        jTextField4.getText(), jTextField3.getText(), jTextField2.getText()).value()),
                     new Function1<String, String>() {
-                public String apply(String f) {
-                    return f.trim().isEmpty() ? "" : f.trim().substring(0, 1).toUpperCase(localeRu);
-                }
-        }), "");
-        jTextField1.setText($.join($.chain(name, city, "" + getFilteredOrders(getDatabaseData()).size()).value(), "-"));
+                        public String apply(String f) {
+                            return f.trim().isEmpty() ? "" : f.trim().substring(0, 1);
+                        }
+                }), "");
+                String city = $.join($.map($.words(jTextField9.getText()),
+                            new Function1<String, String>() {
+                        public String apply(String f) {
+                            return f.trim().isEmpty() ? "" : f.trim().substring(0, 1).toUpperCase(localeRu);
+                        }
+                }), "");
+                jTextField1.setText($.join($.chain(name, city.isEmpty() ? "М" : city,
+                        "" + getFilteredOrders(getDatabaseData()).size()).value(), "-"));
+            }
+        });
     }
 
     private List<Map<String, Object>> getDatabaseData() {
