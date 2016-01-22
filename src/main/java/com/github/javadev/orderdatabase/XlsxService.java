@@ -48,7 +48,7 @@ public class XlsxService {
     private final String xlsxPath;
     
     public XlsxService(String xlsxPath) {
-        this.xlsxPath = xlsxPath == null ? "database.xlsx" : xlsxPath;
+        this.xlsxPath = xlsxPath == null || xlsxPath.isEmpty() ? "database.xlsx" : xlsxPath;
     }
 
     public List<Map<String, Object>> readAll() {
@@ -75,7 +75,7 @@ public class XlsxService {
                                     if ("created".equals(columnIndexToDbName.get(cell.getColumnIndex()))) {
                                         data.put(columnIndexToDbName.get(cell.getColumnIndex()), cellNumValue.longValue());
                                     } else {
-                                        data.put(columnIndexToDbName.get(cell.getColumnIndex()), cellNumValue.toString());
+                                        data.put(columnIndexToDbName.get(cell.getColumnIndex()), "" + cellNumValue.longValue());
                                     }
                                 }
                                 break;

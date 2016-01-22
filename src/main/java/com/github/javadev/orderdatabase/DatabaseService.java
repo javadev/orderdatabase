@@ -1,5 +1,6 @@
 package com.github.javadev.orderdatabase;
 
+import com.github.underscore.Function1;
 import com.github.underscore.lodash.$;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import java.sql.Connection;
@@ -28,6 +29,7 @@ public class DatabaseService {
         "email",
         "paymentMethod",
         "deliveryMethod",
+        "country",
         "city",
         "street",
         "houseNumber",
@@ -36,6 +38,15 @@ public class DatabaseService {
         "status",
         "user",
         "comment"
+    );
+    private final static List<String> PRODUCT_FIELD_NAMES = Arrays.asList(
+        "_id",
+        "orderId",
+        "vendorCode",
+        "name",
+        "price",
+        "quantity",
+        "totalPrice"
     );
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final String hostName;
@@ -71,6 +82,28 @@ public class DatabaseService {
                     result.add(data);
                 }
             }
+            Map<String, List<Map<String, Object>>> resultById = $.groupBy(result,
+                new Function1<Map<String, Object>, String>() {
+                    public String apply(Map<String, Object> item) {
+                        return (String) item.get("_id");
+                    }
+                });
+            String productSql = "SELECT " + $.join(PRODUCT_FIELD_NAMES, ", ") + " FROM productdata";
+            try (ResultSet resultSet = stmt.executeQuery(productSql)) {
+                while (resultSet.next()) {
+                    Map<String, Object> data = new LinkedHashMap<String, Object>();
+                    for (String field : PRODUCT_FIELD_NAMES) {
+                        data.put(field, "created".equals(field) ? resultSet.getLong(field) : resultSet.getString(field));
+                    }
+                    if (data.get("orderId") != null) {
+                        Map<String, Object> order = resultById.get((String) data.get("orderId")).get(0);
+                        if (order.get("products") == null) {
+                            order.put("products", new ArrayList<Map<String, Object>>());
+                        }
+                        ((List<Map<String, Object>>) order.get("products")).add(data);
+                    }
+                }
+            }
         } catch (SQLException | ClassNotFoundException se) {
             checkExceptionAndCreateTable(se, stmt);
         } finally {
@@ -100,6 +133,13 @@ public class DatabaseService {
         stmt.getConnection().commit();    
     }
     
+    private void alterTableCountry(Statement stmt) throws SQLException {
+        stmt.getConnection().setAutoCommit(false);
+        String sqlAlter1 = "ALTER TABLE orderdata ADD country VARCHAR(255);";
+        stmt.executeUpdate(sqlAlter1);
+        stmt.getConnection().commit();    
+    }
+    
     private void createTable(Statement stmt) throws SQLException {
         stmt.getConnection().setAutoCommit(false);
         String sql = "CREATE TABLE orderdata "
@@ -120,7 +160,27 @@ public class DatabaseService {
         stmt.executeUpdate(restrictionDelete);
         stmt.getConnection().commit();
     }
-    
+
+    private void createProductTable(Statement stmt) throws SQLException {
+        stmt.getConnection().setAutoCommit(false);
+        String sql = "CREATE TABLE productdata "
+                   + "(_id VARCHAR(16) not NULL,"
+                   + $.join($.without(PRODUCT_FIELD_NAMES, "_id"), " VARCHAR(255),")
+                   + " VARCHAR(255), PRIMARY KEY ( _id ))";
+        stmt.executeUpdate(sql);
+        String restrictionUpdate =
+            "CREATE TRIGGER productdata_upd BEFORE UPDATE ON productdata FOR EACH ROW\n"
+            + "  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot update record';\n"
+            + ";";
+        stmt.executeUpdate(restrictionUpdate);
+        String restrictionDelete =
+            "CREATE TRIGGER productdata_del BEFORE DELETE ON productdata FOR EACH ROW\n"
+            + "  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete record';\n"
+            + ";";
+        stmt.executeUpdate(restrictionDelete);
+        stmt.getConnection().commit();
+    }
+        
     public void insertData(List<Map<String, Object>> dataList) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -140,6 +200,24 @@ public class DatabaseService {
                         stmt.setString(index, (String) data.get(field));
                     }
                     index += 1;
+                }
+                stmt.executeUpdate();
+            }
+            String insertProductTableSQL = "INSERT INTO productdata"
+                            + "(" + $.join(PRODUCT_FIELD_NAMES, ", ") + ") VALUES"
+                            + "(" + $.repeat("?,", PRODUCT_FIELD_NAMES.size() - 1) + "?)";
+            stmt = conn.prepareStatement(insertProductTableSQL);
+            stmt.getConnection().setAutoCommit(false);
+            for (Map<String, Object> data : dataList) {
+                if (data.get("products") == null || ((List<Map<String, Object>>) data.get("products")).isEmpty()) {
+                    continue;
+                }
+                for (Map<String, Object> product : (List<Map<String, Object>>) data.get("products")) {
+                    int index = 1;
+                    for (String field : PRODUCT_FIELD_NAMES) {
+                        stmt.setString(index, (String) product.get(field));
+                        index += 1;
+                    }
                 }
                 stmt.executeUpdate();
             }
@@ -169,6 +247,7 @@ public class DatabaseService {
             if (detailMessage.contains("orderdata' doesn't exist")) {
                 try {
                     createTable(stmt);
+                    createProductTable(stmt);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
@@ -176,6 +255,20 @@ public class DatabaseService {
             } else if (detailMessage.contains("Unknown column 'status'")) {
                 try {
                     alterTable(stmt);
+                    return;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if (detailMessage.contains("Unknown column 'country'")) {
+                try {
+                    alterTableCountry(stmt);
+                    return;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if (detailMessage.contains("productdata' doesn't exist")) {
+                try {
+                    createProductTable(stmt);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
