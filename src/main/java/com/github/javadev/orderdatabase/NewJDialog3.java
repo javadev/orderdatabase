@@ -12,10 +12,15 @@ import javax.swing.table.AbstractTableModel;
 
 public class NewJDialog3 extends javax.swing.JDialog {
     private final List<Map<String, Object>> productData;
+    private final boolean useXlsx;
+    private final String xlsxPath;
     private boolean isApproved;
 
-    public NewJDialog3(java.awt.Frame parent, boolean modal, List<Map<String, Object>> productData) {
+    public NewJDialog3(java.awt.Frame parent, boolean modal,
+            List<Map<String, Object>> productData, boolean useXlsx, String xlsxPath) {
         super(parent, modal);
+        this.useXlsx = useXlsx;
+        this.xlsxPath = xlsxPath;
         initComponents();
         this.productData = (List<Map<String, Object>>) (productData == null ?
                 new ArrayList<>() : (List<Map<String, Object>>) $.clone(productData));
@@ -39,6 +44,7 @@ public class NewJDialog3 extends javax.swing.JDialog {
                 }
             }
         });
+        jButton7.setEnabled(useXlsx);
     }
 
     private static class MyModel extends AbstractTableModel {
@@ -114,6 +120,7 @@ public class NewJDialog3 extends javax.swing.JDialog {
         jButton6 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButton7 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Каталог товаров");
@@ -203,6 +210,14 @@ public class NewJDialog3 extends javax.swing.JDialog {
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(jTable1);
 
+        jButton7.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jButton7.setText("Добавить из Excel");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -217,7 +232,8 @@ public class NewJDialog3 extends javax.swing.JDialog {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
                 .addContainerGap())
             .add(layout.createSequentialGroup()
                 .add(424, 424, 424)
@@ -239,7 +255,9 @@ public class NewJDialog3 extends javax.swing.JDialog {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(jButton3)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jButton4))
+                        .add(jButton4)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jButton7))
                     .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 271, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -247,6 +265,8 @@ public class NewJDialog3 extends javax.swing.JDialog {
                     .add(jButton6))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        layout.linkSize(new java.awt.Component[] {jButton1, jButton2, jButton3, jButton4, jButton7}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -310,6 +330,13 @@ public class NewJDialog3 extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        if (useXlsx) {
+            this.productData.addAll(new XlsxService(xlsxPath).loadCatalog());
+            jTable1.setModel(new MyModel(this.productData));
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -317,6 +344,7 @@ public class NewJDialog3 extends javax.swing.JDialog {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;

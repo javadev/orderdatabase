@@ -36,6 +36,8 @@ public class DatabaseService {
         "houseNumber2",
         "appartmentNumber",
         "status",
+        "totalSum",
+        "discount",
         "user",
         "comment"
     );
@@ -140,6 +142,15 @@ public class DatabaseService {
         stmt.getConnection().commit();    
     }
     
+    private void alterTableTotalSum(Statement stmt) throws SQLException {
+        stmt.getConnection().setAutoCommit(false);
+        String sqlAlter1 = "ALTER TABLE orderdata ADD totalSum VARCHAR(255);";
+        stmt.executeUpdate(sqlAlter1);
+        String sqlAlter2 = "ALTER TABLE orderdata ADD discount VARCHAR(255);";
+        stmt.executeUpdate(sqlAlter2);
+        stmt.getConnection().commit();    
+    }
+
     private void createTable(Statement stmt) throws SQLException {
         stmt.getConnection().setAutoCommit(false);
         String sql = "CREATE TABLE orderdata "
@@ -255,6 +266,9 @@ public class DatabaseService {
             } else if (detailMessage.contains("Unknown column 'status'")) {
                 try {
                     alterTable(stmt);
+                    alterTableCountry(stmt);
+                    createProductTable(stmt);
+                    alterTableTotalSum(stmt);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
@@ -262,6 +276,8 @@ public class DatabaseService {
             } else if (detailMessage.contains("Unknown column 'country'")) {
                 try {
                     alterTableCountry(stmt);
+                    createProductTable(stmt);
+                    alterTableTotalSum(stmt);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
@@ -269,6 +285,14 @@ public class DatabaseService {
             } else if (detailMessage.contains("productdata' doesn't exist")) {
                 try {
                     createProductTable(stmt);
+                    alterTableTotalSum(stmt);
+                    return;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if (detailMessage.contains("Unknown column 'totalSum'")) {
+                try {
+                    alterTableTotalSum(stmt);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
