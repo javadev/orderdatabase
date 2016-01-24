@@ -225,7 +225,7 @@ public class XlsxService {
             fillCell(sheet, 3, 14, (String) data.get("houseNumber"));
             fillCell(sheet, 7, 14, (String) data.get("houseNumber2"));
             fillCell(sheet, 12, 14, (String) data.get("appartmentNumber"));
-            fillCell(sheet, 5, 15, (String) data.get("phoneNumber"));
+            fillCell(sheet, 4, 15, (String) data.get("phoneNumber"));
             fillCell(sheet, 3, 16, (String) data.get("email"));
             fillCell(sheet, 3, 16, (String) data.get("email"));
             fillCell(sheet, 5, 18, (String) data.get("comment"));
