@@ -229,6 +229,7 @@ public class XlsxService {
             fillCell(sheet, 3, 16, (String) data.get("email"));
             fillCell(sheet, 3, 16, (String) data.get("email"));
             fillCell(sheet, 5, 18, (String) data.get("comment"));
+            fillCell(sheet, 24, 9, new SimpleDateFormat("dd/MM/yyyy").format(new Date((Long) data.get("created"))));
             fillCell(sheet, 29, 9, new SimpleDateFormat("HH:mm").format(new Date((Long) data.get("created"))));
             fillCell(sheet, 24, 11, (String) data.get("paymentMethod"));
             fillCell(sheet, 24, 12, (String) data.get("deliveryMethod"));
