@@ -234,9 +234,9 @@ public class XlsxService {
             fillCell(sheet, 24, 11, (String) data.get("paymentMethod"));
             fillCell(sheet, 24, 12, (String) data.get("deliveryMethod"));
             fillCell(sheet, 28, 40, (String) data.get("totalSum"));
-            if ((String) data.get("totalSum") != null && ((String) data.get("totalSum")).matches("\\d+")) {
+            if ((String) data.get("totalSum") != null && ((String) data.get("totalSum")).matches("[\\d\\.]+")) {
             fillCell(sheet, 7, 42, new MoneyToStr(MoneyToStr.Currency.RUR, MoneyToStr.Language.RUS, MoneyToStr.Pennies.NUMBER)
-                    .convert(Long.parseLong((String) data.get("totalSum")), 0L));
+                    .convert(Double.parseDouble((String) data.get("totalSum"))));
             } else {
                 fillCell(sheet, 7, 42, "");
             }
