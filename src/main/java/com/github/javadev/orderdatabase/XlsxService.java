@@ -248,19 +248,23 @@ public class XlsxService {
                 fillCell(sheet, 28, 25 + index, "");
             }
             if (data.get("products") != null) {
-                fillCell(sheet, 20, 40, String.valueOf(((List<Map<String, Object>>) data.get("products")).size()));
                 int index = 0;
+                long totalQuantity = 0;
                 for (Map<String, Object> product : (List<Map<String, Object>>) data.get("products")) {
                     fillCell(sheet, 2, 25 + index, (String) product.get("vendorCode"));
                     fillCell(sheet, 8, 25 + index, (String) product.get("name"));
                     fillCell(sheet, 20, 25 + index, (String) product.get("quantity"));
                     fillCell(sheet, 23, 25 + index, (String) product.get("price"));
                     fillCell(sheet, 28, 25 + index, (String) product.get("totalPrice"));
+                    if (((String) product.get("quantity")).matches("\\d+")) {
+                        totalQuantity += Long.parseLong((String) product.get("quantity"));
+                    }
                     index += 1;
                     if (index > 15) {
                         break;
                     }
                 }
+                fillCell(sheet, 20, 40, "" + totalQuantity);
             } else {
                 fillCell(sheet, 20, 40, "0");
             }
