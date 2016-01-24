@@ -592,8 +592,10 @@ public class Form1 extends javax.swing.JFrame {
             return amount;
         }
         Double newPrice = amountValue.longValue() * (1 - discountValue.doubleValue() / 100D);
-        return newPrice.longValue() == newPrice.doubleValue() ?
-                "" + newPrice.longValue() : "" + newPrice.doubleValue();
+        Long intPart = newPrice.longValue();
+        Long fractPart = Math.round((newPrice - intPart) * 100);
+        return newPrice.floatValue() == newPrice.longValue() ?
+                "" + newPrice.longValue() : intPart + "," + (fractPart < 10 ? "0" + fractPart : fractPart);
     }
     
     private static class MyModel extends AbstractTableModel {
