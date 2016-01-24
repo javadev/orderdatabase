@@ -29,7 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class XlsxService {
     private static final Set<String> NAME_FIELDS = new HashSet<String>(Arrays.asList("firstName", "middleName", "surname"));
     private static final Map<String, String> COLUMN_NAME_TO_DB_NAME = new LinkedHashMap<String, String>() { {
-        put("Заказа наряд №", "orderNumber");
+        put("Заказ наряд №", "orderNumber");
         put("Заказчик", "customerName");
         put("Статус", "status");
         put("итоговая сумма заказа", "totalSum");
@@ -44,7 +44,7 @@ public class XlsxService {
         put("e-mail", "email");
         put("Дата приема заказа", "created");
         put("Дата выполнения", "completed");
-        put("Форма раслета", "paymentMethod");
+        put("Форма расчета", "paymentMethod");
         put("Форма доставки", "deliveryMethod");
         put("Комментарии", "comment");
     } };
