@@ -19,6 +19,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -114,11 +116,15 @@ public class Form1 extends javax.swing.JFrame {
             setLocation(Math.min(screenSize.width - 50, ((Long) database.get("locationX")).intValue()),
                     Math.min(screenSize.height - 50, ((Long) database.get("locationY")).intValue()));
         }
-
         dossieDialog = new NewJDialog1(this, "Досье покупателя", false, database);
         dossieDialog.setLocationRelativeTo(this);
         List<Map<String, Object>> filteredOrders = getFilteredOrders(getDatabaseData());
         jTable2.setModel(new MyProductModel(new ArrayList<Map<String, Object>>()));
+        if (database.get("productColumnWidth") instanceof List) {
+            setColumnWidth(jTable2, (List<Long>) database.get("productColumnWidth"));
+        } else {
+            setColumnWidth(jTable2, java.util.Arrays.asList(60L, 175L, 34L, 54L, 52L));
+        }
         addJTable2Listener(jTable2);
         if (!filteredOrders.isEmpty()) {
             fillOrderForm($.last(filteredOrders));
@@ -148,7 +154,9 @@ public class Form1 extends javax.swing.JFrame {
                     long previousSum = calcPreviousSum(getFilteredOrders(getDatabaseData()));
                     jTextField16.setText(formatSum(previousSum + totalSum));
                     jTextField18.setText(calcDiscount(previousSum + totalSum) + "%");
+                    List<Long> columnWidth = getColumnWidth(jTable);
                     jTable.setModel(new MyProductModel(list));
+                    setColumnWidth(jTable, columnWidth);
                     addJTable2Listener(jTable);
                     if (list.size() > 0) {
                         int newSelectedIndex = Math.min(selectedIndex, list.size() - 1);
@@ -240,7 +248,8 @@ public class Form1 extends javax.swing.JFrame {
     }
     
     private String formatSum(Long value) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(localeRu);
+        DecimalFormat format = (DecimalFormat) NumberFormat.getInstance(localeRu);
+        format.setMaximumFractionDigits(2);
         return format.format(value.doubleValue());
     }
     
@@ -278,11 +287,13 @@ public class Form1 extends javax.swing.JFrame {
         jTextField13.setText((String) order.get("appartmentNumber"));
         jTextArea1.setText((String) order.get("comment"));
         jLabel25.setText((String) order.get("_id"));
+        List<Long> columnWidth = getColumnWidth(jTable2);
         if (order.get("products") == null) {
             jTable2.setModel(new MyProductModel(new ArrayList<Map<String, Object>>()));
         } else {
             jTable2.setModel(new MyProductModel((List<Map<String, Object>>) order.get("products")));
         }
+        setColumnWidth(jTable2, columnWidth);
         addJTable2Listener(jTable2);
         long totalSum = calcTotalSum((List<Map<String, Object>>) order.get("products"));
         jTextField15.setText(formatSum(totalSum));
@@ -516,6 +527,7 @@ public class Form1 extends javax.swing.JFrame {
         database.put("searchDataText", ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).getText().trim());
         database.put("periodIndex", jComboBox5.getSelectedIndex());
         database.put("autoLoadIndex", jComboBox6.getSelectedIndex());
+        database.put("productColumnWidth", getColumnWidth(jTable2));
         database.put("locationX", getLocation().x);
         database.put("locationY", getLocation().y);
         database.put("useMySql", useMySql);
@@ -533,6 +545,24 @@ public class Form1 extends javax.swing.JFrame {
         }
     }
     
+    private List<Long> getColumnWidth(javax.swing.JTable jTable) {
+        int columnCount = jTable.getColumnModel().getColumnCount();
+        List<Long> result = new ArrayList<>();
+        for (int index = 0; index < columnCount; index += 1) {
+            result.add(Long.valueOf(jTable.getColumnModel().getColumn(index).getPreferredWidth()));
+        }
+        return result;
+    }
+
+    private void setColumnWidth(javax.swing.JTable jTable, List<Long> columnWidth) {
+        int columnCount = jTable.getColumnModel().getColumnCount();
+        for (int index = 0; index < columnCount; index += 1) {
+            if (index < columnWidth.size()) {
+                jTable.getColumnModel().getColumn(index).setPreferredWidth(columnWidth.get(index).intValue());
+            }
+        }
+    }
+
     private static byte[] xor(final byte[] input, final byte[] secret) {
         final byte[] output = new byte[input.length];
         if (secret.length == 0) {
@@ -977,12 +1007,14 @@ public class Form1 extends javax.swing.JFrame {
         jLabel9.setText("Способ доставки");
 
         jLabel10.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel10.setText("Город");
 
         jLabel11.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel11.setText("Улица");
 
         jLabel12.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel12.setText("Дом");
 
         jLabel13.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
@@ -1371,6 +1403,7 @@ public class Form1 extends javax.swing.JFrame {
         );
 
         jLabel23.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel23.setText("Статус заявки");
         jLabel23.setToolTipText("Статус заявки");
 
@@ -1391,6 +1424,7 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jLabel28.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel28.setText("Дата приёма заказа");
 
         jTextField19.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
@@ -1401,6 +1435,7 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jLabel29.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel29.setText("<html><font color=\"green\"><u>Быстрый переход на сайт</u> </font><font color=\"blue\"><u>www.sveta-shop.ru</u></font></html>");
         jLabel29.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel29.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1468,31 +1503,29 @@ public class Form1 extends javax.swing.JFrame {
                         .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(125, 125, 125))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel28)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField19, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel27, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField18, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField16, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(35, 35, 35))))
+                                .addComponent(jTextField19, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel27, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField18, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField16, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(35, 35, 35))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1661,10 +1694,7 @@ public class Form1 extends javax.swing.JFrame {
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel26, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -1674,7 +1704,11 @@ public class Form1 extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel26, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextField1)
