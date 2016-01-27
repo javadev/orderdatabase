@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -114,14 +115,16 @@ public class XlsxService {
                         }
                     }
                     if (row.getRowNum() > 0) {
-                        if (data.get("created") == null) {
-                            data.put("created", new Date().getTime());
+                        if (data.get("orderNumber") != null
+                                && !((String) data.get("orderNumber")).trim().isEmpty()) {
+                            if (data.get("created") == null) {
+                                data.put("created", new Date().getTime());
+                            }
+                            result.add(data);
                         }
-                        result.add(data);
                     }
                 }
             }
-//            System.out.println(columnIndexToDbName);
         } catch (IOException ex) {
             Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -234,9 +237,11 @@ public class XlsxService {
             fillCell(sheet, 24, 11, (String) data.get("paymentMethod"));
             fillCell(sheet, 24, 12, (String) data.get("deliveryMethod"));
             fillCell(sheet, 28, 40, (String) data.get("totalSum"));
-            if ((String) data.get("totalSum") != null && ((String) data.get("totalSum")).matches("[\\d\\,]+")) {
+            fillCell(sheet, 23, 41, (String) data.get("discount") + " %");
+            fillCell(sheet, 28, 41, (String) data.get("totalSumWithDiscount"));
+            if ((String) data.get("totalSumWithDiscount") != null && ((String) data.get("totalSumWithDiscount")).matches("[\\d\\,]+")) {
             fillCell(sheet, 7, 42, new MoneyToStr(MoneyToStr.Currency.RUR, MoneyToStr.Language.RUS, MoneyToStr.Pennies.NUMBER)
-                    .convert(Double.parseDouble(((String) data.get("totalSum")).replace(",", "."))));
+                    .convert(Double.parseDouble(((String) data.get("totalSumWithDiscount")).replace(",", "."))));
             } else {
                 fillCell(sheet, 7, 42, "");
             }
@@ -265,6 +270,7 @@ public class XlsxService {
                     }
                 }
                 fillCell(sheet, 20, 40, "" + totalQuantity);
+                fillCell(sheet, 20, 41, "" + totalQuantity);
             } else {
                 fillCell(sheet, 20, 40, "0");
             }
@@ -297,6 +303,7 @@ public class XlsxService {
         try {
             try (InputStream fileStream = new FileInputStream(xlsxPath)) {
                 XSSFWorkbook book = new XSSFWorkbook(fileStream);
+                FormulaEvaluator evaluator = book.getCreationHelper().createFormulaEvaluator();
                 XSSFSheet sheet = book.getSheetAt(2);
                 Iterator<Row> rowIterator = sheet.iterator();
                 while (rowIterator.hasNext()) {
@@ -316,14 +323,30 @@ public class XlsxService {
                                 if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
                                     Double cellNumValue = cell.getNumericCellValue();
                                     data.put("price", "" + cellNumValue.longValue());
+                                } else if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                                    Double cellNumValue = cell.getNumericCellValue();
+                                    data.put("price", "" + cellNumValue.longValue());
                                 } else {
                                     data.put("price", cell.getStringCellValue().trim());
                                 }
                                 break;
+                            case 6:
+                                data.put("name", $.chain((String) data.get("name"),
+                                        cell.getStringCellValue().trim()).join().item());
+                                break;
+                            case 8:
+                                if (cell.getStringCellValue().trim().equals("Нет")) {
+                                    data.put("present", Boolean.FALSE);
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
                     if (row.getRowNum() > 0) {
-                        result.add(data);
+                        if (data.get("present") == null) {
+                            result.add(data);
+                        }
                     }
                 }
             }
