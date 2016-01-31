@@ -110,7 +110,7 @@ public class Form1 extends javax.swing.JFrame {
         dbName = (String) database.get("dbName");
         user = (String) database.get("user");
         pass = database.get("pass") == null ? null
-                : new String(xor(((String) database.get("pass")).getBytes(), "UTF-8".getBytes()));
+                : decrypt(((String) database.get("pass")));
         useXlsx = database.get("useXlsx") == null ? true : (Boolean) database.get("useXlsx");
         xlsxPath = (String) database.get("xlsxPath");
         ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).setText((String) database.get("searchDataText"));
@@ -126,7 +126,7 @@ public class Form1 extends javax.swing.JFrame {
             jCheckBoxMenuItem1.setSelected(false);
         }
         adminPass = database.get("adminPass") == null ? null
-                : new String(xor(((String) database.get("adminPass")).getBytes(), "UTF-8".getBytes()));
+                : decrypt(((String) database.get("adminPass")));
         final java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         if (database.get("locationX") instanceof Long && database.get("locationY") instanceof Long) {
             setLocation(Math.min(screenSize.width - 50, ((Long) database.get("locationX")).intValue()),
@@ -562,8 +562,8 @@ public class Form1 extends javax.swing.JFrame {
         database.put("hostName", hostName);
         database.put("dbName", dbName);
         database.put("user", user);
-        database.put("pass", pass == null ? null : new String(xor(pass.getBytes(), "UTF-8".getBytes())));
-        database.put("adminPass", adminPass == null ? null : new String(xor(adminPass.getBytes(), "UTF-8".getBytes())));
+        database.put("pass", pass == null ? null : encrypt(pass));
+        database.put("adminPass", adminPass == null ? null : encrypt(adminPass));
         database.put("useXlsx", useXlsx);
         database.put("xlsxPath", xlsxPath);
         
@@ -574,6 +574,41 @@ public class Form1 extends javax.swing.JFrame {
         }
     }
     
+    public static String encrypt(String value) {
+         try {
+             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
+             javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
+ 
+             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
+             cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec, iv);
+ 
+             byte[] encrypted = cipher.doFinal(value.getBytes("UTF-8"));
+             return javax.xml.bind.DatatypeConverter.printBase64Binary(encrypted);
+         } catch (Exception ex) {
+             return "";
+         }
+     }
+ 
+     public static String decrypt(String encrypted) {
+         try {
+             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
+             javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
+ 
+             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
+             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, skeySpec, iv);
+ 
+             byte[] original = cipher.doFinal(javax.xml.bind.DatatypeConverter.parseBase64Binary(encrypted));
+ 
+             final String decrypted = new String(original, "UTF-8");
+             if (!encrypted.isEmpty() && decrypted.isEmpty()) {
+                 return new String(xor(encrypted.getBytes("UTF-8"), "UTF-8".getBytes("UTF-8")), "UTF-8");
+             }
+             return decrypted;
+         } catch (Exception ex) {
+             return "";
+         }
+     }
+
     private List<Long> getColumnWidth(javax.swing.JTable jTable) {
         int columnCount = jTable.getColumnModel().getColumnCount();
         List<Long> result = new ArrayList<>();
