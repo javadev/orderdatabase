@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -111,6 +110,8 @@ public class XlsxService {
                                     }
                                 }
                                 break;
+                            default:
+                                break;
                                 
                         }
                     }
@@ -195,6 +196,13 @@ public class XlsxService {
         } catch (IOException ex) {
             Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             if (fos != null) {
                 try {
                     fos.close();
@@ -303,7 +311,6 @@ public class XlsxService {
         try {
             try (InputStream fileStream = new FileInputStream(xlsxPath)) {
                 XSSFWorkbook book = new XSSFWorkbook(fileStream);
-                FormulaEvaluator evaluator = book.getCreationHelper().createFormulaEvaluator();
                 XSSFSheet sheet = book.getSheetAt(2);
                 Iterator<Row> rowIterator = sheet.iterator();
                 while (rowIterator.hasNext()) {

@@ -708,7 +708,7 @@
             </Property>
             <Property name="text" type="java.lang.String" value="&#x421;&#x43e;&#x437;&#x434;&#x430;&#x442;&#x44c; &#x437;&#x430;&#x43a;&#x430;&#x437;"/>
             <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-              <ComponentRef name="jButton9"/>
+              <ComponentRef name="jButton12"/>
             </Property>
           </Properties>
           <Events>

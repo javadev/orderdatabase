@@ -459,11 +459,6 @@ public class Form1 extends javax.swing.JFrame {
         }
         if (useXlsx) {
             XlsxService xlsxService = new XlsxService(xlsxPath);
-            Map<String, Map<String, Object>> orderNumbers = new LinkedHashMap<>();
-            List<Map<String, Object>> xlsxDataList = xlsxService.readAll();
-            for (Map<String, Object> data : xlsxDataList) {
-                orderNumbers.put((String) data.get("orderNumber"), data);
-            }
             List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
             List<Map<String, Object>> filteredOrders = getFilteredOrders(dataList);
             xlsxService.updateData($.sortBy(filteredOrders, new Function1<Map<String, Object>, Long>() {
@@ -547,6 +542,7 @@ public class Form1 extends javax.swing.JFrame {
             ((List<Map<String, Object>>) database.get("data")).add(data);
             saveDatabaseData();
             jLabel25.setText((String) data.get("_id"));
+            jTextField19.setText(new SimpleDateFormat("dd.MM.yy").format(new Date((Long) data.get("created"))));
             database.put("currentOrder", data);
         }
         dossieDialog.reload();
@@ -1205,7 +1201,7 @@ public class Form1 extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton1.setText("Создать заказ");
-        jButton1.setNextFocusableComponent(jButton9);
+        jButton1.setNextFocusableComponent(jButton12);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -2024,54 +2020,52 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton8KeyPressed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        if (useXlsx) {
-            Map<String, Object> data = createOrderData();
-            if (database.get("currentOrder") != null
-                && !$.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
-                $.omit((Map<String, Object>) database.get("currentOrder"),
-                    "_id", "created", "status", "user", "country", "products").toString())) {
-                saveData(data);
+        Map<String, Object> data = createOrderData();
+        if (database.get("currentOrder") != null
+            && !$.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
+            $.omit((Map<String, Object>) database.get("currentOrder"),
+                "_id", "created", "status", "user", "country", "products").toString())) {
+            saveData(data);
+        }
+        Map<String, Object> currentOrder = (Map<String, Object>) database.get("currentOrder");
+        if (currentOrder.get("created") == null) {
+            return;
+        }
+        if (currentOrder instanceof Map) {
+            if (currentOrder.get("totalSum") == null) {
+                List<Map<String, Object>> products = (List<Map<String, Object>>) currentOrder.get("products");
+                long totalSum = calcTotalSum(products);
+                long previousSum = calcPreviousSum(getFilteredOrders(getDatabaseData()));
+                currentOrder.put("totalSum", "" + totalSum);
+                currentOrder.put("discount", "" + calcDiscount(previousSum + totalSum));
             }
-            Map<String, Object> currentOrder = (Map<String, Object>) database.get("currentOrder");
-            if (currentOrder.get("created") == null) {
-                return;
-            }
-            if (currentOrder instanceof Map) {
-                if (currentOrder.get("totalSum") == null) {
-                    List<Map<String, Object>> products = (List<Map<String, Object>>) currentOrder.get("products");
-                    long totalSum = calcTotalSum(products);
-                    long previousSum = calcPreviousSum(getFilteredOrders(getDatabaseData()));
-                    currentOrder.put("totalSum", "" + totalSum);
-                    currentOrder.put("discount", "" + calcDiscount(previousSum + totalSum));
-                }
-                Map<String, Object> clonedCurrentOrder = new LinkedHashMap<>();
-                for (Map.Entry<String, Object> entry : currentOrder.entrySet()) {
-                    if ("totalSum".equals(entry.getKey())) {
-                        clonedCurrentOrder.put(entry.getKey(), entry.getValue());
-                        clonedCurrentOrder.put("totalSumWithDiscount", getPriceWithDiscount(
-                                (String) entry.getValue(), (String) currentOrder.get("discount")));
-                    } else if ("products".equals(entry.getKey())) {
-                        List<Map<String, Object>> newProducts = new ArrayList<>();
-                        for (Map<String, Object> product : (List<Map<String, Object>>) entry.getValue()) {
-                            Map<String, Object> newProduct = new LinkedHashMap<>();
-                            for (Map.Entry<String, Object> entryProduct : product.entrySet()) {
-                                newProduct.put(entryProduct.getKey(), (String) entryProduct.getValue());
-                            }
-                            newProducts.add(newProduct);
+            Map<String, Object> clonedCurrentOrder = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> entry : currentOrder.entrySet()) {
+                if ("totalSum".equals(entry.getKey())) {
+                    clonedCurrentOrder.put(entry.getKey(), entry.getValue());
+                    clonedCurrentOrder.put("totalSumWithDiscount", getPriceWithDiscount(
+                            (String) entry.getValue(), (String) currentOrder.get("discount")));
+                } else if ("products".equals(entry.getKey())) {
+                    List<Map<String, Object>> newProducts = new ArrayList<>();
+                    for (Map<String, Object> product : (List<Map<String, Object>>) entry.getValue()) {
+                        Map<String, Object> newProduct = new LinkedHashMap<>();
+                        for (Map.Entry<String, Object> entryProduct : product.entrySet()) {
+                            newProduct.put(entryProduct.getKey(), (String) entryProduct.getValue());
                         }
-                        clonedCurrentOrder.put(entry.getKey(), newProducts);
-                    } else {
-                        clonedCurrentOrder.put(entry.getKey(), entry.getValue());
+                        newProducts.add(newProduct);
                     }
+                    clonedCurrentOrder.put(entry.getKey(), newProducts);
+                } else {
+                    clonedCurrentOrder.put(entry.getKey(), entry.getValue());
                 }
-                String fileName = $.chain("order-", (String) currentOrder.get("_id"), ".xlsx").join("").item();
-                new XlsxService(fileName).fillBlank(clonedCurrentOrder);
-                createdFiles.add(fileName);
-                try {
-                    java.awt.Desktop.getDesktop().browse(new File(fileName).toURI());
-                } catch (IOException ex) {
-                    Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            }
+            String fileName = $.chain("order-", (String) currentOrder.get("_id"), ".xlsx").join("").item();
+            new XlsxService(fileName).fillBlank(clonedCurrentOrder);
+            createdFiles.add(fileName);
+            try {
+                java.awt.Desktop.getDesktop().browse(new File(fileName).toURI());
+            } catch (IOException ex) {
+                Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_jButton9ActionPerformed
@@ -2148,7 +2142,7 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void jButton12KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton12KeyPressed
-        // TODO add your handling code here:
+        focusNextElementOnPressEnter(evt);
     }//GEN-LAST:event_jButton12KeyPressed
 
     private void jCheckBoxMenuItem1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ItemStateChanged
