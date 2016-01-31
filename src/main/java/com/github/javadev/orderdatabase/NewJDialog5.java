@@ -138,7 +138,6 @@ public class NewJDialog5 extends javax.swing.JDialog {
         jLabel23.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel23.setText("Статус заявки");
-        jLabel23.setToolTipText("");
 
         jButton9.setText("...");
         jButton9.addActionListener(new java.awt.event.ActionListener() {
@@ -157,12 +156,10 @@ public class NewJDialog5 extends javax.swing.JDialog {
         jLabel24.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel24.setText("Каталог товаров");
-        jLabel24.setToolTipText("");
 
         jLabel25.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel25.setText("Пароль администратора");
-        jLabel25.setToolTipText("");
 
         jButton12.setText("...");
         jButton12.addActionListener(new java.awt.event.ActionListener() {

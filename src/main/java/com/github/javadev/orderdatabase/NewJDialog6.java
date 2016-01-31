@@ -19,7 +19,7 @@ public class NewJDialog6 extends javax.swing.JDialog {
     }
     
     public String getPass() {
-        return jTextField1.getText();
+        return jTextField1.getText().isEmpty() ? null : jTextField1.getText();
     }
 
     /**
@@ -151,7 +151,7 @@ public class NewJDialog6 extends javax.swing.JDialog {
             jLabel1.setText("Неверный текущий пароль!");
             return;
         }
-        if (!jTextField1.getText().matches("[A-Z]+[0-9]+.*?[a-z]+.*")) {
+        if (!jTextField1.getText().isEmpty() && !jTextField1.getText().matches("[A-Z]+[0-9]+.*?[a-z]+.*")) {
             jLabel1.setText("Неверный новый пароль!");
             return;
         };
