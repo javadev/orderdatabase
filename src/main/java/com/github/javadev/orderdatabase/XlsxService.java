@@ -214,7 +214,7 @@ public class XlsxService {
     }
 
     public void fillBlank(Map<String, Object> data) {
-        if (!(data instanceof Map)) {
+        if (data == null) {
             return;
         }
         if (!new File(xlsxPath).exists()) {

@@ -48,7 +48,7 @@ public class NewJDialog1 extends javax.swing.JDialog {
                 })
                 .sortBy(new Function1<Map<String, Object>, Long>() {
                     public Long apply(final Map<String, Object> item) {
-                        return item.get("created") == null ? 0L : (Long) item.get("created");
+                        return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                     }
                 })
                 .value();

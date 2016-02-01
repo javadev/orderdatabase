@@ -299,6 +299,9 @@ public class MoneyToStr {
                 break;
             }
         }
+        if (theISOElement == null) {
+            throw new IllegalArgumentException("language not found " + language.name());
+        }
         rubOneUnit = theISOElement.getAttribute("RubOneUnit");
         rubTwoUnit = theISOElement.getAttribute("RubTwoUnit");
         rubFiveUnit = theISOElement.getAttribute("RubFiveUnit");
