@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DatabaseService {
-    private final static List<String> FIELD_NAMES = Arrays.asList(
+    private static final List<String> FIELD_NAMES = Arrays.asList(
         "created",
         "_id",
         "orderNumber",
@@ -41,7 +41,7 @@ public class DatabaseService {
         "user",
         "comment"
     );
-    private final static List<String> PRODUCT_FIELD_NAMES = Arrays.asList(
+    private static final List<String> PRODUCT_FIELD_NAMES = Arrays.asList(
         "_id",
         "orderId",
         "vendorCode",
@@ -50,6 +50,23 @@ public class DatabaseService {
         "quantity",
         "totalPrice"
     );
+    private static final String CREATE_ORDERDATA_SQL = "CREATE TABLE orderdata "
+                   + "(_id VARCHAR(16) not NULL,"
+                   + "created BIGINT,"
+                   + $.join($.without(FIELD_NAMES, "_id", "created"), " VARCHAR(255),")
+                   + " TEXT, PRIMARY KEY ( _id ))";
+    private static final String CREATE_PRODUCTDATA_SQL = "CREATE TABLE productdata "
+                   + "(_id VARCHAR(16) not NULL,"
+                   + $.join($.without(PRODUCT_FIELD_NAMES, "_id"), " VARCHAR(255),")
+                   + " VARCHAR(255), PRIMARY KEY ( _id ))";
+    private static final String SELECT_ORDERDATA_SQL = "SELECT " + $.join(FIELD_NAMES, ", ") + " FROM orderdata";
+    private static final String SELECT_PRODUCTDATA_SQL = "SELECT " + $.join(PRODUCT_FIELD_NAMES, ", ") + " FROM productdata";
+    private static final String INSERT_ORDERDATA_SQL = "INSERT INTO orderdata"
+                            + "(" + $.join(FIELD_NAMES, ", ") + ") VALUES"
+                            + "(" + $.repeat("?,", FIELD_NAMES.size() - 1) + "?)";
+    private static final String INSERT_PRODUCTDATA_SQL = "INSERT INTO productdata"
+                            + "(" + $.join(PRODUCT_FIELD_NAMES, ", ") + ") VALUES"
+                            + "(" + $.repeat("?,", PRODUCT_FIELD_NAMES.size() - 1) + "?)";
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final String hostName;
     private final String dbName;
@@ -74,8 +91,7 @@ public class DatabaseService {
         try {
             conn = createConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT " + $.join(FIELD_NAMES, ", ") + " FROM orderdata";
-            try (ResultSet resultSet = stmt.executeQuery(sql)) {
+            try (ResultSet resultSet = stmt.executeQuery(SELECT_ORDERDATA_SQL)) {
                 while (resultSet.next()) {
                     Map<String, Object> data = new LinkedHashMap<String, Object>();
                     for (String field : FIELD_NAMES) {
@@ -90,8 +106,7 @@ public class DatabaseService {
                         return (String) item.get("_id");
                     }
                 });
-            String productSql = "SELECT " + $.join(PRODUCT_FIELD_NAMES, ", ") + " FROM productdata";
-            try (ResultSet resultSet = stmt.executeQuery(productSql)) {
+            try (ResultSet resultSet = stmt.executeQuery(SELECT_PRODUCTDATA_SQL)) {
                 while (resultSet.next()) {
                     Map<String, Object> data = new LinkedHashMap<String, Object>();
                     for (String field : PRODUCT_FIELD_NAMES) {
@@ -153,12 +168,7 @@ public class DatabaseService {
 
     private void createTable(Statement stmt) throws SQLException {
         stmt.getConnection().setAutoCommit(false);
-        String sql = "CREATE TABLE orderdata "
-                   + "(_id VARCHAR(16) not NULL,"
-                   + "created BIGINT,"
-                   + $.join($.without(FIELD_NAMES, "_id", "created"), " VARCHAR(255),")
-                   + " TEXT, PRIMARY KEY ( _id ))";
-        stmt.executeUpdate(sql);
+        stmt.executeUpdate(CREATE_ORDERDATA_SQL);
         String restrictionUpdate =
             "CREATE TRIGGER orderdata_upd BEFORE UPDATE ON orderdata FOR EACH ROW\n"
             + "  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot update record';\n"
@@ -174,11 +184,7 @@ public class DatabaseService {
 
     private void createProductTable(Statement stmt) throws SQLException {
         stmt.getConnection().setAutoCommit(false);
-        String sql = "CREATE TABLE productdata "
-                   + "(_id VARCHAR(16) not NULL,"
-                   + $.join($.without(PRODUCT_FIELD_NAMES, "_id"), " VARCHAR(255),")
-                   + " VARCHAR(255), PRIMARY KEY ( _id ))";
-        stmt.executeUpdate(sql);
+        stmt.executeUpdate(CREATE_PRODUCTDATA_SQL);
         String restrictionUpdate =
             "CREATE TRIGGER productdata_upd BEFORE UPDATE ON productdata FOR EACH ROW\n"
             + "  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot update record';\n"
@@ -197,10 +203,7 @@ public class DatabaseService {
         PreparedStatement stmt = null;
         try {
             conn = createConnection();
-            String insertTableSQL = "INSERT INTO orderdata"
-                            + "(" + $.join(FIELD_NAMES, ", ") + ") VALUES"
-                            + "(" + $.repeat("?,", FIELD_NAMES.size() - 1) + "?)";
-            stmt = conn.prepareStatement(insertTableSQL);
+            stmt = conn.prepareStatement(INSERT_ORDERDATA_SQL);
             stmt.getConnection().setAutoCommit(false);
             for (Map<String, Object> data : dataList) {
                 int index = 1;
@@ -214,10 +217,7 @@ public class DatabaseService {
                 }
                 stmt.executeUpdate();
             }
-            String insertProductTableSQL = "INSERT INTO productdata"
-                            + "(" + $.join(PRODUCT_FIELD_NAMES, ", ") + ") VALUES"
-                            + "(" + $.repeat("?,", PRODUCT_FIELD_NAMES.size() - 1) + "?)";
-            stmt = conn.prepareStatement(insertProductTableSQL);
+            stmt = conn.prepareStatement(INSERT_PRODUCTDATA_SQL);
             stmt.getConnection().setAutoCommit(false);
             for (Map<String, Object> data : dataList) {
                 if (data.get("products") == null || ((List<Map<String, Object>>) data.get("products")).isEmpty()) {

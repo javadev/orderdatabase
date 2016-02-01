@@ -463,7 +463,7 @@ public class Form1 extends javax.swing.JFrame {
             List<Map<String, Object>> filteredOrders = getFilteredOrders(dataList);
             xlsxService.updateData($.sortBy(filteredOrders, new Function1<Map<String, Object>, Long>() {
                 public Long apply(Map<String, Object> item) {
-                    return item.get("created") == null ? 0L : (Long) item.get("created");
+                    return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                 }
             }));
         }
@@ -482,7 +482,7 @@ public class Form1 extends javax.swing.JFrame {
             List<Map<String, Object>> sorted = $.sortBy(entry.getValue(),
                new Function1<Map<String, Object>, Long>() {
                public Long apply(final Map<String, Object> item) {
-                   return item.get("created") == null ? 0L : (Long) item.get("created");
+                   return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                } 
             });
             if (!sorted.isEmpty()) {
@@ -491,7 +491,7 @@ public class Form1 extends javax.swing.JFrame {
         }
         $.sortBy(filteredOrders, new Function1<Map<String, Object>, Long>() {
             public Long apply(Map<String, Object> item) {
-                return item.get("created") == null ? 0L : (Long) item.get("created");
+                return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
             }
         });
         return filteredOrders;
@@ -862,14 +862,16 @@ public class Form1 extends javax.swing.JFrame {
                             break;
                         case 5:
                             result = difference <= 86400000 * 365.25;
-                            break;                            
+                            break;
+                        default:
+                            break;
                     }
                     return result;
                 }
             })
             .sortBy(new Function1<Map<String, Object>, Long>() {
                 public Long apply(Map<String, Object> item) {
-                    return item.get("created") == null ? 0L : (Long) item.get("created");
+                    return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                 }
             })    
             .value();
@@ -2028,10 +2030,10 @@ public class Form1 extends javax.swing.JFrame {
             saveData(data);
         }
         Map<String, Object> currentOrder = (Map<String, Object>) database.get("currentOrder");
-        if (currentOrder.get("created") == null) {
-            return;
-        }
-        if (currentOrder instanceof Map) {
+        if (currentOrder != null) {
+            if (currentOrder.get("created") == null) {
+                return;
+            }
             if (currentOrder.get("totalSum") == null) {
                 List<Map<String, Object>> products = (List<Map<String, Object>>) currentOrder.get("products");
                 long totalSum = calcTotalSum(products);
@@ -2277,6 +2279,8 @@ public class Form1 extends javax.swing.JFrame {
                 break;
             case 3:
                 taskHandle = scheduler.scheduleAtFixedRate(reloadSearchOrders(), 0, 10, TimeUnit.MINUTES);
+                break;
+            default:
                 break;
         }
     }
