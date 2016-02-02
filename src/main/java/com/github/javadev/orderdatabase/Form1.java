@@ -578,10 +578,10 @@ public class Form1 extends javax.swing.JFrame {
          try {
              javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
              javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
- 
+
              javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
              cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec, iv);
- 
+
              byte[] encrypted = cipher.doFinal(value.getBytes("UTF-8"));
              return javax.xml.bind.DatatypeConverter.printBase64Binary(encrypted);
          } catch (Exception ex) {
@@ -593,12 +593,12 @@ public class Form1 extends javax.swing.JFrame {
          try {
              javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
              javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
- 
+
              javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
              cipher.init(javax.crypto.Cipher.DECRYPT_MODE, skeySpec, iv);
- 
+
              byte[] original = cipher.doFinal(javax.xml.bind.DatatypeConverter.parseBase64Binary(encrypted));
- 
+
              final String decrypted = new String(original, "UTF-8");
              if (!encrypted.isEmpty() && decrypted.isEmpty()) {
                  return new String(xor(encrypted.getBytes("UTF-8"), "UTF-8".getBytes("UTF-8")), "UTF-8");
