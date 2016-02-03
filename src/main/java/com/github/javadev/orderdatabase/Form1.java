@@ -92,7 +92,7 @@ public class Form1 extends javax.swing.JFrame {
                 } else {
                     saveData(null);
                 }
-                for (String fileName : createdFiles) {
+                for (String fileName : $.uniq(createdFiles)) {
                     try {
                         Files.delete(Paths.get(fileName));
                     } catch (IOException ex) {
