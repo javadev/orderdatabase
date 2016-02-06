@@ -105,6 +105,8 @@ public class Form1 extends javax.swing.JFrame {
         fillComboBoxModel("deliveryMethodData", jComboBox2);
         fillComboBoxModel("statusData", jComboBox3);
         fillComboBoxModel("searchData", jComboBox4);
+        fillComboBoxModel("countryData", jComboBox7, Optional.of("Россия"));
+        fillComboBoxModel("cityData", jComboBox8, Optional.of("Москва"));
         useMySql = database.get("useMySql") == null ? true : (Boolean) database.get("useMySql");
         hostName = (String) database.get("hostName");
         dbName = (String) database.get("dbName");
@@ -271,11 +273,18 @@ public class Form1 extends javax.swing.JFrame {
         format.setMaximumFractionDigits(2);
         return format.format(value.doubleValue());
     }
-    
+
     private void fillComboBoxModel(String key, JComboBox jComboBox) {
+        fillComboBoxModel(key, jComboBox, Optional.<String>absent());
+    }
+
+    private void fillComboBoxModel(String key, JComboBox jComboBox, Optional<String> defaultValue) {
         final List<String> databaseData;
         if (database.get(key) == null || !(database.get(key) instanceof List)) {
             databaseData = new ArrayList<String>();
+            if (defaultValue.isPresent()) {
+                databaseData.add(defaultValue.get());
+            }
         } else {
             databaseData = (List<String>) database.get(key);
         }
@@ -298,8 +307,8 @@ public class Form1 extends javax.swing.JFrame {
         fillComboBoxSelectedItem(jComboBox1, (String) order.get("paymentMethod"), "paymentMethodData");
         fillComboBoxSelectedItem(jComboBox2, (String) order.get("deliveryMethod"), "deliveryMethodData");
         fillComboBoxSelectedItem(jComboBox3, (String) order.get("status"), "statusData");
-        jTextField17.setText((String) order.get("country"));
-        jTextField9.setText((String) order.get("city"));
+        fillComboBoxSelectedItem(jComboBox7, (String) order.get("country"), "countryData", Optional.of("Россия"));
+        fillComboBoxSelectedItem(jComboBox8, (String) order.get("city"), "cityData", Optional.of("Москва"));
         jTextField10.setText((String) order.get("street"));
         jTextField11.setText((String) order.get("houseNumber"));
         jTextField12.setText((String) order.get("houseNumber2"));
@@ -340,8 +349,8 @@ public class Form1 extends javax.swing.JFrame {
         data.put("paymentMethod",  null);
         data.put("deliveryMethod", null);
         data.put("status", null);
-        data.put("country", "");
-        data.put("city", "");
+        data.put("country", "Россия");
+        data.put("city", "Москва");
         data.put("street", "");
         data.put("houseNumber", "");
         data.put("houseNumber2", "");
@@ -354,16 +363,22 @@ public class Form1 extends javax.swing.JFrame {
         return data;
     }
 
-    private void fillComboBoxSelectedItem(JComboBox jComboBox, String data, String dictKey) {
+    private void fillComboBoxSelectedItem(JComboBox jComboBox, String data,
+            String dictKey) {
+        fillComboBoxSelectedItem(jComboBox, data, dictKey, Optional.<String>absent());
+    }
+
+    private void fillComboBoxSelectedItem(JComboBox jComboBox, String data,
+            String dictKey, Optional<String> defaultValue) {
         if (jComboBox.getModel() == null) {
             return;
         }
-        if (data == null) {
+        if (data == null || data.isEmpty()) {
             jComboBox.getModel().setSelectedItem(null);
             return;
         }
         String modelElement = null;
-        fillComboBoxModel(dictKey, jComboBox);
+        fillComboBoxModel(dictKey, jComboBox, defaultValue);
         for (int index = 0; index < jComboBox.getModel().getSize(); index += 1) {
             if (jComboBox.getModel().getElementAt(index).equals(data)) {
                 modelElement = (String) jComboBox.getModel().getElementAt(index);
@@ -382,7 +397,7 @@ public class Form1 extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 jTextField1.setText(calcOrderNumber(jTextField4.getText(), jTextField2.getText(), jTextField3.getText(),
-                        jTextField9.getText()));
+                        String.valueOf(jComboBox8.getSelectedItem()).trim()));
             }
         });
     }
@@ -513,8 +528,10 @@ public class Form1 extends javax.swing.JFrame {
                 : String.valueOf(jComboBox2.getSelectedItem()).trim());
         data.put("status", jComboBox3.getSelectedItem() == null ? null
                 : String.valueOf(jComboBox3.getSelectedItem()).trim());
-        data.put("country", jTextField17.getText().trim());
-        data.put("city", jTextField9.getText().trim());
+        data.put("country", jComboBox7.getSelectedItem() == null ? null
+                : String.valueOf(jComboBox7.getSelectedItem()).trim());
+        data.put("city", jComboBox8.getSelectedItem() == null ? null
+                : String.valueOf(jComboBox8.getSelectedItem()).trim());
         data.put("street", jTextField10.getText().trim());
         data.put("houseNumber", jTextField11.getText().trim());
         data.put("houseNumber2", jTextField12.getText().trim());
@@ -1008,7 +1025,6 @@ public class Form1 extends javax.swing.JFrame {
         jTextField4 = new javax.swing.JTextField();
         jTextField5 = new javax.swing.JTextField();
         jTextField6 = new javax.swing.JTextField();
-        jTextField9 = new javax.swing.JTextField();
         jTextField10 = new javax.swing.JTextField();
         jTextField11 = new javax.swing.JTextField();
         jTextField12 = new javax.swing.JTextField();
@@ -1041,7 +1057,6 @@ public class Form1 extends javax.swing.JFrame {
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
-        jTextField17 = new javax.swing.JTextField();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
@@ -1058,6 +1073,8 @@ public class Form1 extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
+        jComboBox7 = new javax.swing.JComboBox();
+        jComboBox8 = new javax.swing.JComboBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -1174,17 +1191,6 @@ public class Form1 extends javax.swing.JFrame {
             }
         });
 
-        jTextField9.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jTextField9.setNextFocusableComponent(jTextField10);
-        jTextField9.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField9KeyPressed(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField9KeyReleased(evt);
-            }
-        });
-
         jTextField10.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jTextField10.setNextFocusableComponent(jTextField11);
         jTextField10.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1227,7 +1233,7 @@ public class Form1 extends javax.swing.JFrame {
         });
 
         jComboBox2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jComboBox2.setNextFocusableComponent(jTextField17);
+        jComboBox2.setNextFocusableComponent(jComboBox7);
         jComboBox2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jComboBox2KeyPressed(evt);
@@ -1517,14 +1523,6 @@ public class Form1 extends javax.swing.JFrame {
         jLabel26.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel26.setText("Страна");
 
-        jTextField17.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jTextField17.setNextFocusableComponent(jTextField9);
-        jTextField17.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField17KeyPressed(evt);
-            }
-        });
-
         jTextArea1.setColumns(15);
         jTextArea1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jTextArea1.setLineWrap(true);
@@ -1718,6 +1716,22 @@ public class Form1 extends javax.swing.JFrame {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE))
         );
 
+        jComboBox7.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jComboBox7.setNextFocusableComponent(jComboBox8);
+        jComboBox7.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jComboBox7KeyPressed(evt);
+            }
+        });
+
+        jComboBox8.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jComboBox8.setNextFocusableComponent(jTextField10);
+        jComboBox8.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jComboBox8KeyPressed(evt);
+            }
+        });
+
         jMenu1.setMnemonic('\u0430');
         jMenu1.setText("Файл");
 
@@ -1819,8 +1833,6 @@ public class Form1 extends javax.swing.JFrame {
                             .addComponent(jTextField6)
                             .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField17)
-                            .addComponent(jTextField9)
                             .addComponent(jTextField10)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1829,7 +1841,9 @@ public class Form1 extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jTextField12, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                             .addComponent(jTextField13)
-                            .addComponent(jScrollPane4))
+                            .addComponent(jScrollPane4)
+                            .addComponent(jComboBox7, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jComboBox8, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10))
@@ -1886,13 +1900,13 @@ public class Form1 extends javax.swing.JFrame {
                             .addComponent(jLabel9)
                             .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel26)
-                            .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel10)
-                            .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jComboBox8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
@@ -1969,10 +1983,6 @@ public class Form1 extends javax.swing.JFrame {
     private void jComboBox2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBox2KeyPressed
         focusNextElementOnPressEnter(evt);
     }//GEN-LAST:event_jComboBox2KeyPressed
-
-    private void jTextField9KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField9KeyPressed
-        focusNextElementOnPressEnter(evt);
-    }//GEN-LAST:event_jTextField9KeyPressed
 
     private void jTextField10KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField10KeyPressed
         focusNextElementOnPressEnter(evt);
@@ -2131,10 +2141,6 @@ public class Form1 extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField16KeyPressed
 
-    private void jTextField17KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField17KeyPressed
-        focusNextElementOnPressEnter(evt);
-    }//GEN-LAST:event_jTextField17KeyPressed
-
     private void jTextField2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyReleased
         fillOrderNumber();
     }//GEN-LAST:event_jTextField2KeyReleased
@@ -2146,10 +2152,6 @@ public class Form1 extends javax.swing.JFrame {
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
         fillOrderNumber();
     }//GEN-LAST:event_jTextField4KeyReleased
-
-    private void jTextField9KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField9KeyReleased
-        fillOrderNumber();
-    }//GEN-LAST:event_jTextField9KeyReleased
 
     private void jTextField18KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField18KeyPressed
         // TODO add your handling code here:
@@ -2270,7 +2272,8 @@ public class Form1 extends javax.swing.JFrame {
             }
         }
         NewJDialog5 dialog = new NewJDialog5(this, useXlsx, jComboBox1.getModel(),
-                jComboBox2.getModel(), jComboBox3.getModel(),
+                jComboBox2.getModel(), jComboBox3.getModel(), jComboBox7.getModel(),
+                jComboBox8.getModel(),
                 (List<Map<String, Object>>) database.get("productData"), useXlsx, xlsxPath, adminPass);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
@@ -2278,6 +2281,8 @@ public class Form1 extends javax.swing.JFrame {
             jComboBox1.setModel(dialog.getModel1());
             jComboBox2.setModel(dialog.getModel2());
             jComboBox3.setModel(dialog.getModel3());
+            jComboBox7.setModel(dialog.getModel4());
+            jComboBox8.setModel(dialog.getModel5());
             database.put("productData", dialog.getProductData());
                     database.put("paymentMethodData", new ArrayList<String>());
             for (int index = 0; index < jComboBox1.getModel().getSize(); index += 1) {
@@ -2294,9 +2299,27 @@ public class Form1 extends javax.swing.JFrame {
                 ((List<String>) database.get("statusData")).add(
                     String.valueOf(jComboBox3.getModel().getElementAt(index)).trim());
             }
+            database.put("countryData", new ArrayList<String>());
+            for (int index = 0; index < jComboBox7.getModel().getSize(); index += 1) {
+                ((List<String>) database.get("countryData")).add(
+                    String.valueOf(jComboBox7.getModel().getElementAt(index)).trim());
+            }
+            database.put("cityData", new ArrayList<String>());
+            for (int index = 0; index < jComboBox8.getModel().getSize(); index += 1) {
+                ((List<String>) database.get("cityData")).add(
+                    String.valueOf(jComboBox8.getModel().getElementAt(index)).trim());
+            }
             adminPass = dialog.getNewAdminPass();
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jComboBox7KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBox7KeyPressed
+                focusNextElementOnPressEnter(evt);
+    }//GEN-LAST:event_jComboBox7KeyPressed
+
+    private void jComboBox8KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBox8KeyPressed
+                focusNextElementOnPressEnter(evt);
+    }//GEN-LAST:event_jComboBox8KeyPressed
 
     private void initTimer() {
         int index = jComboBox6.getSelectedIndex();
@@ -2391,6 +2414,8 @@ public class Form1 extends javax.swing.JFrame {
     private javax.swing.JComboBox jComboBox4;
     private javax.swing.JComboBox jComboBox5;
     private javax.swing.JComboBox jComboBox6;
+    private javax.swing.JComboBox jComboBox7;
+    private javax.swing.JComboBox jComboBox8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2446,7 +2471,6 @@ public class Form1 extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField14;
     private javax.swing.JTextField jTextField15;
     private javax.swing.JTextField jTextField16;
-    private javax.swing.JTextField jTextField17;
     private javax.swing.JTextField jTextField18;
     private javax.swing.JTextField jTextField19;
     private javax.swing.JTextField jTextField2;
@@ -2454,6 +2478,5 @@ public class Form1 extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 }
