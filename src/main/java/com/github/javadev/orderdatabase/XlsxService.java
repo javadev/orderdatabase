@@ -1,5 +1,6 @@
 package com.github.javadev.orderdatabase;
 
+import com.github.moneytostr.MoneyToStr;
 import com.github.underscore.lodash.$;
 import java.io.File;
 import java.io.FileInputStream;
