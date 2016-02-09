@@ -2,7 +2,6 @@ package com.github.javadev.orderdatabase;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 
 public class NewJDialog extends javax.swing.JDialog {
     private final DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
@@ -224,12 +223,15 @@ public class NewJDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String newValue = (String) JOptionPane.showInputDialog(
-                    this, "Новое значение:\n",
-                    "",
-                    JOptionPane.PLAIN_MESSAGE);
-        if (newValue != null && !newValue.isEmpty()) {
-            comboBoxModel.addElement(newValue);
+        javax.swing.JLabel jLabel = new javax.swing.JLabel("Новое значение:");
+        final javax.swing.JTextField jTextField = new javax.swing.JTextField();
+        Object[] objects = {jLabel, jTextField};
+        String[] options = {"ОК", "Отмена"};
+        int result = javax.swing.JOptionPane.showOptionDialog(this, objects,
+                "Ввод данных", javax.swing.JOptionPane.OK_CANCEL_OPTION,
+                javax.swing.JOptionPane.PLAIN_MESSAGE, null, options, null);
+        if (result == javax.swing.JOptionPane.OK_OPTION && !jTextField.getText().isEmpty()) {
+            comboBoxModel.addElement(jTextField.getText());
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

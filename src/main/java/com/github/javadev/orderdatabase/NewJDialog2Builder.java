@@ -11,6 +11,7 @@ public class NewJDialog2Builder {
     private String pass;
     private boolean useXlsx;
     private String xlsxPath;
+    private boolean showDbNumber;
 
     public NewJDialog2Builder() {
     }
@@ -60,8 +61,13 @@ public class NewJDialog2Builder {
         return this;
     }
 
+    public NewJDialog2Builder setShowDbNumber(boolean showDbNumber) {
+        this.showDbNumber = showDbNumber;
+        return this;
+    }
+
     public NewJDialog2 createNewJDialog2() {
-        return new NewJDialog2(parent, modal, useMysql, hostName, dbName, user, pass, useXlsx, xlsxPath);
+        return new NewJDialog2(parent, modal, useMysql, hostName, dbName, user, pass, useXlsx, xlsxPath, showDbNumber);
     }
     
 }
