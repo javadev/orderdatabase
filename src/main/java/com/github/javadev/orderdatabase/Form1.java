@@ -349,9 +349,9 @@ public class Form1 extends javax.swing.JFrame {
         data.put("paymentMethod",  null);
         data.put("deliveryMethod", null);
         data.put("status", null);
-        data.put("country", $.isEmpty((List<String>) database.get("countryData")) ? null
+        data.put("country", $.isEmpty((List<String>) database.get("countryData")) ? "Россия"
             : $.first((List<String>) database.get("countryData")));
-        data.put("city", $.isEmpty((List<String>) database.get("cityData")) ? null
+        data.put("city", $.isEmpty((List<String>) database.get("cityData")) ? "Москва"
             : $.first((List<String>) database.get("cityData")));
         data.put("street", "");
         data.put("houseNumber", "");
