@@ -53,12 +53,15 @@ import javax.swing.text.JTextComponent;
 public class Form1 extends javax.swing.JFrame {
     private final Map<String, Object> database = new LinkedHashMap<>();
     private final List<Map<String, Object>> foundOrders = new ArrayList<>();
+    private final List<Map<String, Object>> users = new ArrayList<>();
+    private final Map<String, Object> activeUser = new LinkedHashMap<>();
     private final List<String> createdFiles = new ArrayList<>();
     private final JFileChooser chooser1 = new JFileChooser();
     private final NewJDialog1 dossieDialog;
     private final Locale localeRu = new Locale("ru", "RU");
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> taskHandle;
+    private ScheduledFuture<?> passHandle;
     private boolean useMySql;
     private String hostName;
     private String dbName;
@@ -67,6 +70,7 @@ public class Form1 extends javax.swing.JFrame {
     private boolean useXlsx;
     private String xlsxPath;
     private String adminPass;
+    private boolean showDbNumber;
 
     public Form1() {
         initComponents();
@@ -116,6 +120,7 @@ public class Form1 extends javax.swing.JFrame {
         useXlsx = database.get("useXlsx") == null ? true : (Boolean) database.get("useXlsx");
         xlsxPath = (String) database.get("xlsxPath");
         ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).setText((String) database.get("searchDataText"));
+        showDbNumber = database.get("showDbNumber") == null ? false : (Boolean) database.get("showDbNumber");
         if ($.isNumber(database.get("periodIndex"))) {
             jComboBox5.setSelectedIndex(((Long) database.get("periodIndex")).intValue());
         }
@@ -183,6 +188,14 @@ public class Form1 extends javax.swing.JFrame {
                 }
             }
         });
+        if (!showDbNumber) {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    jLabel24.setVisible(false);
+                    jLabel25.setVisible(false);
+                }
+            });
+        }
         chooser1.setAcceptAllFileFilterUsed(false);
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Xml file", "xml"));
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Json file", ".json")); 
@@ -201,6 +214,20 @@ public class Form1 extends javax.swing.JFrame {
                     }
                 });
             }
+        });
+        if (database.get("userData") instanceof String) {
+            users.addAll((List<Map<String, Object>>) $.fromJson(decrypt((String) database.get("userData"))));
+            if (!getActiveUsers().isEmpty()) {
+                disableButtons();
+            }
+        }
+    }
+
+    private List<Map<String, Object>> getActiveUsers() {
+        return $.filter(users, new Predicate<Map<String, Object>>() {
+                public Boolean apply(Map<String, Object> arg) {
+                    return $.isBoolean(arg.get("active")) && (Boolean) arg.get("active"); 
+                }
         });
     }
 
@@ -405,13 +432,17 @@ public class Form1 extends javax.swing.JFrame {
     }
     
     private String calcOrderNumber(String surname, String firstName, String middleName, String cityName) {
-        String name = $.join($.map($.compact($.chain(
-                surname, firstName, middleName).value()),
+        String name = $.chain(
+                surname, firstName, middleName)
+            .compact()
+            .map(
             new Function1<String, String>() {
                 public String apply(String f) {
                     return f.trim().isEmpty() ? "" : f.trim().substring(0, 1);
                 }
-        }), "");
+            })
+            .join("")
+            .item();
         String city = $.join($.map($.words(cityName),
                     new Function1<String, String>() {
                 public String apply(String f) {
@@ -432,7 +463,8 @@ public class Form1 extends javax.swing.JFrame {
             for (Map<String, Object> data : dataList) {
                 ids.add((String) data.get("_id"));
             }
-            List<Map<String, Object>> dbDataList = new DatabaseService(hostName, dbName, user, pass).readAll();
+            List<Map<String, Object>> dbDataList = new DatabaseService(hostName, dbName,
+                activeUser.isEmpty() ? user : (String) activeUser.get("login"), pass).readAll();
             for (Map<String, Object> data : dbDataList) {
                 if (!ids.contains((String) data.get("_id"))) {
                     dataList.add(data);
@@ -459,7 +491,8 @@ public class Form1 extends javax.swing.JFrame {
 
     private void saveDatabaseData() {
         if (useMySql) {
-            DatabaseService databaseService = new DatabaseService(hostName, dbName, user, pass);
+            DatabaseService databaseService = new DatabaseService(hostName, dbName,
+                activeUser.isEmpty() ? user : (String) activeUser.get("login"), pass);
             Set<String> ids = new HashSet<String>();
             List<Map<String, Object>> dbDataList = databaseService.readAll();
             for (Map<String, Object> data : dbDataList) {
@@ -585,6 +618,7 @@ public class Form1 extends javax.swing.JFrame {
         database.put("adminPass", adminPass == null ? null : encrypt(adminPass));
         database.put("useXlsx", useXlsx);
         database.put("xlsxPath", xlsxPath);
+        database.put("showDbNumber", showDbNumber);
         
         try {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
@@ -718,6 +752,114 @@ public class Form1 extends javax.swing.JFrame {
                 Form1.this.pack();
             }
         });
+    }
+
+    private void enableButtons() {
+        try {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    final java.awt.Color colorBlack = new java.awt.Color(0, 0, 0);
+                    jButton1.setForeground(colorBlack);
+                    jButton8.setForeground(colorBlack);
+                    jButton9.setForeground(colorBlack);
+                    jButton12.setForeground(colorBlack);
+                    jButton2.setForeground(colorBlack);
+                    jButton3.setForeground(colorBlack);
+                    jButton4.setForeground(colorBlack);
+                }
+            });
+        } catch(Exception ex) {
+            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void disableButtons() {
+        try {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    final java.awt.Color colorGrey = new java.awt.Color(102, 102, 102);
+                    jButton1.setForeground(colorGrey);
+                    jButton8.setForeground(colorGrey);
+                    jButton9.setForeground(colorGrey);
+                    jButton12.setForeground(colorGrey);
+                    jButton2.setForeground(colorGrey);
+                    jButton3.setForeground(colorGrey);
+                    jButton4.setForeground(colorGrey);
+                    setTitle("Программа обработки заявок покупателей");
+                }
+            });
+        } catch(Exception ex) {
+            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private Runnable logout() {
+        activeUser.clear();
+        if (passHandle != null) {
+            passHandle.cancel(true);
+        }
+        return new Runnable() {
+            public void run() {
+                disableButtons();
+            }
+        };
+    }
+
+    private boolean checkLogin() {
+        if (getActiveUsers().isEmpty() || !activeUser.isEmpty()) {
+            return true;
+        }
+        if (passHandle != null) {
+            passHandle.cancel(true);
+        }
+        passHandle = scheduler.scheduleAtFixedRate(logout(), 0, 2, TimeUnit.HOURS);
+        javax.swing.JLabel jLabelName = new javax.swing.JLabel("Введите имя пользователя");
+        final javax.swing.JTextField jTextField = new javax.swing.JTextField();
+        javax.swing.JLabel jLabel = new javax.swing.JLabel("Введите пароль пользователя");
+        final javax.swing.JTextField jPassword = new javax.swing.JPasswordField();
+        Object[] objects = {jLabelName, jTextField, jLabel, jPassword};
+        String[] options = {"ОК", "Отмена"};
+        while (true) {
+            int result = javax.swing.JOptionPane.showOptionDialog(this, objects,
+                    "Имя пользователя и пароль", javax.swing.JOptionPane.OK_CANCEL_OPTION,
+                    javax.swing.JOptionPane.QUESTION_MESSAGE, null, options, null);
+            if (result == javax.swing.JOptionPane.OK_OPTION) {
+                Optional<Map<String, Object>> user = $.find(users, new Predicate<Map<String, Object>>() {
+                    public Boolean apply(Map<String, Object> arg) {
+                        return $.isBoolean(arg.get("active")) && (Boolean) arg.get("active")
+                                && jTextField.getText().trim().equals(arg.get("login"))
+                                && jPassword.getText().equals(arg.get("pass"));
+                    }
+                });
+                if (!user.isPresent()) {
+                    final javax.swing.JOptionPane optionPane = new javax.swing.JOptionPane("Неверный пароль",
+                            javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                            javax.swing.JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+                    final javax.swing.JDialog dialog = new javax.swing.JDialog(this);
+                    dialog.setLocationRelativeTo(this);
+                    dialog.setTitle("Неверный пароль");
+                    dialog.setModal(true);
+                    dialog.setContentPane(optionPane);
+                    dialog.setDefaultCloseOperation(javax.swing.JDialog.DO_NOTHING_ON_CLOSE);
+                    dialog.pack();
+                    $.delay(new Function<Void>() {
+                        public Void apply() {
+                            dialog.dispose();
+                            return null;
+                        }
+                    }, 1500);
+                    dialog.setVisible(true);
+                    continue;
+                }
+                activeUser.putAll(user.get());
+                enableButtons();
+                setTitle("Программа обработки заявок покупателей, оператор: " + activeUser.get("login"));
+                return true;
+            } else {
+                break;
+            }
+        }
+        return false;
     }
     
     private static class MyModel extends AbstractTableModel {
@@ -1084,6 +1226,7 @@ public class Form1 extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
 
@@ -1777,6 +1920,9 @@ public class Form1 extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem4);
 
+        jMenuItem5.setText("Выйти из системы");
+        jMenu3.add(jMenuItem5);
+
         jMenuBar1.add(jMenu3);
 
         jMenu2.setMnemonic('\u0441');
@@ -1944,6 +2090,9 @@ public class Form1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (!checkLogin()) {
+            return;
+        }
         Map<String, Object> data = createOrderData();
         if (database.get("currentOrder") != null
             && !$.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
@@ -2031,6 +2180,7 @@ public class Form1 extends javax.swing.JFrame {
                 .setPass(pass)
                 .setUseXlsx(useXlsx)
                 .setXlsxPath(xlsxPath)
+                .setShowDbNumber(showDbNumber)
                 .createNewJDialog2();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
@@ -2043,10 +2193,20 @@ public class Form1 extends javax.swing.JFrame {
             pass = dialog.getPass();
             useXlsx = dialog.getUseXlsx();
             xlsxPath = dialog.getXlsxPath();
+            showDbNumber = dialog.getShowDbNumber();
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    jLabel24.setVisible(showDbNumber);
+                    jLabel25.setVisible(showDbNumber);
+                }
+            });
         }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        if (!checkLogin()) {
+            return;
+        }
         Optional<Map<String, Object>> product = database.get("productData") == null
                 ? Optional.<Map<String, Object>>absent()
                 : $.find((List<Map<String, Object>>) database.get("productData"),
@@ -2069,6 +2229,9 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton8KeyPressed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        if (!checkLogin()) {
+            return;
+        }
         Map<String, Object> data = createOrderData();
         if (database.get("currentOrder") != null
             && !$.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
@@ -2179,6 +2342,9 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel29MouseClicked
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        if (!checkLogin()) {
+            return;
+        }
         saveData(createOrderData());
     }//GEN-LAST:event_jButton12ActionPerformed
 
@@ -2211,8 +2377,11 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox6KeyPressed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-                dossieDialog.reload();
-                dossieDialog.setVisible(true);
+        if (!checkLogin()) {
+            return;
+        }
+        dossieDialog.reload();
+        dossieDialog.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton2KeyPressed
@@ -2220,17 +2389,23 @@ public class Form1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2KeyPressed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-                searchOrders();
+        if (!checkLogin()) {
+            return;
+        }
+        searchOrders();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton3KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton3KeyPressed
-                focusNextElementOnPressEnter(evt);
+        focusNextElementOnPressEnter(evt);
     }//GEN-LAST:event_jButton3KeyPressed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        if (!checkLogin()) {
+            return;
+        }
         int result = chooser1.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-                writeDataFile(chooser1.getSelectedFile().getAbsolutePath());
+            writeDataFile(chooser1.getSelectedFile().getAbsolutePath());
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -2243,7 +2418,7 @@ public class Form1 extends javax.swing.JFrame {
             javax.swing.JLabel jLabel = new javax.swing.JLabel("Введите пароль администратора");
             final javax.swing.JTextField jPassword = new javax.swing.JPasswordField();
             Object[] objects = {jLabel, jPassword};
-            String[] options = {"OK", "Cancel"};
+            String[] options = {"ОК", "Отмена"};
             int result = javax.swing.JOptionPane.showOptionDialog(this, objects,
                     "Пароль администратора", javax.swing.JOptionPane.OK_CANCEL_OPTION,
                     javax.swing.JOptionPane.QUESTION_MESSAGE, null, options, null);
@@ -2276,7 +2451,8 @@ public class Form1 extends javax.swing.JFrame {
         NewJDialog5 dialog = new NewJDialog5(this, useXlsx, jComboBox1.getModel(),
                 jComboBox2.getModel(), jComboBox3.getModel(), jComboBox7.getModel(),
                 jComboBox8.getModel(),
-                (List<Map<String, Object>>) database.get("productData"), useXlsx, xlsxPath, adminPass);
+                (List<Map<String, Object>>) database.get("productData"), useXlsx, xlsxPath, adminPass,
+                users);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {
@@ -2286,7 +2462,17 @@ public class Form1 extends javax.swing.JFrame {
             jComboBox7.setModel(dialog.getModel4());
             jComboBox8.setModel(dialog.getModel5());
             database.put("productData", dialog.getProductData());
-                    database.put("paymentMethodData", new ArrayList<String>());
+            if (!users.equals(dialog.getUserData())) {
+                users.clear();
+                users.addAll(dialog.getUserData());
+                database.put("userData", encrypt($.toJson(dialog.getUserData())));
+                if (getActiveUsers().isEmpty()) {
+                    enableButtons();
+                } else {
+                    logout().run();
+                }
+            }
+            database.put("paymentMethodData", new ArrayList<String>());
             for (int index = 0; index < jComboBox1.getModel().getSize(); index += 1) {
                 ((List<String>) database.get("paymentMethodData")).add(
                     String.valueOf(jComboBox1.getModel().getElementAt(index)).trim());
@@ -2455,6 +2641,7 @@ public class Form1 extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

@@ -27,7 +27,7 @@ public class NewJDialog2 extends javax.swing.JDialog {
      */
     public NewJDialog2(java.awt.Frame parent, boolean modal,
             boolean useMysql, String hostName, String dbName, String user, String pass,
-            boolean useXlsx, String xlsxPath) {
+            boolean useXlsx, String xlsxPath, boolean showDbNumber) {
         super(parent, modal);
         initComponents();
         jCheckBox1.setSelected(useMysql);
@@ -40,6 +40,7 @@ public class NewJDialog2 extends javax.swing.JDialog {
         chooser1.setDialogTitle("Select XLSX file");
         chooser1.setCurrentDirectory(new File("."));
         chooser1.setFileFilter(new FilterXlsx());
+        jCheckBox3.setSelected(showDbNumber);
     }
     
     public boolean isApproved() {
@@ -74,6 +75,10 @@ public class NewJDialog2 extends javax.swing.JDialog {
         return jTextField4.getText();
     }
 
+    public boolean getShowDbNumber() {
+        return jCheckBox3.isSelected();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -98,17 +103,26 @@ public class NewJDialog2 extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jCheckBox3 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Параметры...");
         setResizable(false);
 
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel1.setText("Имя базы данных");
 
+        jTextField1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel2.setText("Имя пользователя");
 
+        jLabel3.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel3.setText("Пароль");
 
+        jTextField2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+
+        jPasswordField1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jPasswordField1.setText("jPasswordField1");
 
         jButton5.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
@@ -127,19 +141,36 @@ public class NewJDialog2 extends javax.swing.JDialog {
             }
         });
 
+        jLabel4.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel4.setText("Имя сервера");
 
+        jTextField3.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+
+        jCheckBox1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Синхронизировать данные с базой MySQL");
 
+        jCheckBox2.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jCheckBox2.setText("Синхронизировать данные с таблицей Excel");
 
+        jLabel5.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jLabel5.setText("Путь к файлу");
 
+        jTextField4.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+
+        jButton1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         jButton1.setText("Выбрать файл");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jCheckBox3.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jCheckBox3.setText("Показывать номер для записи в базе");
+        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox3ActionPerformed(evt);
             }
         });
 
@@ -157,27 +188,32 @@ public class NewJDialog2 extends javax.swing.JDialog {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel5))
                 .add(18, 18, 18)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jTextField3)
                     .add(jTextField1)
                     .add(jTextField2)
                     .add(jPasswordField1)
                     .add(layout.createSequentialGroup()
                         .add(jTextField4)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jButton1)))
+                        .add(jButton1))
+                    .add(jTextField3))
                 .addContainerGap())
-            .add(layout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jCheckBox1)
-                    .add(jCheckBox2))
-                .add(196, 196, 196))
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jButton5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6))
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(6, 6, 6)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jCheckBox1)
+                            .add(jCheckBox2)))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jCheckBox3)))
+                .add(196, 221, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -207,7 +243,9 @@ public class NewJDialog2 extends javax.swing.JDialog {
                     .add(jLabel5)
                     .add(jTextField4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jButton1))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jCheckBox3)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 8, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jButton5)
                     .add(jButton6))
@@ -226,6 +264,10 @@ public class NewJDialog2 extends javax.swing.JDialog {
         setVisible(false);
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox3ActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (chooser1.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
             return;
@@ -239,6 +281,7 @@ public class NewJDialog2 extends javax.swing.JDialog {
     private javax.swing.JButton jButton6;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
