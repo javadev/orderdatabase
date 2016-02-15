@@ -71,6 +71,7 @@ public class Form1 extends javax.swing.JFrame {
     private String xlsxPath;
     private String adminPass;
     private boolean showDbNumber;
+    private byte[] passIv;
 
     public Form1() {
         initComponents();
@@ -115,8 +116,9 @@ public class Form1 extends javax.swing.JFrame {
         hostName = (String) database.get("hostName");
         dbName = (String) database.get("dbName");
         user = (String) database.get("user");
+        passIv = database.get("passIv") == null ? "PWJB6205kuou(!@-".getBytes() : javax.xml.bind.DatatypeConverter.parseBase64Binary((String) database.get("passIv"));
         pass = database.get("pass") == null ? null
-                : decrypt(((String) database.get("pass")));
+                : decrypt(((String) database.get("pass")), passIv);
         useXlsx = database.get("useXlsx") == null ? true : (Boolean) database.get("useXlsx");
         xlsxPath = (String) database.get("xlsxPath");
         ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).setText((String) database.get("searchDataText"));
@@ -133,7 +135,14 @@ public class Form1 extends javax.swing.JFrame {
             jCheckBoxMenuItem1.setSelected(false);
         }
         adminPass = database.get("adminPass") == null ? null
-                : decrypt(((String) database.get("adminPass")));
+                : decrypt(((String) database.get("adminPass")), passIv);
+        if (database.get("userData") instanceof String) {
+            users.addAll((List<Map<String, Object>>) $.fromJson(decrypt((String) database.get("userData"), passIv)));
+            if (!getActiveUsers().isEmpty()) {
+                disableButtons();
+            }
+        }
+        passIv = generateIv();
         final java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         if (database.get("locationX") instanceof Long && database.get("locationY") instanceof Long) {
             setLocation(Math.min(screenSize.width - 50, ((Long) database.get("locationX")).intValue()),
@@ -215,12 +224,6 @@ public class Form1 extends javax.swing.JFrame {
                 });
             }
         });
-        if (database.get("userData") instanceof String) {
-            users.addAll((List<Map<String, Object>>) $.fromJson(decrypt((String) database.get("userData"))));
-            if (!getActiveUsers().isEmpty()) {
-                disableButtons();
-            }
-        }
     }
 
     private List<Map<String, Object>> getActiveUsers() {
@@ -614,8 +617,9 @@ public class Form1 extends javax.swing.JFrame {
         database.put("hostName", hostName);
         database.put("dbName", dbName);
         database.put("user", user);
-        database.put("pass", pass == null ? null : encrypt(pass));
-        database.put("adminPass", adminPass == null ? null : encrypt(adminPass));
+        database.put("passIv", passIv == null ? null : javax.xml.bind.DatatypeConverter.printBase64Binary(passIv));
+        database.put("pass", pass == null ? null : encrypt(pass, passIv));
+        database.put("adminPass", adminPass == null ? null : encrypt(adminPass, passIv));
         database.put("useXlsx", useXlsx);
         database.put("xlsxPath", xlsxPath);
         database.put("showDbNumber", showDbNumber);
@@ -627,9 +631,16 @@ public class Form1 extends javax.swing.JFrame {
         }
     }
     
-    public static String encrypt(String value) {
+    private static byte[] generateIv() {
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        byte[] ivBytes = new byte[16];
+        random.nextBytes(ivBytes);
+        return ivBytes;
+    }
+
+    private static String encrypt(String value, byte[] passIv) {
          try {
-             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
+             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec(passIv);
              javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
 
              javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
@@ -642,9 +653,9 @@ public class Form1 extends javax.swing.JFrame {
          }
      }
  
-     public static String decrypt(String encrypted) {
+     private static String decrypt(String encrypted, byte[] passIv) {
          try {
-             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
+             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec(passIv);
              javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
 
              javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
@@ -2465,7 +2476,7 @@ public class Form1 extends javax.swing.JFrame {
             if (!users.equals(dialog.getUserData())) {
                 users.clear();
                 users.addAll(dialog.getUserData());
-                database.put("userData", encrypt($.toJson(dialog.getUserData())));
+                database.put("userData", encrypt($.toJson(dialog.getUserData()), passIv));
                 if (getActiveUsers().isEmpty()) {
                     enableButtons();
                 } else {
