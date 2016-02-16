@@ -87,13 +87,14 @@ public class DatabaseService {
     public List<Map<String, Object>> readAll() {
         List<Map<String, Object>> result = new ArrayList<>();
         Connection conn = null;
-        Statement stmt = null;
+        Statement stmt1 = null;
+        Statement stmt2 = null;
         try {
             conn = createConnection();
-            stmt = conn.createStatement();
-            try (ResultSet resultSet = stmt.executeQuery(SELECT_ORDERDATA_SQL)) {
+            stmt1 = conn.createStatement();
+            try (ResultSet resultSet = stmt1.executeQuery(SELECT_ORDERDATA_SQL)) {
                 while (resultSet.next()) {
-                    Map<String, Object> data = new LinkedHashMap<String, Object>();
+                    Map<String, Object> data = new LinkedHashMap<>();
                     for (String field : FIELD_NAMES) {
                         data.put(field, "created".equals(field) ? resultSet.getLong(field) : resultSet.getString(field));
                     }
@@ -102,13 +103,15 @@ public class DatabaseService {
             }
             Map<String, List<Map<String, Object>>> resultById = $.groupBy(result,
                 new Function1<Map<String, Object>, String>() {
+                    @Override
                     public String apply(Map<String, Object> item) {
                         return (String) item.get("_id");
                     }
                 });
-            try (ResultSet resultSet = stmt.executeQuery(SELECT_PRODUCTDATA_SQL)) {
+            stmt2 = conn.createStatement();
+            try (ResultSet resultSet = stmt2.executeQuery(SELECT_PRODUCTDATA_SQL)) {
                 while (resultSet.next()) {
-                    Map<String, Object> data = new LinkedHashMap<String, Object>();
+                    Map<String, Object> data = new LinkedHashMap<>();
                     for (String field : PRODUCT_FIELD_NAMES) {
                         data.put(field, "created".equals(field) ? resultSet.getLong(field) : resultSet.getString(field));
                     }
@@ -122,14 +125,10 @@ public class DatabaseService {
                 }
             }
         } catch (SQLException | ClassNotFoundException se) {
-            checkExceptionAndCreateTable(se, stmt);
+            checkExceptionAndCreateTable(se, conn);
         } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException se) {
-            }
+            closeStatement(stmt1);
+            closeStatement(stmt2);
             try {
                 if (conn != null) {
                     conn.rollback();
@@ -141,32 +140,62 @@ public class DatabaseService {
         return result;
     }
     
-    private void alterTable(Statement stmt) throws SQLException {
+    private void closeStatement(Statement stmt) {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+        } catch (SQLException se) {
+        }
+    }
+
+    private void alterTable(Connection conn) throws SQLException {
+        Statement stmt = null;
+        try {
+        stmt = conn.createStatement();
         stmt.getConnection().setAutoCommit(false);
         String sqlAlter1 = "ALTER TABLE orderdata ADD status VARCHAR(255);";
         stmt.executeUpdate(sqlAlter1);
         String sqlAlter2 = "ALTER TABLE orderdata ADD user VARCHAR(255);";
         stmt.executeUpdate(sqlAlter2);
-        stmt.getConnection().commit();    
+        stmt.getConnection().commit();
+        } finally {
+            closeStatement(stmt);
+        }
     }
     
-    private void alterTableCountry(Statement stmt) throws SQLException {
+    private void alterTableCountry(Connection conn) throws SQLException {
+        Statement stmt = null;
+        try {
+        stmt = conn.createStatement();
         stmt.getConnection().setAutoCommit(false);
         String sqlAlter1 = "ALTER TABLE orderdata ADD country VARCHAR(255);";
         stmt.executeUpdate(sqlAlter1);
         stmt.getConnection().commit();    
+        } finally {
+            closeStatement(stmt);
+        }
     }
     
-    private void alterTableTotalSum(Statement stmt) throws SQLException {
+    private void alterTableTotalSum(Connection conn) throws SQLException {
+        Statement stmt = null;
+        try {
+        stmt = conn.createStatement();
         stmt.getConnection().setAutoCommit(false);
         String sqlAlter1 = "ALTER TABLE orderdata ADD totalSum VARCHAR(255);";
         stmt.executeUpdate(sqlAlter1);
         String sqlAlter2 = "ALTER TABLE orderdata ADD discount VARCHAR(255);";
         stmt.executeUpdate(sqlAlter2);
         stmt.getConnection().commit();    
+        } finally {
+            closeStatement(stmt);
+        }
     }
 
-    private void createTable(Statement stmt) throws SQLException {
+    private void createTable(Connection conn) throws SQLException {
+        Statement stmt = null;
+        try {
+        stmt = conn.createStatement();
         stmt.getConnection().setAutoCommit(false);
         stmt.executeUpdate(CREATE_ORDERDATA_SQL);
         String restrictionUpdate =
@@ -180,9 +209,15 @@ public class DatabaseService {
             + ";";
         stmt.executeUpdate(restrictionDelete);
         stmt.getConnection().commit();
+        } finally {
+            closeStatement(stmt);
+        }
     }
 
-    private void createProductTable(Statement stmt) throws SQLException {
+    private void createProductTable(Connection conn) throws SQLException {
+        Statement stmt = null;
+        try {
+        stmt = conn.createStatement();
         stmt.getConnection().setAutoCommit(false);
         stmt.executeUpdate(CREATE_PRODUCTDATA_SQL);
         String restrictionUpdate =
@@ -196,29 +231,33 @@ public class DatabaseService {
             + ";";
         stmt.executeUpdate(restrictionDelete);
         stmt.getConnection().commit();
+        } finally {
+            closeStatement(stmt);
+        }
     }
         
     public void insertData(List<Map<String, Object>> dataList) {
         Connection conn = null;
-        PreparedStatement stmt = null;
+        PreparedStatement stmt1 = null;
+        PreparedStatement stmt2 = null;
         try {
             conn = createConnection();
-            stmt = conn.prepareStatement(INSERT_ORDERDATA_SQL);
-            stmt.getConnection().setAutoCommit(false);
+            stmt1 = conn.prepareStatement(INSERT_ORDERDATA_SQL);
+            stmt1.getConnection().setAutoCommit(false);
             for (Map<String, Object> data : dataList) {
                 int index = 1;
                 for (String field : FIELD_NAMES) {
                     if ("created".equals(field)) {
-                        stmt.setLong(index, (Long) data.get(field));
+                        stmt1.setLong(index, (Long) data.get(field));
                     } else {
-                        stmt.setString(index, (String) data.get(field));
+                        stmt1.setString(index, (String) data.get(field));
                     }
                     index += 1;
                 }
-                stmt.executeUpdate();
+                stmt1.executeUpdate();
             }
-            stmt = conn.prepareStatement(INSERT_PRODUCTDATA_SQL);
-            stmt.getConnection().setAutoCommit(false);
+            stmt2 = conn.prepareStatement(INSERT_PRODUCTDATA_SQL);
+            stmt2.getConnection().setAutoCommit(false);
             for (Map<String, Object> data : dataList) {
                 if (data.get("products") == null || ((List<Map<String, Object>>) data.get("products")).isEmpty()) {
                     continue;
@@ -226,22 +265,18 @@ public class DatabaseService {
                 for (Map<String, Object> product : (List<Map<String, Object>>) data.get("products")) {
                     int index = 1;
                     for (String field : PRODUCT_FIELD_NAMES) {
-                        stmt.setString(index, (String) product.get(field));
+                        stmt2.setString(index, (String) product.get(field));
                         index += 1;
                     }
                 }
-                stmt.executeUpdate();
+                stmt2.executeUpdate();
             }
-            stmt.getConnection().commit();
+            conn.commit();
         } catch (SQLException | ClassNotFoundException se) {
-            checkExceptionAndCreateTable(se, stmt);
+            checkExceptionAndCreateTable(se, conn);
         } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException se) {
-            }
+            closeStatement(stmt1);
+            closeStatement(stmt2);
             try {
                 if (conn != null) {
                     conn.rollback();
@@ -252,47 +287,47 @@ public class DatabaseService {
         }
     }
 
-    private void checkExceptionAndCreateTable(final Exception se, Statement stmt) {
+    private void checkExceptionAndCreateTable(final Exception se, Connection conn) {
         if (se instanceof MySQLSyntaxErrorException) {
             String detailMessage = ((MySQLSyntaxErrorException) se).getMessage();
             if (detailMessage.contains("orderdata' doesn't exist")) {
                 try {
-                    createTable(stmt);
-                    createProductTable(stmt);
+                    createTable(conn);
+                    createProductTable(conn);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if (detailMessage.contains("Unknown column 'status'")) {
                 try {
-                    alterTable(stmt);
-                    alterTableCountry(stmt);
-                    createProductTable(stmt);
-                    alterTableTotalSum(stmt);
+                    alterTable(conn);
+                    alterTableCountry(conn);
+                    createProductTable(conn);
+                    alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if (detailMessage.contains("Unknown column 'country'")) {
                 try {
-                    alterTableCountry(stmt);
-                    createProductTable(stmt);
-                    alterTableTotalSum(stmt);
+                    alterTableCountry(conn);
+                    createProductTable(conn);
+                    alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if (detailMessage.contains("productdata' doesn't exist")) {
                 try {
-                    createProductTable(stmt);
-                    alterTableTotalSum(stmt);
+                    createProductTable(conn);
+                    alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if (detailMessage.contains("Unknown column 'totalSum'")) {
                 try {
-                    alterTableTotalSum(stmt);
+                    alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
                     Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
@@ -304,7 +339,7 @@ public class DatabaseService {
 
     private Connection createConnection() throws ClassNotFoundException, SQLException {
         Connection conn;
-        Class.forName("com.mysql.jdbc.Driver");
+        Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(getDbUrl(), user, pass);
         return conn;
     }
