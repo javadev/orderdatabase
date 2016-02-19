@@ -463,8 +463,7 @@ public class Form1 extends javax.swing.JFrame {
             for (Map<String, Object> data : dataList) {
                 ids.add((String) data.get("_id"));
             }
-            List<Map<String, Object>> dbDataList = new DatabaseService(hostName, dbName,
-                activeUser.isEmpty() ? user : (String) activeUser.get("login"), pass).readAll();
+            List<Map<String, Object>> dbDataList = new DatabaseService(hostName, dbName, user, pass).readAll();
             for (Map<String, Object> data : dbDataList) {
                 if (!ids.contains((String) data.get("_id"))) {
                     dataList.add(data);
@@ -491,8 +490,7 @@ public class Form1 extends javax.swing.JFrame {
 
     private void saveDatabaseData() {
         if (useMySql) {
-            DatabaseService databaseService = new DatabaseService(hostName, dbName,
-                activeUser.isEmpty() ? user : (String) activeUser.get("login"), pass);
+            DatabaseService databaseService = new DatabaseService(hostName, dbName, user, pass);
             Set<String> ids = new HashSet<String>();
             List<Map<String, Object>> dbDataList = databaseService.readAll();
             for (Map<String, Object> data : dbDataList) {
@@ -613,7 +611,7 @@ public class Form1 extends javax.swing.JFrame {
         database.put("useMySql", useMySql);
         database.put("hostName", hostName);
         database.put("dbName", dbName);
-        database.put("user", user);
+        database.put("user", activeUser.isEmpty() ? user : activeUser.get("login"));
         database.put("pass", pass == null ? null : encrypt(pass));
         database.put("adminPass", adminPass == null ? null : encrypt(adminPass));
         database.put("useXlsx", useXlsx);
