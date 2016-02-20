@@ -617,48 +617,43 @@ public class Form1 extends javax.swing.JFrame {
         database.put("useXlsx", useXlsx);
         database.put("xlsxPath", xlsxPath);
         database.put("showDbNumber", showDbNumber);
-        
-        try {
-            Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
-        } catch (IOException ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveDatabase();
     }
     
     public static String encrypt(String value) {
-         try {
-             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
-             javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
+        try {
+            javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
+            javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
 
-             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
-             cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec, iv);
+            javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec, iv);
 
-             byte[] encrypted = cipher.doFinal(value.getBytes("UTF-8"));
-             return javax.xml.bind.DatatypeConverter.printBase64Binary(encrypted);
-         } catch (Exception ex) {
-             return "";
-         }
-     }
+            byte[] encrypted = cipher.doFinal(value.getBytes("UTF-8"));
+            return javax.xml.bind.DatatypeConverter.printBase64Binary(encrypted);
+        } catch (Exception ex) {
+            return "";
+        }
+    }
  
-     public static String decrypt(String encrypted) {
-         try {
-             javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
-             javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
+    public static String decrypt(String encrypted) {
+        try {
+            javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
+            javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
 
-             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
-             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, skeySpec, iv);
+            javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(javax.crypto.Cipher.DECRYPT_MODE, skeySpec, iv);
 
-             byte[] original = cipher.doFinal(javax.xml.bind.DatatypeConverter.parseBase64Binary(encrypted));
+            byte[] original = cipher.doFinal(javax.xml.bind.DatatypeConverter.parseBase64Binary(encrypted));
 
-             final String decrypted = new String(original, "UTF-8");
-             if (!encrypted.isEmpty() && decrypted.isEmpty()) {
-                 return new String(xor(encrypted.getBytes("UTF-8"), "UTF-8".getBytes("UTF-8")), "UTF-8");
-             }
-             return decrypted;
-         } catch (Exception ex) {
-             return "";
-         }
-     }
+            final String decrypted = new String(original, "UTF-8");
+            if (!encrypted.isEmpty() && decrypted.isEmpty()) {
+                return new String(xor(encrypted.getBytes("UTF-8"), "UTF-8".getBytes("UTF-8")), "UTF-8");
+            }
+            return decrypted;
+        } catch (Exception ex) {
+            return "";
+        }
+    }
 
     private List<Long> getColumnWidth(javax.swing.JTable jTable) {
         int columnCount = jTable.getColumnModel().getColumnCount();
@@ -798,7 +793,9 @@ public class Form1 extends javax.swing.JFrame {
         }
         return new Runnable() {
             public void run() {
-                disableButtons();
+                if (!getActiveUsers().isEmpty()) {
+                    disableButtons();
+                }
             }
         };
     }
@@ -830,23 +827,10 @@ public class Form1 extends javax.swing.JFrame {
                     }
                 });
                 if (!user.isPresent()) {
-                    final javax.swing.JOptionPane optionPane = new javax.swing.JOptionPane("Неверный пароль",
-                            javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                            javax.swing.JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
-                    final javax.swing.JDialog dialog = new javax.swing.JDialog(this);
-                    dialog.setLocationRelativeTo(this);
-                    dialog.setTitle("Неверный пароль");
-                    dialog.setModal(true);
-                    dialog.setContentPane(optionPane);
-                    dialog.setDefaultCloseOperation(javax.swing.JDialog.DO_NOTHING_ON_CLOSE);
-                    dialog.pack();
-                    $.delay(new Function<Void>() {
-                        public Void apply() {
-                            dialog.dispose();
-                            return null;
-                        }
-                    }, 1500);
-                    dialog.setVisible(true);
+                    displayPopup("Неверный пароль");
+                    continue;
+                }
+                if (!checkChangePass(user.get())) {
                     continue;
                 }
                 activeUser.putAll(user.get());
@@ -860,6 +844,65 @@ public class Form1 extends javax.swing.JFrame {
         return false;
     }
     
+    private void displayPopup(String message) {
+        final javax.swing.JOptionPane optionPane = new javax.swing.JOptionPane(message,
+                javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                javax.swing.JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+        final javax.swing.JDialog dialog = new javax.swing.JDialog(this);
+        dialog.setLocationRelativeTo(this);
+        dialog.setTitle(message);
+        dialog.setModal(true);
+        dialog.setContentPane(optionPane);
+        dialog.setDefaultCloseOperation(javax.swing.JDialog.DO_NOTHING_ON_CLOSE);
+        dialog.pack();
+        $.delay(new Function<Void>() {
+            public Void apply() {
+                dialog.dispose();
+                return null;
+            }
+        }, 1500);
+        dialog.setVisible(true);
+    }
+
+    private void saveDatabase() {
+        try {
+            Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
+        } catch (IOException ex) {
+            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private boolean checkChangePass(Map<String, Object> user) {
+        if (user.get("passChanged") != null) {
+            if (new Date().getTime() - (Long) user.get("passChanged") > 86400000L * 90) {
+                displayPopup("Учётная запись заблокирована");
+                return false;
+            }
+            if (new Date().getTime() - (Long) user.get("passChanged") < 86400000L * 30) {
+                return true;
+            }
+        }
+        return changePassword(user);
+    }
+    
+    private boolean changePassword(Map<String, Object> user) {
+        if (user.isEmpty()) {
+            return false;
+        }
+        NewJDialog6 dialog = new NewJDialog6((java.awt.Frame) getOwner(),
+            "Изменение пароля пользователя", true, (String) user.get("pass"));
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+        if (dialog.isApproved()) {
+            user.put("pass", dialog.getPass());
+            user.put("passChanged", new Date().getTime());
+            database.put("userData", encrypt($.toJson(users)));
+            saveDatabase();
+            return true;
+        }
+        return false;
+    }
+
     private static class MyModel extends AbstractTableModel {
 
         private static final String[] columnNames = {"Номер", "Фамилия", "Имя", "Отчество"};
@@ -1224,6 +1267,7 @@ public class Form1 extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -1918,7 +1962,20 @@ public class Form1 extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem4);
 
+        jMenuItem6.setText("Изменить пароль");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem6);
+
         jMenuItem5.setText("Выйти из системы");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem5);
 
         jMenuBar1.add(jMenu3);
@@ -2446,11 +2503,16 @@ public class Form1 extends javax.swing.JFrame {
                 return;
             }
         }
+        Function<List<Map<String, Object>>> getDatabaseDataFunc = new Function<List<Map<String, Object>>>() {
+            public List<Map<String, Object>> apply() {
+                return getDatabaseData();
+            }
+        };
         NewJDialog5 dialog = new NewJDialog5(this, useXlsx, jComboBox1.getModel(),
                 jComboBox2.getModel(), jComboBox3.getModel(), jComboBox7.getModel(),
                 jComboBox8.getModel(),
                 (List<Map<String, Object>>) database.get("productData"), useXlsx, xlsxPath, adminPass,
-                users);
+                users, getDatabaseDataFunc);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {
@@ -2464,6 +2526,7 @@ public class Form1 extends javax.swing.JFrame {
                 users.clear();
                 users.addAll(dialog.getUserData());
                 database.put("userData", encrypt($.toJson(dialog.getUserData())));
+                saveDatabase();
                 if (getActiveUsers().isEmpty()) {
                     enableButtons();
                 } else {
@@ -2506,6 +2569,14 @@ public class Form1 extends javax.swing.JFrame {
     private void jComboBox8KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBox8KeyPressed
                 focusNextElementOnPressEnter(evt);
     }//GEN-LAST:event_jComboBox8KeyPressed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        logout().run();
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        changePassword(activeUser);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void initTimer() {
         int index = jComboBox6.getSelectedIndex();
@@ -2640,6 +2711,7 @@ public class Form1 extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

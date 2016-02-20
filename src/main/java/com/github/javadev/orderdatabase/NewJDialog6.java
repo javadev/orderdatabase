@@ -8,8 +8,8 @@ public class NewJDialog6 extends javax.swing.JDialog {
     /**
      * Creates new form NewJDialog6
      */
-    public NewJDialog6(java.awt.Frame parent, boolean modal, String pass) {
-        super(parent, modal);
+    public NewJDialog6(java.awt.Frame parent, String title, boolean modal, String pass) {
+        super(parent, title, modal);
         initComponents();
         this.pass = pass;
     }
@@ -42,7 +42,6 @@ public class NewJDialog6 extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Изменение пароля администратора");
         setResizable(false);
 
         jButton5.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
@@ -155,6 +154,10 @@ public class NewJDialog6 extends javax.swing.JDialog {
             jLabel1.setText("Неверный новый пароль!");
             return;
         };
+        if (jTextField1.getText().trim().equals(pass)) {
+            jLabel1.setText("Неверный новый пароль!");
+            return;
+        }
         setVisible(false);
         isApproved = true;
     }//GEN-LAST:event_jButton5ActionPerformed

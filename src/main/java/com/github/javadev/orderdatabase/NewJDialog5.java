@@ -1,5 +1,6 @@
 package com.github.javadev.orderdatabase;
 
+import com.github.underscore.Function;
 import com.github.underscore.lodash.$;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,9 @@ public class NewJDialog5 extends javax.swing.JDialog {
     private final boolean useXlsx;
     private final String xlsxPath;
     private final String adminPass;
-    private String newAdminPass;
     private List<Map<String, Object>> userData;
+    private final Function<List<Map<String, Object>>> databaseDataFunc;
+    private String newAdminPass;
     private boolean isApproved;
     
     /**
@@ -29,7 +31,8 @@ public class NewJDialog5 extends javax.swing.JDialog {
             ComboBoxModel model4, ComboBoxModel model5,
             List<Map<String, Object>> productData, boolean useXlsx,
             String xlsxPath, String adminPass,
-            List<Map<String, Object>> userData) {
+            List<Map<String, Object>> userData,
+            Function<List<Map<String, Object>>> databaseDataFunc) {
         super(parent, modal);
         initComponents();
         this.model1 = cloneComboBoxModel(model1);
@@ -45,6 +48,7 @@ public class NewJDialog5 extends javax.swing.JDialog {
         this.newAdminPass = adminPass;
         this.userData = (List<Map<String, Object>>) (userData == null ?
                 new ArrayList<>() : (List<Map<String, Object>>) $.clone(userData));
+        this.databaseDataFunc = databaseDataFunc;
     }
     
     private ComboBoxModel cloneComboBoxModel(ComboBoxModel model) {
@@ -231,12 +235,10 @@ public class NewJDialog5 extends javax.swing.JDialog {
         });
 
         jLabel29.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        jLabel29.setForeground(new java.awt.Color(102, 102, 102));
         jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel29.setText("Статистика использования");
 
         jButton15.setText("...");
-        jButton15.setEnabled(false);
         jButton15.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton15ActionPerformed(evt);
@@ -377,7 +379,8 @@ public class NewJDialog5 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
-        NewJDialog6 dialog = new NewJDialog6((java.awt.Frame) getOwner(), true, adminPass);
+        NewJDialog6 dialog = new NewJDialog6((java.awt.Frame) getOwner(), 
+            "Изменение пароля администратора", true, adminPass);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         if (dialog.isApproved()) {
@@ -414,7 +417,10 @@ public class NewJDialog5 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
-        // TODO add your handling code here:
+        NewJDialog9 dialog = new NewJDialog9((java.awt.Frame) getOwner(), true,
+            databaseDataFunc);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }//GEN-LAST:event_jButton15ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
