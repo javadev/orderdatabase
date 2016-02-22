@@ -46,7 +46,7 @@ public class NewJDialog7 extends javax.swing.JDialog {
 
     private static class MyModel extends AbstractTableModel {
 
-        private static final String[] columnNames = {"Дата создания", "Имя пользователя", "Разрешён"};
+        private static final String[] columnNames = {"Дата создания", "Дата изменения", "Имя пользователя", "Разрешён"};
         private final List<Map<String, Object>> list;
 
         private MyModel(List<Map<String, Object>> list) {
@@ -54,10 +54,10 @@ public class NewJDialog7 extends javax.swing.JDialog {
         }
         
         Class[] types = new Class [] {
-            java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
         };
         boolean[] canEdit = new boolean [] {
-            false, false, true
+            false, false, false, true
         };
 
         @Override
@@ -73,7 +73,7 @@ public class NewJDialog7 extends javax.swing.JDialog {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
-            if (col == 2) {
+            if (col == 3) {
                 Map<String, Object> newRow = (Map<String, Object>) $.clone((Map<String, Object>) list.get(row));
                 newRow.put("active", value);
                 list.set(row, newRow);
@@ -106,8 +106,14 @@ public class NewJDialog7 extends javax.swing.JDialog {
                     }
                     return "";
                 case 1:
-                    return list.get(rowIndex).get("login");
+                    if (list.get(rowIndex).get("passChanged") != null) {
+                        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(
+                            new Date((Long) list.get(rowIndex).get("passChanged")));
+                    }
+                    return "";
                 case 2:
+                    return list.get(rowIndex).get("login");
+                case 3:
                     return $.isBoolean(list.get(rowIndex).get("active"))
                             ? (Boolean) list.get(rowIndex).get("active") : Boolean.TRUE;
             }
@@ -212,20 +218,20 @@ public class NewJDialog7 extends javax.swing.JDialog {
         jTable1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Дата создания", "Имя пользователя", "Разрешён"
+                "Дата создания", "Дата изменения", "Имя пользователя", "Разрешён"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -252,14 +258,14 @@ public class NewJDialog7 extends javax.swing.JDialog {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jLabel1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 360, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 187, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 187, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton3)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 187, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(12, 12, 12))
         );
         layout.setVerticalGroup(
