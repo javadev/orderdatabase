@@ -71,6 +71,9 @@ public class Form1 extends javax.swing.JFrame {
     private String xlsxPath;
     private String adminPass;
     private boolean showDbNumber;
+    private boolean useFirebase;
+    private String firebaseAppName;
+    private String firebaseToken;
 
     public Form1() {
         initComponents();
@@ -121,6 +124,10 @@ public class Form1 extends javax.swing.JFrame {
         xlsxPath = (String) database.get("xlsxPath");
         ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).setText((String) database.get("searchDataText"));
         showDbNumber = database.get("showDbNumber") == null ? false : (Boolean) database.get("showDbNumber");
+        useFirebase = database.get("useFirebase") == null ? false : (Boolean) database.get("useFirebase");
+        firebaseAppName = (String) database.get("firebaseAppName");
+        firebaseToken = database.get("firebaseToken") == null ? null
+                : decrypt(((String) database.get("firebaseToken")));
         if ($.isNumber(database.get("periodIndex"))) {
             jComboBox5.setSelectedIndex(((Long) database.get("periodIndex")).intValue());
         }
@@ -485,6 +492,17 @@ public class Form1 extends javax.swing.JFrame {
                 }
             }
         }
+        if (useFirebase) {
+            for (Map<String, Object> data : dataList) {
+                ids.add((String) data.get("_id"));
+            }
+            List<Map<String, Object>> fireDataList = new FirebaseService(firebaseAppName, firebaseToken).readAll();
+            for (Map<String, Object> data : fireDataList) {
+                if (!ids.contains((String) data.get("_id"))) {
+                    dataList.add(data);
+                }
+            }
+        }
         return dataList;
     }
 
@@ -514,6 +532,24 @@ public class Form1 extends javax.swing.JFrame {
                     return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                 }
             }));
+        }
+        if (useFirebase) {
+            final FirebaseService firebaseService = new FirebaseService(firebaseAppName, firebaseToken);
+            List<Map<String, Object>> fireDataList = firebaseService.readAll();
+            Set<String> ids = new HashSet<>();
+            if (fireDataList != null) {
+                for (Map<String, Object> data : fireDataList) {
+                    ids.add((String) data.get("_id"));
+                }
+            }
+            List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
+            List<Map<String, Object>> dataToSaveList = new ArrayList<>();
+            for (Map<String, Object> data : dataList) {
+                if (!ids.contains((String) data.get("_id"))) {
+                    dataToSaveList.add(data);
+                }
+            }
+            firebaseService.setData($.concat(fireDataList, dataToSaveList));
         }
     }
 
@@ -570,7 +606,7 @@ public class Form1 extends javax.swing.JFrame {
         data.put("houseNumber2", jTextField12.getText().trim());
         data.put("appartmentNumber", jTextField13.getText().trim());
         data.put("comment", jTextArea1.getText().trim());
-        data.put("user", user);
+        data.put("user", activeUser.isEmpty() ? user : activeUser.get("login"));
         List<Map<String, Object>> products = ((MyProductModel) jTable2.getModel()).getData();
         for (Map<String, Object> product : products) {
             product.put("_id", uniqueId());
@@ -617,6 +653,9 @@ public class Form1 extends javax.swing.JFrame {
         database.put("useXlsx", useXlsx);
         database.put("xlsxPath", xlsxPath);
         database.put("showDbNumber", showDbNumber);
+        database.put("useFirebase", useFirebase);
+        database.put("firebaseAppName", firebaseAppName);
+        database.put("firebaseToken", firebaseToken == null ? null : encrypt(firebaseToken));
         saveDatabase();
     }
     
@@ -2236,6 +2275,9 @@ public class Form1 extends javax.swing.JFrame {
                 .setUseXlsx(useXlsx)
                 .setXlsxPath(xlsxPath)
                 .setShowDbNumber(showDbNumber)
+                .setUseFirebase(useFirebase)
+                .setFirebaseAppName(firebaseAppName)
+                .setFirebaseToken(firebaseToken)
                 .createNewJDialog2();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
@@ -2249,6 +2291,9 @@ public class Form1 extends javax.swing.JFrame {
             useXlsx = dialog.getUseXlsx();
             xlsxPath = dialog.getXlsxPath();
             showDbNumber = dialog.getShowDbNumber();
+            useFirebase = dialog.getUseFirebase();
+            firebaseAppName = dialog.getFirebaseAppName();
+            firebaseToken = dialog.getFirebaseToken().isEmpty() ? null : dialog.getFirebaseToken();
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     jLabel24.setVisible(showDbNumber);

@@ -89,7 +89,7 @@
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="&#x412;&#x435;&#x440;&#x441;&#x438;&#x44f; 1.10, &#x430;&#x432;&#x442;&#x43e;&#x440; &#x41a;&#x43e;&#x43b;&#x435;&#x441;&#x43d;&#x438;&#x43a;&#x43e;&#x432; &#x412;. &#x412;."/>
+        <Property name="text" type="java.lang.String" value="&#x412;&#x435;&#x440;&#x441;&#x438;&#x44f; 1.11, &#x430;&#x432;&#x442;&#x43e;&#x440; &#x41a;&#x43e;&#x43b;&#x435;&#x441;&#x43d;&#x438;&#x43a;&#x43e;&#x432; &#x412;. &#x412;."/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">

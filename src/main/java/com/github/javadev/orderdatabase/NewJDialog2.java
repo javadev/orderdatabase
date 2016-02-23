@@ -27,7 +27,9 @@ public class NewJDialog2 extends javax.swing.JDialog {
      */
     public NewJDialog2(java.awt.Frame parent, boolean modal,
             boolean useMysql, String hostName, String dbName, String user, String pass,
-            boolean useXlsx, String xlsxPath, boolean showDbNumber) {
+            boolean useXlsx, String xlsxPath, boolean showDbNumber,
+            boolean useFirebase, String firebaseAppName,
+            String firebaseToken) {
         super(parent, modal);
         initComponents();
         jCheckBox1.setSelected(useMysql);
@@ -41,6 +43,9 @@ public class NewJDialog2 extends javax.swing.JDialog {
         chooser1.setCurrentDirectory(new File("."));
         chooser1.setFileFilter(new FilterXlsx());
         jCheckBox3.setSelected(showDbNumber);
+        jCheckBox4.setSelected(useFirebase);
+        jTextField5.setText(firebaseAppName);
+        jPasswordField2.setText(firebaseToken);
     }
     
     public boolean isApproved() {
@@ -79,6 +84,18 @@ public class NewJDialog2 extends javax.swing.JDialog {
         return jCheckBox3.isSelected();
     }
 
+    public boolean getUseFirebase() {
+        return jCheckBox4.isSelected();
+    }
+
+    public String getFirebaseAppName() {
+        return jTextField5.getText();
+    }
+
+    public String getFirebaseToken() {
+        return String.valueOf(jPasswordField2.getPassword());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -104,6 +121,11 @@ public class NewJDialog2 extends javax.swing.JDialog {
         jTextField4 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jPasswordField2 = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Параметры...");
@@ -174,29 +196,31 @@ public class NewJDialog2 extends javax.swing.JDialog {
             }
         });
 
+        jCheckBox4.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jCheckBox4.setText("Синхронизировать данные с базой Firebase");
+        jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox4ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel6.setText("Имя сервера");
+
+        jTextField5.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel7.setText("Токен");
+
+        jPasswordField2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jPasswordField2.setText("jPasswordField1");
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel4)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel1)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel2)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel3)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel5))
-                .add(18, 18, 18)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jTextField1)
-                    .add(jTextField2)
-                    .add(jPasswordField1)
-                    .add(layout.createSequentialGroup()
-                        .add(jTextField4)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jButton1))
-                    .add(jTextField3))
-                .addContainerGap())
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jButton5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -212,9 +236,43 @@ public class NewJDialog2 extends javax.swing.JDialog {
                             .add(jCheckBox2)))
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jCheckBox3)))
-                .add(196, 221, Short.MAX_VALUE))
+                        .add(jCheckBox3))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jCheckBox4)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel4)
+                        .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel1)
+                        .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel2)
+                        .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel3)
+                        .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel5))
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(jLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                        .add(jLabel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .add(18, 18, 18)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(jTextField4)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jButton1))
+                    .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jPasswordField2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 184, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextField5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 184, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jPasswordField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 184, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextField2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 184, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 184, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextField3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 349, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
+
+        layout.linkSize(new java.awt.Component[] {jPasswordField1, jPasswordField2, jTextField1, jTextField2, jTextField3, jTextField5}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -245,7 +303,17 @@ public class NewJDialog2 extends javax.swing.JDialog {
                     .add(jButton1))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jCheckBox3)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jCheckBox4)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel6)
+                    .add(jTextField5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel7)
+                    .add(jPasswordField2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jButton5)
                     .add(jButton6))
@@ -275,6 +343,10 @@ public class NewJDialog2 extends javax.swing.JDialog {
         jTextField4.setText(chooser1.getSelectedFile().getPath());
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jCheckBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox4ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton5;
@@ -282,15 +354,20 @@ public class NewJDialog2 extends javax.swing.JDialog {
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPasswordField jPasswordField1;
+    private javax.swing.JPasswordField jPasswordField2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
 }
