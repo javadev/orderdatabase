@@ -3,6 +3,7 @@ package com.github.javadev.orderdatabase;
 import com.github.underscore.Block;
 import com.github.underscore.Function;
 import com.github.underscore.Function1;
+import com.github.underscore.Predicate;
 import com.github.underscore.lodash.$;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -110,23 +111,25 @@ public class NewJDialog9 extends javax.swing.JDialog {
                 }
             })
             .item();
-        final List<Map<String, Object>> createdOrders = new ArrayList<>();
-        $.each(groupedByDate.entrySet(), new Block<Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>>>() {
-            public void apply(final Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>> arg) {
-                int found = 0;
-                for (Map.Entry<String, List<Map<String, Object>>> item : arg.getValue()) {
-                    String status = (String) $.last(item.getValue()).get("status");
-                    if (status != null && status.equals("оплачено")) {
-                        found += 1;
-                    }
-                }
-                Map<String, Object> map = new LinkedHashMap<String, Object>();
+        final List<Map<String, Object>> createdOrders =
+        $.chain(groupedByDate.entrySet())
+                .map(new Function1<Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>>,
+                Map<String, Object>>() {
+            public Map<String, Object> apply(final Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>> arg) {
+                List<Map.Entry<String, List<Map<String, Object>>>> payedOrders =
+                    $.filter(arg.getValue(), new Predicate<Map.Entry<String, List<Map<String, Object>>>>() {
+                        public Boolean apply(Map.Entry<String, List<Map<String, Object>>> arg) {
+                            String status = (String) $.last(arg.getValue()).get("status");
+                            return status != null && status.equals("оплачено");
+                        }
+                    });
+                Map<String, Object> map = new LinkedHashMap<>();
                 map.put("summaryCreated", arg.getKey());
                 map.put("countCreated", arg.getValue().size());
-                map.put("countPayed", found);
-                createdOrders.add(map);
+                map.put("countPayed", payedOrders.size());
+                return map;
             }
-        });
+        }).value();
         return createdOrders;
     }
 
