@@ -112,6 +112,7 @@
                         <option>-keep class schemasMicrosoftComOfficeOffice.** { *; }</option>
                         <option>-keep class schemasMicrosoftComVml.** { *; }</option>
                         <option>-keep class org.openxmlformats.schemas.** { *; }</option>
+                        <option>-keepclassmembers enum * {    public static **[] values();    public static ** valueOf(java.lang.String);}</option>
                     </options>
                     <libs>
                         <lib>${java.home}/lib/rt.jar</lib>
@@ -176,6 +177,16 @@
             <groupId>com.github.javadev</groupId>
             <artifactId>moneytostr</artifactId>
             <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.firebase</groupId>
+            <artifactId>firebase-client-jvm</artifactId>
+            <version>[2.5.2,)</version>
+        </dependency>
+        <dependency>
+            <groupId>com.firebase</groupId>
+            <artifactId>firebase-token-generator</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

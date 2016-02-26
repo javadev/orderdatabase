@@ -12,6 +12,9 @@ public class NewJDialog2Builder {
     private boolean useXlsx;
     private String xlsxPath;
     private boolean showDbNumber;
+    private boolean useFirebase;
+    private String firebaseAppName;
+    private String firebaseToken;
 
     public NewJDialog2Builder() {
     }
@@ -66,8 +69,25 @@ public class NewJDialog2Builder {
         return this;
     }
 
+    public NewJDialog2Builder setUseFirebase(boolean useFirebase) {
+        this.useFirebase = useFirebase;
+        return this;
+    }
+
+    public NewJDialog2Builder setFirebaseAppName(String firebaseAppName) {
+        this.firebaseAppName = firebaseAppName;
+        return this;
+    }
+
+    public NewJDialog2Builder setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
+        return this;
+    }
+
     public NewJDialog2 createNewJDialog2() {
-        return new NewJDialog2(parent, modal, useMysql, hostName, dbName, user, pass, useXlsx, xlsxPath, showDbNumber);
+        return new NewJDialog2(parent, modal, useMysql, hostName, dbName, user,
+                pass, useXlsx, xlsxPath, showDbNumber, useFirebase,
+                firebaseAppName, firebaseToken);
     }
     
 }
