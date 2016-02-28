@@ -4,7 +4,6 @@ import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.firebase.security.token.TokenGenerator;
 import com.github.underscore.lodash.$;
@@ -72,7 +71,7 @@ public class FirebaseService {
             @Override
             public void onAuthenticationError(FirebaseError fe) {
                 semaphore.release();
-                Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, "Login error", fe);
+                Logger.getLogger(FirebaseService.class.getName()).log(Level.SEVERE, "Login error", fe);
             }
         });
         try {
@@ -99,7 +98,7 @@ public class FirebaseService {
             }
             @Override
             public void onAuthenticationError(FirebaseError fe) {
-                Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, "Login error", fe);
+                Logger.getLogger(FirebaseService.class.getName()).log(Level.SEVERE, "Login error", fe);
             }
         });
     }
