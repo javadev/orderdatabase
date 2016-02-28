@@ -46,16 +46,16 @@ public class FirebaseService {
             @Override
             public void onAuthenticated(AuthData ad) {
                 Firebase orderdataRef = myFirebaseRef.child("orderdata");
-                Query queryRef = orderdataRef.startAt();
-                queryRef.addValueEventListener(new ValueEventListener() {
+                orderdataRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         try {
-                            List<Map<String, Object>> data =
-                                    (List<Map<String, Object>>) snapshot.getValue();
-                            if (data != null) {
-                                for (Map<String, Object> item : data) {
-                                    result.add(item);
+                            for (DataSnapshot data : snapshot.getChildren()) {
+                                if (data.getValue() instanceof Map) {
+                                    result.add((Map<String, Object>) data.getValue());
+                                }
+                                if (data.getValue() instanceof List) {
+                                    result.addAll((List<Map<String, Object>>) data.getValue());
                                 }
                             }
                         } catch (ClassCastException ex) {
@@ -83,7 +83,7 @@ public class FirebaseService {
         return result;
     }
     
-    public void setData(final List<Map<String, Object>> dataList) {
+    public void insertData(final List<Map<String, Object>> dataList) {
         final Firebase myFirebaseRef = new Firebase($.join(Arrays.asList("https://", appName, ".firebaseio.com/"), ""));
         Map<String, Object> authPayload = new HashMap<>();
         authPayload.put("uid", "1");
@@ -94,7 +94,7 @@ public class FirebaseService {
             @Override
             public void onAuthenticated(AuthData ad) {
                 Firebase orderdataRef = myFirebaseRef.child("orderdata");
-                orderdataRef.setValue(dataList);
+                orderdataRef.push().setValue(dataList);
                 myFirebaseRef.unauth();
             }
             @Override

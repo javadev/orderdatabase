@@ -549,7 +549,7 @@ public class Form1 extends javax.swing.JFrame {
                     dataToSaveList.add(data);
                 }
             }
-            firebaseService.setData($.concat(fireDataList, dataToSaveList));
+            firebaseService.insertData(dataToSaveList);
         }
     }
 
