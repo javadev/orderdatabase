@@ -2,8 +2,6 @@ package com.github.javadev.orderdatabase;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class About extends javax.swing.JDialog {
 
@@ -104,20 +102,16 @@ public class About extends javax.swing.JDialog {
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
         try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("https://github.com/javadev/orderdatabase/releases"));
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException | IOException ex) {
+            Log.error(ex, null);
         }
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
         try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("https://github.com/javadev/orderdatabase/issues"));
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException | IOException ex) {
+            Log.error(ex, null);
         }
     }//GEN-LAST:event_jLabel4MouseClicked
 

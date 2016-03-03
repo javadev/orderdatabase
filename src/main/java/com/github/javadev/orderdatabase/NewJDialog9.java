@@ -1,12 +1,10 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Block;
 import com.github.underscore.Function;
 import com.github.underscore.Function1;
 import com.github.underscore.Predicate;
 import com.github.underscore.lodash.$;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;

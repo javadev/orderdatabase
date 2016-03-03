@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class FirebaseService {
     private final String appName;
@@ -71,13 +69,13 @@ public class FirebaseService {
             @Override
             public void onAuthenticationError(FirebaseError fe) {
                 semaphore.release();
-                Logger.getLogger(FirebaseService.class.getName()).log(Level.SEVERE, "Login error", fe);
+                Log.error(fe.toException(), "Login error");
             }
         });
         try {
             semaphore.acquire();
         } catch (InterruptedException ex) {
-            Logger.getLogger(FirebaseService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
         return result;
     }
@@ -98,7 +96,7 @@ public class FirebaseService {
             }
             @Override
             public void onAuthenticationError(FirebaseError fe) {
-                Logger.getLogger(FirebaseService.class.getName()).log(Level.SEVERE, "Login error", fe);
+                Log.error(fe.toException(), "Login error");
             }
         });
     }

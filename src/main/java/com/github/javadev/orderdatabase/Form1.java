@@ -36,8 +36,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComboBox;
@@ -84,7 +82,7 @@ public class Form1 extends javax.swing.JFrame {
                 database.putAll((Map<String, Object>) $.fromJson(
                     new String(Files.readAllBytes(path), "UTF-8")));
             } catch (IOException ex) {
-                Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                Log.error(ex, null);
             }
         }
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -103,7 +101,7 @@ public class Form1 extends javax.swing.JFrame {
                     try {
                         Files.delete(Paths.get(fileName));
                     } catch (IOException ex) {
-                        Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                        Log.error(ex, null);
                     }
                 }
             }
@@ -801,7 +799,7 @@ public class Form1 extends javax.swing.JFrame {
                 }
             });
         } catch(Exception ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
     
@@ -821,7 +819,7 @@ public class Form1 extends javax.swing.JFrame {
                 }
             });
         } catch(Exception ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
 
@@ -907,7 +905,7 @@ public class Form1 extends javax.swing.JFrame {
         try {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
 
@@ -1216,7 +1214,7 @@ public class Form1 extends javax.swing.JFrame {
                 Files.write(Paths.get(fileName), $.toJson(foundOrders).getBytes("UTF-8"));
             }
         } catch (IOException ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }        
     }
 
@@ -2377,7 +2375,7 @@ public class Form1 extends javax.swing.JFrame {
             try {
                 java.awt.Desktop.getDesktop().browse(new File(fileName).toURI());
             } catch (IOException ex) {
-                Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                Log.error(ex, null);
             }
         }
     }//GEN-LAST:event_jButton9ActionPerformed
@@ -2433,10 +2431,8 @@ public class Form1 extends javax.swing.JFrame {
     private void jLabel29MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel29MouseClicked
         try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://www.sveta-shop.ru"));
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException | IOException ex) {
+            Log.error(ex, null);
         }
 
     }//GEN-LAST:event_jLabel29MouseClicked
@@ -2659,7 +2655,7 @@ public class Form1 extends javax.swing.JFrame {
                         }
                     });
                 } catch(Exception ex) {
-                    Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             }
         };
