@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DatabaseService {
     private static final List<String> FIELD_NAMES = Arrays.asList(
@@ -296,7 +294,7 @@ public class DatabaseService {
                     createProductTable(conn);
                     return;
                 } catch (SQLException ex) {
-                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             } else if (detailMessage.contains("Unknown column 'status'")) {
                 try {
@@ -306,7 +304,7 @@ public class DatabaseService {
                     alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
-                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             } else if (detailMessage.contains("Unknown column 'country'")) {
                 try {
@@ -315,7 +313,7 @@ public class DatabaseService {
                     alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
-                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             } else if (detailMessage.contains("productdata' doesn't exist")) {
                 try {
@@ -323,18 +321,18 @@ public class DatabaseService {
                     alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
-                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             } else if (detailMessage.contains("Unknown column 'totalSum'")) {
                 try {
                     alterTableTotalSum(conn);
                     return;
                 } catch (SQLException ex) {
-                    Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             }
         }
-        Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, se);                    
+        Log.error(se, null);
     }
 
     private Connection createConnection() throws ClassNotFoundException, SQLException {
