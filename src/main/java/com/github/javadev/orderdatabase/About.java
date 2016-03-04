@@ -51,7 +51,7 @@ public class About extends javax.swing.JDialog {
         });
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Версия 1.11, автор Колесников В. В.");
+        jLabel3.setText("Версия 1.12, автор Колесников В. В.");
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("<html>Создать сообщение об ошибке: <font color=\"#0000CF\"><u>https://github.com/javadev/orderdatabase/issues</u></font></html>");

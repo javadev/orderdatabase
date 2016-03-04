@@ -1,8 +1,8 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Block;
 import com.github.underscore.Function;
 import com.github.underscore.Function1;
+import com.github.underscore.FunctionAccum;
 import com.github.underscore.Predicate;
 import com.github.underscore.lodash.$;
 import java.text.SimpleDateFormat;
@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 
 public class NewJDialog9 extends javax.swing.JDialog {
@@ -102,15 +103,14 @@ public class NewJDialog9 extends javax.swing.JDialog {
             })
             .item();
         Map<String, List<Map.Entry<String, List<Map<String, Object>>>>> groupedByDate =
-                $.chain(groupedByOrderNumber.entrySet())
-                .groupBy(new Function1<Map.Entry<String, List<Map<String, Object>>>, String>() {
+            $.groupBy(groupedByOrderNumber.entrySet(),
+                new Function1<Map.Entry<String, List<Map<String, Object>>>, String>() {
                 @Override
                 public String apply(Map.Entry<String, List<Map<String, Object>>> arg) {
                     return new SimpleDateFormat("dd.MM.yyyy").format(
                             new Date((Long) arg.getValue().get(0).get("created")));
                 }
-            })
-            .item();
+            });
         final List<Map<String, Object>> createdOrders =
         $.chain(groupedByDate.entrySet())
                 .map(new Function1<Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>>,
@@ -123,14 +123,63 @@ public class NewJDialog9 extends javax.swing.JDialog {
                             return status != null && status.equals("оплачено");
                         }
                     });
+                Map<String, Integer> userCreated = groupByUsers(arg.getValue());
+                final Map<String, Integer> userPayed = groupByUsers(payedOrders);
+                Set<String> userSummary = $.map(userCreated.entrySet(), new Function1<Map.Entry<String, Integer>, String>() {
+                    @Override
+                    public String apply(final Map.Entry<String, Integer> user) {
+                        String summary = user.getKey() + " (" + user.getValue() + ", ";
+                        if (userPayed.get(user.getKey()) != null) {
+                            summary += userPayed.get(user.getKey());
+                        } else {
+                            summary += "0";
+                        }
+                        return summary + ")";
+                    }
+                });
                 Map<String, Object> map = new LinkedHashMap<>();
                 map.put("summaryCreated", arg.getKey());
                 map.put("countCreated", arg.getValue().size());
                 map.put("countPayed", payedOrders.size());
+                map.put("summary", userSummary.toString().replace("[", "").replace("]", ""));
                 return map;
             }
         }).value();
         return createdOrders;
+    }
+    
+    private Map<String, Integer> groupByUsers(List<Map.Entry<String, List<Map<String, Object>>>> orders) {
+        return $.reduce(orders, new FunctionAccum<Map<String, Integer>, Map.Entry<String, List<Map<String, Object>>>>() {
+            public Map<String, Integer> apply(Map<String, Integer> accum, Map.Entry<String, List<Map<String, Object>>> arg) {
+                String user = (String) $.first(arg.getValue()).get("user");
+                if (user != null && !user.isEmpty()) {
+                    if (!accum.containsKey(user)) {
+                        accum.put(user, 1);
+                    } else {
+                        accum.put(user, accum.get(user) + 1);
+                    }
+                }
+                return accum;
+            }
+        }, new LinkedHashMap<String, Integer>());
+    }
+    
+    private List<Long> getColumnWidth(javax.swing.JTable jTable) {
+        int columnCount = jTable.getColumnModel().getColumnCount();
+        List<Long> result = new ArrayList<>();
+        for (int index = 0; index < columnCount; index += 1) {
+            result.add(Long.valueOf(jTable.getColumnModel().getColumn(index).getPreferredWidth()));
+        }
+        return result;
+    }
+
+    private void setColumnWidth(javax.swing.JTable jTable, List<Long> columnWidth) {
+        int columnCount = jTable.getColumnModel().getColumnCount();
+        for (int index = 0; index < columnCount; index += 1) {
+            if (index < columnWidth.size()) {
+                jTable.getColumnModel().getColumn(index).setPreferredWidth(columnWidth.get(index).intValue());
+            }
+        }
     }
 
     /**
@@ -221,11 +270,11 @@ public class NewJDialog9 extends javax.swing.JDialog {
                 .add(42, 42, 42)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jLabel1)
-                    .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 247, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
                     .add(jButton1))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton5)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -237,7 +286,9 @@ public class NewJDialog9 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        List<Long> columns = getColumnWidth(jTable1);
         jTable1.setModel(new MyModel(getDatabaseMetrics()));
+        setColumnWidth(jTable1, columns);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
