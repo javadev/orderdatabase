@@ -417,10 +417,10 @@ public class NewJDialog5 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
-        NewJDialog9 dialog = new NewJDialog9((java.awt.Frame) getOwner(), true,
+        NewJDialog9 dialog9 = new NewJDialog9((java.awt.Frame) getOwner(), true,
             databaseDataFunc);
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
+        dialog9.setLocationRelativeTo(this);
+        dialog9.setVisible(true);
     }//GEN-LAST:event_jButton15ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
