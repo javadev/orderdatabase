@@ -18,8 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -128,7 +126,7 @@ public class XlsxService {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
         return result;
     }
@@ -177,9 +175,9 @@ public class XlsxService {
                 book.write(outputStream);
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         } catch (IOException ex) {
-            Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
     
@@ -195,20 +193,20 @@ public class XlsxService {
                 r = stream.read(buf);
             }
         } catch (IOException ex) {
-            Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             }
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             }
         }
@@ -288,9 +286,9 @@ public class XlsxService {
                 book.write(outputStream);
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         } catch (IOException ex) {
-            Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
     
@@ -359,7 +357,7 @@ public class XlsxService {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(XlsxService.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
         return result;
     }

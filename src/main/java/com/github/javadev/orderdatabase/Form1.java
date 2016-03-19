@@ -36,8 +36,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComboBox;
@@ -84,7 +82,7 @@ public class Form1 extends javax.swing.JFrame {
                 database.putAll((Map<String, Object>) $.fromJson(
                     new String(Files.readAllBytes(path), "UTF-8")));
             } catch (IOException ex) {
-                Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                Log.error(ex, null);
             }
         }
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -103,7 +101,7 @@ public class Form1 extends javax.swing.JFrame {
                     try {
                         Files.delete(Paths.get(fileName));
                     } catch (IOException ex) {
-                        Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                        Log.error(ex, null);
                     }
                 }
             }
@@ -205,8 +203,15 @@ public class Form1 extends javax.swing.JFrame {
         }
         chooser1.setAcceptAllFileFilterUsed(false);
         chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Xml file", "xml"));
-        chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Json file", ".json")); 
+        chooser1.addChoosableFileFilter(new FileNameExtensionFilter("Json file", "json")); 
         chooser1.setSelectedFile(new File("search-result.xml"));
+        chooser1.setDialogTitle("Сохранить результаты поиска");
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                chooser1.setCurrentDirectory(new File("."));
+            }
+        });
         jTextField1.requestFocusInWindow();
         JTextComponent editor = (JTextComponent) jComboBox4.getEditor().getEditorComponent();
         editor.setNextFocusableComponent(jComboBox4.getNextFocusableComponent());
@@ -801,7 +806,7 @@ public class Form1 extends javax.swing.JFrame {
                 }
             });
         } catch(Exception ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
     
@@ -821,7 +826,7 @@ public class Form1 extends javax.swing.JFrame {
                 }
             });
         } catch(Exception ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
 
@@ -907,7 +912,7 @@ public class Form1 extends javax.swing.JFrame {
         try {
             Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
     }
 
@@ -1216,7 +1221,7 @@ public class Form1 extends javax.swing.JFrame {
                 Files.write(Paths.get(fileName), $.toJson(foundOrders).getBytes("UTF-8"));
             }
         } catch (IOException ex) {
-            Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }        
     }
 
@@ -1724,7 +1729,7 @@ public class Form1 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1878,9 +1883,8 @@ public class Form1 extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(116, Short.MAX_VALUE)
-                .addComponent(jLabel21)
-                .addContainerGap())
+                .addGap(0, 108, Short.MAX_VALUE)
+                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -1960,7 +1964,9 @@ public class Form1 extends javax.swing.JFrame {
 
         jMenu1.setMnemonic('\u0430');
         jMenu1.setText("Файл");
+        jMenu1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
 
+        jMenuItem1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jMenuItem1.setMnemonic('\u044b');
         jMenuItem1.setText("Выход");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -1974,7 +1980,9 @@ public class Form1 extends javax.swing.JFrame {
 
         jMenu3.setMnemonic('\u0435');
         jMenu3.setText("Сервис");
+        jMenu3.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
 
+        jMenuItem3.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jMenuItem3.setMnemonic('\u043f');
         jMenuItem3.setText("Параметры...");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
@@ -1984,6 +1992,7 @@ public class Form1 extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem3);
 
+        jCheckBoxMenuItem1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("Показывать панель поиска");
         jCheckBoxMenuItem1.addItemListener(new java.awt.event.ItemListener() {
@@ -1993,6 +2002,7 @@ public class Form1 extends javax.swing.JFrame {
         });
         jMenu3.add(jCheckBoxMenuItem1);
 
+        jMenuItem4.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jMenuItem4.setText("Настроить справочники...");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2001,6 +2011,7 @@ public class Form1 extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem4);
 
+        jMenuItem6.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jMenuItem6.setText("Изменить пароль");
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2009,6 +2020,7 @@ public class Form1 extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem6);
 
+        jMenuItem5.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jMenuItem5.setText("Выйти из системы");
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2021,7 +2033,9 @@ public class Form1 extends javax.swing.JFrame {
 
         jMenu2.setMnemonic('\u0441');
         jMenu2.setText("Справка");
+        jMenu2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
 
+        jMenuItem2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jMenuItem2.setMnemonic('\u043e');
         jMenuItem2.setText("О программе");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -2377,7 +2391,7 @@ public class Form1 extends javax.swing.JFrame {
             try {
                 java.awt.Desktop.getDesktop().browse(new File(fileName).toURI());
             } catch (IOException ex) {
-                Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                Log.error(ex, null);
             }
         }
     }//GEN-LAST:event_jButton9ActionPerformed
@@ -2434,9 +2448,9 @@ public class Form1 extends javax.swing.JFrame {
         try {
             java.awt.Desktop.getDesktop().browse(new java.net.URI("http://www.sveta-shop.ru"));
         } catch (URISyntaxException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
 
     }//GEN-LAST:event_jLabel29MouseClicked
@@ -2659,7 +2673,7 @@ public class Form1 extends javax.swing.JFrame {
                         }
                     });
                 } catch(Exception ex) {
-                    Logger.getLogger(Form1.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.error(ex, null);
                 }
             }
         };
@@ -2682,13 +2696,13 @@ public class Form1 extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Form1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.error(ex, null);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Form1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.error(ex, null);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Form1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.error(ex, null);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Form1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.error(ex, null);
         }
         //</editor-fold>
 
