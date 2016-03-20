@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.javadev</groupId>
     <artifactId>orderdatabase</artifactId>
-    <version>1.12-SNAPSHOT</version>
+    <version>1.13-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>java/swing application to create/update/search orders</name>
     <description>The java/swing application to create/update/search orders</description>
@@ -113,6 +113,8 @@
                         <option>-keep class schemasMicrosoftComOfficeOffice.** { *; }</option>
                         <option>-keep class schemasMicrosoftComVml.** { *; }</option>
                         <option>-keep class org.openxmlformats.schemas.** { *; }</option>
+                        <option>-keep class ch.qos.** { *; }</option>
+                        <option>-keep class org.slf4j.** { *; }</option>
                         <option>-keepclassmembers enum * {    public static **[] values();    public static ** valueOf(java.lang.String);}</option>
                     </options>
                     <libs>
@@ -188,6 +190,11 @@
             <groupId>com.firebase</groupId>
             <artifactId>firebase-token-generator</artifactId>
             <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.6</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
