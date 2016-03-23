@@ -27,7 +27,7 @@ public class Log {
     }
 
     public static void warn(Throwable aProblem, String param) {
-        warn(null, problem2String(param, aProblem));
+        warn(problem2String(param, aProblem));
     }
 
     private static void log(MessageType messageType, String localParam) {
@@ -71,7 +71,7 @@ public class Log {
     }
 
     public static String modifyString(String param) {
-         if (null == param && "".equals(param)) {
+         if ("".equals(param)) {
              return "";
          }
          return param;
