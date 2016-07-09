@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.javadev</groupId>
     <artifactId>orderdatabase</artifactId>
-    <version>1.13-SNAPSHOT</version>
+    <version>1.14-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>java/swing application to create/update/search orders</name>
     <description>The java/swing application to create/update/search orders</description>
