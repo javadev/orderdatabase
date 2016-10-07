@@ -47,7 +47,7 @@ public class Form1Test {
                 new Class[]{String.class, String.class, String.class, String.class});
         method.setAccessible(true);
         String result = (String) method.invoke(form1, "", "", "", "");
-        assertEquals("М-1", result);
+        assertEquals("-М-1", result);
     }
 
     @Test
