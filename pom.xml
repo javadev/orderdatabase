@@ -164,7 +164,7 @@
         <dependency>
             <groupId>com.github.javadev</groupId>
             <artifactId>underscore-lodash</artifactId>
-            <version>1.17</version>
+            <version>1.18</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -194,7 +194,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
+            <version>1.1.8</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
