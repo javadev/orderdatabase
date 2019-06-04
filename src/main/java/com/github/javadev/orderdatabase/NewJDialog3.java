@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.$;
+import com.github.underscore.lodash.U;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ public class NewJDialog3 extends javax.swing.JDialog {
         this.xlsxPath = xlsxPath;
         initComponents();
         this.productData = (List<Map<String, Object>>) (productData == null ?
-                new ArrayList<>() : (List<Map<String, Object>>) $.clone(productData));
+                new ArrayList<>() : (List<Map<String, Object>>) U.clone(productData));
         jTable1.setModel(new MyModel(this.productData));
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override

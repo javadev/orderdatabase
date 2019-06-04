@@ -1,7 +1,7 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Function1;
-import com.github.underscore.lodash.$;
+import com.github.underscore.Function;
+import com.github.underscore.lodash.U;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -51,20 +51,20 @@ public class DatabaseService {
     private static final String CREATE_ORDERDATA_SQL = "CREATE TABLE orderdata "
                    + "(_id VARCHAR(16) not NULL,"
                    + "created BIGINT,"
-                   + $.join($.without(FIELD_NAMES, "_id", "created"), " VARCHAR(255),")
+                   + U.join(U.without(FIELD_NAMES, "_id", "created"), " VARCHAR(255),")
                    + " TEXT, PRIMARY KEY ( _id ))";
     private static final String CREATE_PRODUCTDATA_SQL = "CREATE TABLE productdata "
                    + "(_id VARCHAR(16) not NULL,"
-                   + $.join($.without(PRODUCT_FIELD_NAMES, "_id"), " VARCHAR(255),")
+                   + U.join(U.without(PRODUCT_FIELD_NAMES, "_id"), " VARCHAR(255),")
                    + " VARCHAR(255), PRIMARY KEY ( _id ))";
-    private static final String SELECT_ORDERDATA_SQL = "SELECT " + $.join(FIELD_NAMES, ", ") + " FROM orderdata";
-    private static final String SELECT_PRODUCTDATA_SQL = "SELECT " + $.join(PRODUCT_FIELD_NAMES, ", ") + " FROM productdata";
+    private static final String SELECT_ORDERDATA_SQL = "SELECT " + U.join(FIELD_NAMES, ", ") + " FROM orderdata";
+    private static final String SELECT_PRODUCTDATA_SQL = "SELECT " + U.join(PRODUCT_FIELD_NAMES, ", ") + " FROM productdata";
     private static final String INSERT_ORDERDATA_SQL = "INSERT INTO orderdata"
-                            + "(" + $.join(FIELD_NAMES, ", ") + ") VALUES"
-                            + "(" + $.repeat("?,", FIELD_NAMES.size() - 1) + "?)";
+                            + "(" + U.join(FIELD_NAMES, ", ") + ") VALUES"
+                            + "(" + U.repeat("?,", FIELD_NAMES.size() - 1) + "?)";
     private static final String INSERT_PRODUCTDATA_SQL = "INSERT INTO productdata"
-                            + "(" + $.join(PRODUCT_FIELD_NAMES, ", ") + ") VALUES"
-                            + "(" + $.repeat("?,", PRODUCT_FIELD_NAMES.size() - 1) + "?)";
+                            + "(" + U.join(PRODUCT_FIELD_NAMES, ", ") + ") VALUES"
+                            + "(" + U.repeat("?,", PRODUCT_FIELD_NAMES.size() - 1) + "?)";
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final String hostName;
     private final String dbName;
@@ -72,10 +72,10 @@ public class DatabaseService {
     private final String pass;
 
     public DatabaseService(String hostName, String dbName, String user, String pass) {
-        this.hostName = !$.isString(hostName) || hostName.trim().isEmpty() ? "localhost" : $.escape(hostName);
-        this.dbName = !$.isString(dbName) || dbName.trim().isEmpty() ? "orderdb" : $.escape(dbName);
-        this.user = !$.isString(user) || user.trim().isEmpty() ? "root" : user;
-        this.pass = !$.isString(pass) || pass.trim().isEmpty() ? "" : pass;
+        this.hostName = !U.isString(hostName) || hostName.trim().isEmpty() ? "localhost" : U.escape(hostName);
+        this.dbName = !U.isString(dbName) || dbName.trim().isEmpty() ? "orderdb" : U.escape(dbName);
+        this.user = !U.isString(user) || user.trim().isEmpty() ? "root" : user;
+        this.pass = !U.isString(pass) || pass.trim().isEmpty() ? "" : pass;
     }
 
     private String getDbUrl() {
@@ -99,8 +99,8 @@ public class DatabaseService {
                     result.add(data);
                 }
             }
-            Map<String, List<Map<String, Object>>> resultById = $.groupBy(result,
-                new Function1<Map<String, Object>, String>() {
+            Map<String, List<Map<String, Object>>> resultById = U.groupBy(result,
+                new Function<Map<String, Object>, String>() {
                     @Override
                     public String apply(Map<String, Object> item) {
                         return (String) item.get("_id");

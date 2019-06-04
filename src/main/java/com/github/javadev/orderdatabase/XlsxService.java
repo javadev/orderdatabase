@@ -1,7 +1,7 @@
 package com.github.javadev.orderdatabase;
 
 import com.github.moneytostr.MoneyToStr;
-import com.github.underscore.lodash.$;
+import com.github.underscore.lodash.U;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -84,7 +84,7 @@ public class XlsxService {
                             case Cell.CELL_TYPE_STRING:
                                 String cellValue = cell.getStringCellValue().trim();
                                 if (row.getRowNum() == 0) {
-                                    if ($.contains(COLUMN_NAME_TO_DB_NAME.keySet(), cellValue)) {
+                                    if (U.contains(COLUMN_NAME_TO_DB_NAME.keySet(), cellValue)) {
                                         columnIndexToDbName.put(cell.getColumnIndex(), COLUMN_NAME_TO_DB_NAME.get(cellValue));
                                     }
                                 } else {
@@ -141,7 +141,7 @@ public class XlsxService {
                 }
             }
             clonedData.put("customerName", 
-                    $.join($.compact(Arrays.asList((String) data.get("surname"),
+                    U.join(U.compact(Arrays.asList((String) data.get("surname"),
                         (String) data.get("firstName"), (String) data.get("middleName")))));
             clonedNewDataList.add(clonedData);
         }
@@ -225,7 +225,7 @@ public class XlsxService {
             XSSFWorkbook book = new XSSFWorkbook(stream);
             XSSFSheet sheet = book.getSheetAt(1);
             fillCell(sheet, 7, 9, (String) data.get("orderNumber"));
-            fillCell(sheet, 4, 11, $.join($.compact($.chain(
+            fillCell(sheet, 4, 11, U.join(U.compact(U.chain(
                     (String) data.get("surname"),
                     (String) data.get("firstName"),
                     (String) data.get("middleName")).value())));
@@ -337,7 +337,7 @@ public class XlsxService {
                                 }
                                 break;
                             case 6:
-                                data.put("name", $.chain((String) data.get("name"),
+                                data.put("name", U.chain((String) data.get("name"),
                                         cell.getStringCellValue().trim()).join().item());
                                 break;
                             case 8:

@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.$;
+import com.github.underscore.lodash.U;
 
 public class NewJDialog6 extends javax.swing.JDialog {
     private final String pass;
@@ -167,7 +167,7 @@ public class NewJDialog6 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        jTextField1.setText($.uniquePassword());
+        jTextField1.setText(U.uniquePassword());
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed

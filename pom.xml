@@ -157,14 +157,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.java.dev.swing-layout</groupId>
+            <groupId>org.swinglabs</groupId>
             <artifactId>swing-layout</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.javadev</groupId>
-            <artifactId>underscore-lodash</artifactId>
-            <version>1.24</version>
+            <artifactId>underscore</artifactId>
+            <version>1.45</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

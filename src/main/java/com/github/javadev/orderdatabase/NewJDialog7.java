@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.$;
+import com.github.underscore.lodash.U;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +21,7 @@ public class NewJDialog7 extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.userData = (List<Map<String, Object>>) (userData == null ?
-                new ArrayList<>() : (List<Map<String, Object>>) $.clone(userData));
+                new ArrayList<>() : (List<Map<String, Object>>) U.clone(userData));
         jTable1.setModel(new MyModel(this.userData));
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -74,7 +74,7 @@ public class NewJDialog7 extends javax.swing.JDialog {
         @Override
         public void setValueAt(Object value, int row, int col) {
             if (col == 3) {
-                Map<String, Object> newRow = (Map<String, Object>) $.clone((Map<String, Object>) list.get(row));
+                Map<String, Object> newRow = (Map<String, Object>) U.clone((Map<String, Object>) list.get(row));
                 newRow.put("active", value);
                 list.set(row, newRow);
                 fireTableCellUpdated(row, 2);
@@ -114,7 +114,7 @@ public class NewJDialog7 extends javax.swing.JDialog {
                 case 2:
                     return list.get(rowIndex).get("login");
                 case 3:
-                    return $.isBoolean(list.get(rowIndex).get("active"))
+                    return U.isBoolean(list.get(rowIndex).get("active"))
                             ? (Boolean) list.get(rowIndex).get("active") : Boolean.TRUE;
             }
             return null;

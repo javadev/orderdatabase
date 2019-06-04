@@ -1,8 +1,8 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Function1;
+import com.github.underscore.Function;
 import com.github.underscore.Predicate;
-import com.github.underscore.lodash.$;
+import com.github.underscore.lodash.U;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -35,10 +35,10 @@ public class NewJDialog1 extends javax.swing.JDialog {
             return Collections.emptyList();
         }
         final Map<String, Object> order = (Map<String, Object>) database.get("currentOrder");
-        List<Map<String, Object>> filteredOrders = $.chain((List<Map<String, Object>>)database.get("data"))
+        List<Map<String, Object>> filteredOrders = U.chain((List<Map<String, Object>>)database.get("data"))
             .filter(new Predicate<Map<String, Object>>() {
                 @Override
-                public Boolean apply(Map<String, Object> map) {
+                public boolean test(Map<String, Object> map) {
                     boolean firstName = checkMap(order, map, "firstName");
                     boolean middleName = checkMap(order, map, "middleName");
                     boolean surname = checkMap(order, map, "surname");
@@ -46,7 +46,7 @@ public class NewJDialog1 extends javax.swing.JDialog {
                     return firstName && middleName && surname && phoneNumber;
                     }
                 })
-                .sortBy(new Function1<Map<String, Object>, Long>() {
+                .sortBy(new Function<Map<String, Object>, Long>() {
                     public Long apply(final Map<String, Object> item) {
                         return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                     }

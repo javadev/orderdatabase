@@ -6,7 +6,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.firebase.security.token.TokenGenerator;
-import com.github.underscore.lodash.$;
+import com.github.underscore.lodash.U;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +23,15 @@ public class FirebaseService {
     }
 
     public FirebaseService(String appName, String token) {
-        this.appName = !$.isString(appName) || appName.trim().isEmpty()
+        this.appName = !U.isString(appName) || appName.trim().isEmpty()
                 ? "amber-torch-6986" : appName;
-        this.token = !$.isString(token) || token.trim().isEmpty()
+        this.token = !U.isString(token) || token.trim().isEmpty()
                 ? "DJYf0UDidCrwtFRjZgYS4qXJvmVeUownDTzqVNWR" : token;
     }
 
     public List<Map<String, Object>> readAll() {
         final List<Map<String, Object>> result = new ArrayList<>();
-        final Firebase myFirebaseRef = new Firebase($.join(Arrays.asList("https://", appName, ".firebaseio.com/"), ""));
+        final Firebase myFirebaseRef = new Firebase(U.join(Arrays.asList("https://", appName, ".firebaseio.com/"), ""));
         final Semaphore semaphore = new Semaphore(0);
         Map<String, Object> authPayload = new HashMap<>();
         authPayload.put("uid", "1");
@@ -81,7 +81,7 @@ public class FirebaseService {
     }
     
     public void insertData(final List<Map<String, Object>> dataList) {
-        final Firebase myFirebaseRef = new Firebase($.join(Arrays.asList("https://", appName, ".firebaseio.com/"), ""));
+        final Firebase myFirebaseRef = new Firebase(U.join(Arrays.asList("https://", appName, ".firebaseio.com/"), ""));
         Map<String, Object> authPayload = new HashMap<>();
         authPayload.put("uid", "1");
         authPayload.put("provider", "jvm");

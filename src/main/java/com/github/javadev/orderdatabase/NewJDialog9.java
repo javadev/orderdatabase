@@ -1,10 +1,10 @@
 package com.github.javadev.orderdatabase;
 
+import com.github.underscore.BiFunction;
 import com.github.underscore.Function;
-import com.github.underscore.Function1;
-import com.github.underscore.FunctionAccum;
 import com.github.underscore.Predicate;
-import com.github.underscore.lodash.$;
+import com.github.underscore.Supplier;
+import com.github.underscore.lodash.U;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,11 +15,11 @@ import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 
 public class NewJDialog9 extends javax.swing.JDialog {
-    private final Function<List<Map<String, Object>>> databaseDataFunc;
+    private final Supplier<List<Map<String, Object>>> databaseDataFunc;
     private boolean isApproved;
 
     public NewJDialog9(java.awt.Frame parent, boolean modal,
-            Function<List<Map<String, Object>>> databaseDataFunc) {
+                       Supplier<List<Map<String, Object>>> databaseDataFunc) {
         super(parent, modal);
         initComponents();
         this.databaseDataFunc = databaseDataFunc;
@@ -89,13 +89,13 @@ public class NewJDialog9 extends javax.swing.JDialog {
     }
     
     public List<Map<String, Object>> getDatabaseMetrics() {
-        Map<String, List<Map<String, Object>>> groupedByOrderNumber = $.chain(databaseDataFunc.apply())
-            .sortBy(new Function1<Map<String, Object>, Long>() {
+        Map<String, List<Map<String, Object>>> groupedByOrderNumber = U.chain(databaseDataFunc.get())
+            .sortBy(new Function<Map<String, Object>, Long>() {
                 public Long apply(Map<String, Object> arg) {
                     return (Long) arg.get("created");
                 }
             })
-            .groupBy(new Function1<Map<String, Object>, String>() {
+            .groupBy(new Function<Map<String, Object>, String>() {
                 @Override
                 public String apply(Map<String, Object> arg) {
                     return (String) arg.get("orderNumber");
@@ -103,8 +103,8 @@ public class NewJDialog9 extends javax.swing.JDialog {
             })
             .item();
         Map<String, List<Map.Entry<String, List<Map<String, Object>>>>> groupedByDate =
-            $.groupBy(groupedByOrderNumber.entrySet(),
-                new Function1<Map.Entry<String, List<Map<String, Object>>>, String>() {
+            U.groupBy(groupedByOrderNumber.entrySet(),
+                new Function<Map.Entry<String, List<Map<String, Object>>>, String>() {
                 @Override
                 public String apply(Map.Entry<String, List<Map<String, Object>>> arg) {
                     return new SimpleDateFormat("dd.MM.yyyy").format(
@@ -112,20 +112,20 @@ public class NewJDialog9 extends javax.swing.JDialog {
                 }
             });
         final List<Map<String, Object>> createdOrders =
-        $.chain(groupedByDate.entrySet())
-                .map(new Function1<Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>>,
+        U.chain(groupedByDate.entrySet())
+                .map(new Function<Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>>,
                 Map<String, Object>>() {
             public Map<String, Object> apply(final Map.Entry<String, List<Map.Entry<String, List<Map<String, Object>>>>> arg) {
                 List<Map.Entry<String, List<Map<String, Object>>>> payedOrders =
-                    $.filter(arg.getValue(), new Predicate<Map.Entry<String, List<Map<String, Object>>>>() {
-                        public Boolean apply(Map.Entry<String, List<Map<String, Object>>> arg) {
-                            String status = (String) $.last(arg.getValue()).get("status");
+                    U.filter(arg.getValue(), new Predicate<Map.Entry<String, List<Map<String, Object>>>>() {
+                        public boolean test(Map.Entry<String, List<Map<String, Object>>> arg) {
+                            String status = (String) U.last(arg.getValue()).get("status");
                             return status != null && status.equals("оплачено");
                         }
                     });
                 Map<String, Integer> userCreated = groupByUsers(arg.getValue());
                 final Map<String, Integer> userPayed = groupByUsers(payedOrders);
-                Set<String> userSummary = $.map(userCreated.entrySet(), new Function1<Map.Entry<String, Integer>, String>() {
+                Set<String> userSummary = U.map(userCreated.entrySet(), new Function<Map.Entry<String, Integer>, String>() {
                     @Override
                     public String apply(final Map.Entry<String, Integer> user) {
                         String summary = user.getKey() + " (" + user.getValue() + ", ";
@@ -149,9 +149,9 @@ public class NewJDialog9 extends javax.swing.JDialog {
     }
     
     private Map<String, Integer> groupByUsers(List<Map.Entry<String, List<Map<String, Object>>>> orders) {
-        return $.reduce(orders, new FunctionAccum<Map<String, Integer>, Map.Entry<String, List<Map<String, Object>>>>() {
+        return U.reduce(orders, new BiFunction<Map<String, Integer>, Map.Entry<String, List<Map<String, Object>>>, Map<String, Integer>>() {
             public Map<String, Integer> apply(Map<String, Integer> accum, Map.Entry<String, List<Map<String, Object>>> arg) {
-                String user = (String) $.first(arg.getValue()).get("user");
+                String user = (String) U.first(arg.getValue()).get("user");
                 if (user != null && !user.isEmpty()) {
                     if (!accum.containsKey(user)) {
                         accum.put(user, 1);

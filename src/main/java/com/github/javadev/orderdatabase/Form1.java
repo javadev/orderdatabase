@@ -1,11 +1,7 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Function;
-import com.github.underscore.Function1;
-import com.github.underscore.FunctionAccum;
-import com.github.underscore.Optional;
-import com.github.underscore.Predicate;
-import com.github.underscore.lodash.$;
+import com.github.underscore.*;
+import com.github.underscore.lodash.U;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -79,7 +75,7 @@ public class Form1 extends javax.swing.JFrame {
         Path path = Paths.get("./database.json");
         if (Files.exists(path)) {
             try {
-                database.putAll((Map<String, Object>) $.fromJson(
+                database.putAll((Map<String, Object>) U.fromJson(
                     new String(Files.readAllBytes(path), "UTF-8")));
             } catch (IOException ex) {
                 Log.error(ex, null);
@@ -90,14 +86,14 @@ public class Form1 extends javax.swing.JFrame {
             public void windowClosing(WindowEvent winEvt) {
                 Map<String, Object> data = createOrderData();
                 if (database.get("currentOrder") != null
-                        && !$.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
-                        $.omit((Map<String, Object>) database.get("currentOrder"),
+                        && !U.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
+                        U.omit((Map<String, Object>) database.get("currentOrder"),
                             "_id", "created", "status", "user", "country", "products").toString())) {
                     saveData(data);
                 } else {
                     saveData(null);
                 }
-                for (String fileName : $.uniq(createdFiles)) {
+                for (String fileName : U.uniq(createdFiles)) {
                     try {
                         Files.delete(Paths.get(fileName));
                     } catch (IOException ex) {
@@ -126,13 +122,13 @@ public class Form1 extends javax.swing.JFrame {
         firebaseAppName = (String) database.get("firebaseAppName");
         firebaseToken = database.get("firebaseToken") == null ? null
                 : decrypt(((String) database.get("firebaseToken")));
-        if ($.isNumber(database.get("periodIndex"))) {
+        if (U.isNumber(database.get("periodIndex"))) {
             jComboBox5.setSelectedIndex(((Long) database.get("periodIndex")).intValue());
         }
-        if ($.isNumber(database.get("autoLoadIndex"))) {
+        if (U.isNumber(database.get("autoLoadIndex"))) {
             jComboBox6.setSelectedIndex(((Long) database.get("autoLoadIndex")).intValue());
         }
-        if ($.isBoolean(database.get("searchPanelEnabled"))) {
+        if (U.isBoolean(database.get("searchPanelEnabled"))) {
             jCheckBoxMenuItem1.setSelected((Boolean) database.get("searchPanelEnabled"));
         } else {
             jCheckBoxMenuItem1.setSelected(false);
@@ -155,7 +151,7 @@ public class Form1 extends javax.swing.JFrame {
         }
         addJTable2Listener(jTable2);
         if (!filteredOrders.isEmpty()) {
-            fillOrderForm($.last(filteredOrders));
+            fillOrderForm(U.last(filteredOrders));
         }
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -228,7 +224,7 @@ public class Form1 extends javax.swing.JFrame {
             }
         });
         if (database.get("userData") instanceof String) {
-            users.addAll((List<Map<String, Object>>) $.fromJson(decrypt((String) database.get("userData"))));
+            users.addAll((List<Map<String, Object>>) U.fromJson(decrypt((String) database.get("userData"))));
             if (!getActiveUsers().isEmpty()) {
                 disableButtons();
             }
@@ -236,9 +232,9 @@ public class Form1 extends javax.swing.JFrame {
     }
 
     private List<Map<String, Object>> getActiveUsers() {
-        return $.filter(users, new Predicate<Map<String, Object>>() {
-                public Boolean apply(Map<String, Object> arg) {
-                    return $.isBoolean(arg.get("active")) && (Boolean) arg.get("active"); 
+        return U.filter(users, new Predicate<Map<String, Object>>() {
+                public boolean test(Map<String, Object> arg) {
+                    return U.isBoolean(arg.get("active")) && (Boolean) arg.get("active"); 
                 }
         });
     }
@@ -263,9 +259,9 @@ public class Form1 extends javax.swing.JFrame {
         final String middleName = (String) ((Map<String, Object>) database.get("currentOrder")).get("middleName");
         final String surname = (String) ((Map<String, Object>) database.get("currentOrder")).get("surname");
         final String phoneNumber = (String) ((Map<String, Object>) database.get("currentOrder")).get("phoneNumber");
-        long previousSum = $.chain(databaseData)
+        long previousSum = U.chain(databaseData)
             .filter(new Predicate<Map<String, Object>>() {
-                public Boolean apply(Map<String, Object> map) {
+                public boolean test(Map<String, Object> map) {
                     boolean firstNameFound = checkMap(map, firstName, "firstName");
                     boolean middleNameFound = checkMap(map, middleName, "middleName");
                     boolean surnameFound = checkMap(map, surname, "surname");
@@ -275,7 +271,7 @@ public class Form1 extends javax.swing.JFrame {
                             && phoneNumberFound && statusFound;
                 }
             })
-            .reduce(new FunctionAccum<Long, Map<String, Object>>() {
+            .reduce(new BiFunction<Long, Map<String, Object>, Long>() {
                 @Override
                 public Long apply(Long accum, Map<String, Object> order) {
                     return accum + calcTotalSum((List<Map<String, Object>>) order.get("products"));
@@ -388,10 +384,10 @@ public class Form1 extends javax.swing.JFrame {
         data.put("paymentMethod",  null);
         data.put("deliveryMethod", null);
         data.put("status", null);
-        data.put("country", $.isEmpty((List<String>) database.get("countryData")) ? "Россия"
-            : $.first((List<String>) database.get("countryData")));
-        data.put("city", $.isEmpty((List<String>) database.get("cityData")) ? "Москва"
-            : $.first((List<String>) database.get("cityData")));
+        data.put("country", U.isEmpty((List<String>) database.get("countryData")) ? "Россия"
+            : U.first((List<String>) database.get("countryData")));
+        data.put("city", U.isEmpty((List<String>) database.get("cityData")) ? "Москва"
+            : U.first((List<String>) database.get("cityData")));
         data.put("street", "");
         data.put("houseNumber", "");
         data.put("houseNumber2", "");
@@ -444,24 +440,24 @@ public class Form1 extends javax.swing.JFrame {
     }
     
     private String calcOrderNumber(String surname, String firstName, String middleName, String cityName) {
-        String name = $.chain(
+        String name = U.chain(
                 surname, firstName, middleName)
             .compact()
             .map(
-            new Function1<String, String>() {
+            new Function<String, String>() {
                 public String apply(String f) {
                     return f.trim().isEmpty() ? "" : f.trim().substring(0, 1);
                 }
             })
             .join("")
             .item();
-        String city = $.join($.map($.words(cityName),
-                    new Function1<String, String>() {
+        String city = U.join(U.map(U.words(cityName),
+                    new Function<String, String>() {
                 public String apply(String f) {
                     return f.trim().isEmpty() ? "" : f.trim().substring(0, 1).toUpperCase(localeRu);
                 }
         }), "");
-        return $.join($.chain(name, city.isEmpty() ? "М" : city,
+        return U.join(U.chain(name, city.isEmpty() ? "М" : city,
                 "" + getFilteredOrders(getDatabaseData()).size()).value(), "-");        
     }
 
@@ -532,7 +528,7 @@ public class Form1 extends javax.swing.JFrame {
             XlsxService xlsxService = new XlsxService(xlsxPath);
             List<Map<String, Object>> dataList = (List<Map<String, Object>>) database.get("data");
             List<Map<String, Object>> filteredOrders = getFilteredOrders(dataList);
-            xlsxService.updateData($.sortBy(filteredOrders, new Function1<Map<String, Object>, Long>() {
+            xlsxService.updateData(U.sortBy(filteredOrders, new Function<Map<String, Object>, Long>() {
                 public Long apply(Map<String, Object> item) {
                     return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                 }
@@ -561,25 +557,25 @@ public class Form1 extends javax.swing.JFrame {
     private List<Map<String, Object>> getFilteredOrders(List<Map<String, Object>> databaseData) {
         List<Map<String, Object>> filteredOrders = new ArrayList<Map<String, Object>>();
         Map<String, List<Map<String, Object>>> orders =
-                $.groupBy(databaseData, 
-                new Function1<Map<String, Object>, String>() {
+                U.groupBy(databaseData, 
+                new Function<Map<String, Object>, String>() {
                     public String apply(Map<String, Object> item) {
                         return (String) item.get("orderNumber");
                     }
                 });
         for (Map.Entry<String, List<Map<String, Object>>> entry : orders.entrySet()) {
-            List<Map<String, Object>> sorted = $.sortBy(entry.getValue(),
-               new Function1<Map<String, Object>, Long>() {
+            List<Map<String, Object>> sorted = U.sortBy(entry.getValue(),
+               new Function<Map<String, Object>, Long>() {
                public Long apply(final Map<String, Object> item) {
                    return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                } 
             });
             if (!sorted.isEmpty()) {
-                filteredOrders.add($.last(sorted));
+                filteredOrders.add(U.last(sorted));
             }
         }
-        List<Map<String, Object>> sortedOrders = $.sortBy(filteredOrders,
-                new Function1<Map<String, Object>, Long>() {
+        List<Map<String, Object>> sortedOrders = U.sortBy(filteredOrders,
+                new Function<Map<String, Object>, Long>() {
             public Long apply(Map<String, Object> item) {
                 return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
             }
@@ -864,9 +860,9 @@ public class Form1 extends javax.swing.JFrame {
                     "Имя пользователя и пароль", javax.swing.JOptionPane.OK_CANCEL_OPTION,
                     javax.swing.JOptionPane.QUESTION_MESSAGE, null, options, null);
             if (result == javax.swing.JOptionPane.OK_OPTION) {
-                Optional<Map<String, Object>> user = $.find(users, new Predicate<Map<String, Object>>() {
-                    public Boolean apply(Map<String, Object> arg) {
-                        return $.isBoolean(arg.get("active")) && (Boolean) arg.get("active")
+                Optional<Map<String, Object>> user = U.find(users, new Predicate<Map<String, Object>>() {
+                    public boolean test(Map<String, Object> arg) {
+                        return U.isBoolean(arg.get("active")) && (Boolean) arg.get("active")
                                 && jTextField.getText().trim().equals(arg.get("login"))
                                 && jPassword.getText().equals(arg.get("pass"));
                     }
@@ -900,8 +896,8 @@ public class Form1 extends javax.swing.JFrame {
         dialog.setContentPane(optionPane);
         dialog.setDefaultCloseOperation(javax.swing.JDialog.DO_NOTHING_ON_CLOSE);
         dialog.pack();
-        $.delay(new Function<Void>() {
-            public Void apply() {
+        U.delay(new Supplier<Void>() {
+            public Void get() {
                 dialog.dispose();
                 return null;
             }
@@ -911,7 +907,7 @@ public class Form1 extends javax.swing.JFrame {
 
     private void saveDatabase() {
         try {
-            Files.write(Paths.get("./database.json"), $.toJson(database).getBytes("UTF-8"));
+            Files.write(Paths.get("./database.json"), U.toJson(database).getBytes("UTF-8"));
         } catch (IOException ex) {
             Log.error(ex, null);
         }
@@ -941,7 +937,7 @@ public class Form1 extends javax.swing.JFrame {
         if (dialog.isApproved()) {
             user.put("pass", dialog.getPass());
             user.put("passChanged", new Date().getTime());
-            database.put("userData", encrypt($.toJson(users)));
+            database.put("userData", encrypt(U.toJson(users)));
             saveDatabase();
             return true;
         }
@@ -996,7 +992,7 @@ public class Form1 extends javax.swing.JFrame {
         private MyProductModel(List<Map<String, Object>> list) {
             List<Map<String, Object>> result = new ArrayList<>();
             for (Map<String, Object> item : list) {
-                result.add((Map<String, Object>) $.clone(item));
+                result.add((Map<String, Object>) U.clone(item));
             }
             this.list = result;
         }
@@ -1009,7 +1005,7 @@ public class Form1 extends javax.swing.JFrame {
         public List<Map<String, Object>> getData() {
             List<Map<String, Object>> result = new ArrayList<>();
             for (Map<String, Object> item : list) {
-                result.add((Map<String, Object>) $.clone(item));
+                result.add((Map<String, Object>) U.clone(item));
             }
             return result;
         }
@@ -1054,7 +1050,7 @@ public class Form1 extends javax.swing.JFrame {
         @Override
         public void setValueAt(Object value, int row, int col) {
             if (col == 2) {
-                Map<String, Object> newRow = (Map<String, Object>) $.clone((Map<String, Object>) list.get(row));
+                Map<String, Object> newRow = (Map<String, Object>) U.clone((Map<String, Object>) list.get(row));
                 newRow.put("quantity", value);
                 if (String.valueOf(value).matches("\\d+") && String.valueOf(newRow.get("price")).matches("\\d+")) {
                     newRow.put("totalPrice",
@@ -1074,21 +1070,21 @@ public class Form1 extends javax.swing.JFrame {
         foundOrders.clear();
         final List<Map<String, Object>> databaseData = getDatabaseData();
         final String searchText = ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).getText().trim();
-        final List<String> wordsForSearch = $.words(searchText);
-        List<Map<String, Object>> selectedOrders = $.chain(
+        final List<String> wordsForSearch = U.words(searchText);
+        List<Map<String, Object>> selectedOrders = U.chain(
             databaseData)
             .filter(new Predicate<Map<String, Object>>() {
                 @Override
-                public Boolean apply(Map<String, Object> map) {
+                public boolean test(Map<String, Object> map) {
                     return checkStrictMap(map, searchText, "_id");
                 }
             })
             .value();
-        List<Map<String, Object>> selectedOrders2 = $.chain(
+        List<Map<String, Object>> selectedOrders2 = U.chain(
             getFilteredOrders(databaseData))
             .filter(new Predicate<Map<String, Object>>() {
                 @Override
-                public Boolean apply(Map<String, Object> map) {
+                public boolean test(Map<String, Object> map) {
                     boolean idNumber = true;
                     for (String word : wordsForSearch) {
                         boolean orderNumber = checkMap(map, word, "orderNumber");
@@ -1120,7 +1116,7 @@ public class Form1 extends javax.swing.JFrame {
                 }
             })
             .filter(new Predicate<Map<String, Object>>() {
-                public Boolean apply(Map<String, Object> map) {
+                public boolean test(Map<String, Object> map) {
                     int index = jComboBox5.getSelectedIndex();
                     if (map.get("created") == null) {
                         return true;
@@ -1151,7 +1147,7 @@ public class Form1 extends javax.swing.JFrame {
                     return result;
                 }
             })
-            .sortBy(new Function1<Map<String, Object>, Long>() {
+            .sortBy(new Function<Map<String, Object>, Long>() {
                 public Long apply(Map<String, Object> item) {
                     return item.get("created") == null ? Long.valueOf(0) : (Long) item.get("created");
                 }
@@ -1164,7 +1160,7 @@ public class Form1 extends javax.swing.JFrame {
     
     private boolean checkMap(Map<String, Object> map, String text, String key) {
         return text == null || text.trim().isEmpty()
-            || (map.get(key) != null && $.isString(text) && (((String) map.get(key)).toLowerCase(localeRu)).contains(
+            || (map.get(key) != null && U.isString(text) && (((String) map.get(key)).toLowerCase(localeRu)).contains(
                 text.trim().toLowerCase(localeRu)));
     }
     
@@ -1217,9 +1213,9 @@ public class Form1 extends javax.swing.JFrame {
     public void writeDataFile(String fileName) {
         try {
             if (fileName.endsWith(".xml")) {
-                Files.write(Paths.get(fileName), $.toXml(foundOrders).getBytes("UTF-8"));
+                Files.write(Paths.get(fileName), U.toXml(foundOrders).getBytes("UTF-8"));
             } else if (fileName.endsWith(".json")) {
-                Files.write(Paths.get(fileName), $.toJson(foundOrders).getBytes("UTF-8"));
+                Files.write(Paths.get(fileName), U.toJson(foundOrders).getBytes("UTF-8"));
             }
         } catch (IOException ex) {
             Log.error(ex, null);
@@ -2224,8 +2220,8 @@ public class Form1 extends javax.swing.JFrame {
         }
         Map<String, Object> data = createOrderData();
         if (database.get("currentOrder") != null
-            && !$.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
-            $.omit((Map<String, Object>) database.get("currentOrder"),
+            && !U.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
+            U.omit((Map<String, Object>) database.get("currentOrder"),
                 "_id", "created", "status", "user", "country", "products").toString())) {
             saveData(data);
         }
@@ -2344,14 +2340,14 @@ public class Form1 extends javax.swing.JFrame {
         }
         Optional<Map<String, Object>> product = database.get("productData") == null
                 ? Optional.<Map<String, Object>>absent()
-                : $.find((List<Map<String, Object>>) database.get("productData"),
+                : U.find((List<Map<String, Object>>) database.get("productData"),
                 new Predicate<Map<String, Object>>() {
-            public Boolean apply(Map<String, Object> f) {
+            public boolean test(Map<String, Object> f) {
                 return jTextField14.getText().trim().equals(f.get("vendorCode"));
             }
         });
         if (product.isPresent()) {
-            Map<String, Object> newProduct = (Map<String, Object>) $.clone(product.get());
+            Map<String, Object> newProduct = (Map<String, Object>) U.clone(product.get());
             newProduct.put("quantity", "1");
             newProduct.put("totalPrice", newProduct.get("price"));
             ((MyProductModel) jTable2.getModel()).addModel(newProduct);
@@ -2369,8 +2365,8 @@ public class Form1 extends javax.swing.JFrame {
         }
         Map<String, Object> data = createOrderData();
         if (database.get("currentOrder") != null
-            && !$.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
-            $.omit((Map<String, Object>) database.get("currentOrder"),
+            && !U.omit(data, "_id", "created", "status", "user", "country", "products").toString().equals(
+            U.omit((Map<String, Object>) database.get("currentOrder"),
                 "_id", "created", "status", "user", "country", "products").toString())) {
             saveData(data);
         }
@@ -2406,7 +2402,7 @@ public class Form1 extends javax.swing.JFrame {
                     clonedCurrentOrder.put(entry.getKey(), entry.getValue());
                 }
             }
-            String fileName = $.chain("order-", (String) currentOrder.get("_id"), ".xlsx").join("").item();
+            String fileName = U.chain("order-", (String) currentOrder.get("_id"), ".xlsx").join("").item();
             new XlsxService(fileName).fillBlank(clonedCurrentOrder);
             createdFiles.add(fileName);
             try {
@@ -2570,8 +2566,8 @@ public class Form1 extends javax.swing.JFrame {
                     dialog.setContentPane(optionPane);
                     dialog.setDefaultCloseOperation(javax.swing.JDialog.DO_NOTHING_ON_CLOSE);
                     dialog.pack();
-                    $.delay(new Function<Void>() {
-                        public Void apply() {
+                    U.delay(new Supplier<Void>() {
+                        public Void get() {
                             dialog.dispose();
                             return null;
                         }
@@ -2583,8 +2579,8 @@ public class Form1 extends javax.swing.JFrame {
                 return;
             }
         }
-        Function<List<Map<String, Object>>> getDatabaseDataFunc = new Function<List<Map<String, Object>>>() {
-            public List<Map<String, Object>> apply() {
+        Supplier<List<Map<String, Object>>> getDatabaseDataFunc = new Supplier<List<Map<String, Object>>>() {
+            public List<Map<String, Object>> get() {
                 return getDatabaseData();
             }
         };
@@ -2605,7 +2601,7 @@ public class Form1 extends javax.swing.JFrame {
             if (!users.equals(dialog.getUserData())) {
                 users.clear();
                 users.addAll(dialog.getUserData());
-                database.put("userData", encrypt($.toJson(dialog.getUserData())));
+                database.put("userData", encrypt(U.toJson(dialog.getUserData())));
                 saveDatabase();
                 if (getActiveUsers().isEmpty()) {
                     enableButtons();

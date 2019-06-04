@@ -1,7 +1,8 @@
 package com.github.javadev.orderdatabase;
 
 import com.github.underscore.Function;
-import com.github.underscore.lodash.$;
+import com.github.underscore.Supplier;
+import com.github.underscore.lodash.U;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class NewJDialog5 extends javax.swing.JDialog {
     private final String xlsxPath;
     private final String adminPass;
     private List<Map<String, Object>> userData;
-    private final Function<List<Map<String, Object>>> databaseDataFunc;
+    private final Supplier<List<Map<String, Object>>> databaseDataFunc;
     private String newAdminPass;
     private boolean isApproved;
     
@@ -32,7 +33,7 @@ public class NewJDialog5 extends javax.swing.JDialog {
             List<Map<String, Object>> productData, boolean useXlsx,
             String xlsxPath, String adminPass,
             List<Map<String, Object>> userData,
-            Function<List<Map<String, Object>>> databaseDataFunc) {
+            Supplier<List<Map<String, Object>>> databaseDataFunc) {
         super(parent, modal);
         initComponents();
         this.model1 = cloneComboBoxModel(model1);
@@ -41,13 +42,13 @@ public class NewJDialog5 extends javax.swing.JDialog {
         this.model4 = cloneComboBoxModel(model4);
         this.model5 = cloneComboBoxModel(model5);
         this.productData = (List<Map<String, Object>>) (productData == null ?
-                new ArrayList<>() : (List<Map<String, Object>>) $.clone(productData));
+                new ArrayList<>() : (List<Map<String, Object>>) U.clone(productData));
         this.useXlsx = useXlsx;
         this.xlsxPath = xlsxPath;
         this.adminPass = adminPass;
         this.newAdminPass = adminPass;
         this.userData = (List<Map<String, Object>>) (userData == null ?
-                new ArrayList<>() : (List<Map<String, Object>>) $.clone(userData));
+                new ArrayList<>() : (List<Map<String, Object>>) U.clone(userData));
         this.databaseDataFunc = databaseDataFunc;
     }
     
