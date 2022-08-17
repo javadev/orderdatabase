@@ -1,4 +1,4 @@
-<mxfile modified="2022-08-17T08:53:53.923Z" host="app.diagrams.net" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="N2kgjdPCkbqaQ9wHF11f" version="20.2.4" type="github" pages="2">
+<mxfile modified="2022-08-17T12:44:59.024Z" host="app.diagrams.net" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36" etag="v6IgPGW4lgbdKsft60_V" version="20.2.4" type="github" pages="2">
   <diagram id="Ht1M8jgEwFfnCIfOTk4-" name="Page-1">
     <mxGraphModel dx="1024" dy="559" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
@@ -10,11 +10,14 @@
         <mxCell id="-QjtrjUzRDEMRZ5MF8oH-9" value="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#007CBD;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=22;" parent="1" vertex="1">
           <mxGeometry x="223.5" y="174.5" width="40" height="38" as="geometry" />
         </mxCell>
+        <mxCell id="0JbA15NXs6ea4f9-UekJ-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="-QjtrjUzRDEMRZ5MF8oH-27" target="-QjtrjUzRDEMRZ5MF8oH-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="-QjtrjUzRDEMRZ5MF8oH-27" value="2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#007CBD;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=22;" parent="1" vertex="1">
           <mxGeometry x="223.5" y="290" width="40" height="38" as="geometry" />
         </mxCell>
         <mxCell id="-QjtrjUzRDEMRZ5MF8oH-28" value="3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#007CBD;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=22;" parent="1" vertex="1">
-          <mxGeometry x="223.5" y="414" width="40" height="38" as="geometry" />
+          <mxGeometry x="223.5" y="450" width="40" height="38" as="geometry" />
         </mxCell>
         <mxCell id="-QjtrjUzRDEMRZ5MF8oH-47" value="Build flow diagram&lt;br&gt;" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=30;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="56.5" y="64.5" width="290" height="40" as="geometry" />
@@ -22,14 +25,14 @@
         <mxCell id="-QjtrjUzRDEMRZ5MF8oH-48" value="Subtitle text&lt;br style=&quot;font-size: 16px&quot;&gt;" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="56.5" y="114.5" width="100" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="-QjtrjUzRDEMRZ5MF8oH-49" value="Clone git repository&lt;br&gt;" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=16;fontStyle=1" parent="1" vertex="1">
-          <mxGeometry x="320" y="180.5" width="170" height="30" as="geometry" />
+        <mxCell id="-QjtrjUzRDEMRZ5MF8oH-49" value="Prepare Workspace&lt;br&gt;Define variables&amp;nbsp;tag,&amp;nbsp;ucTestBuildTag and&amp;nbsp;tagTsccQs" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=16;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="320" y="174.5" width="420" height="50" as="geometry" />
         </mxCell>
         <mxCell id="SCVMTBWpLvtzJIhz15lM-1" value="" style="line;strokeWidth=2;html=1;fontSize=14;" parent="1" vertex="1">
           <mxGeometry x="52.5" y="139.5" width="1060" height="10" as="geometry" />
         </mxCell>
-        <mxCell id="SCVMTBWpLvtzJIhz15lM-2" value="&lt;span&gt;Label&lt;/span&gt;" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=14;fontStyle=1" parent="1" vertex="1">
-          <mxGeometry x="320" y="300.5" width="50" height="20" as="geometry" />
+        <mxCell id="SCVMTBWpLvtzJIhz15lM-2" value="Infra Info&lt;br&gt;Define variables&amp;nbsp;region,&amp;nbsp;role,&amp;nbsp;acct (awsRoleAccount)&lt;br&gt;start commands&lt;br&gt;terraform init -reconfigure --backend-config=backend-${reg_use1_abbrev}-${env_dev_abbrev}.config&lt;br&gt;terraform init -reconfigure --backend-config=backend-${reg_use1_abbrev}-${env_qa_abbrev}.config&lt;br&gt;terraform init -reconfigure --backend-config=backend-${reg_use1_abbrev}-${env_preprod_abbrev}.config&lt;br&gt;&lt;br&gt;terraform init -reconfigure --backend-config=backend-${reg_use1/euw1/apse1_abbrev}-${env_prod_abbrev}.config" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=14;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="320" y="290" width="780" height="140" as="geometry" />
         </mxCell>
         <mxCell id="7OVz4w7n9kzEPWy-4BBC-3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EAEDED;fontSize=22;fontColor=#FFFFFF;strokeColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="1151" y="51" width="539" height="1220" as="geometry" />
@@ -46,11 +49,17 @@
         <mxCell id="7OVz4w7n9kzEPWy-4BBC-14" value="&lt;span&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/span&gt;&lt;br&gt;" style="text;html=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=14;labelBackgroundColor=none;whiteSpace=wrap;" parent="1" vertex="1">
           <mxGeometry x="1219.5" y="185.5" width="450" height="115" as="geometry" />
         </mxCell>
-        <mxCell id="0JbA15NXs6ea4f9-UekJ-2" value="&lt;span&gt;Label&lt;/span&gt;" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=14;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="320" y="423" width="50" height="20" as="geometry" />
+        <mxCell id="0JbA15NXs6ea4f9-UekJ-2" value="&lt;span&gt;Build&lt;br&gt;Clone repository:&lt;br&gt;git credentialsId: gitCredentialsId, poll: false, url: git_TSCC_QS_Source, branch: &quot;${tsccQsBranch}&quot;&lt;br&gt;Create git tag:&lt;br&gt;&lt;div&gt;sh &quot;git tag -a ${tagTsccQs} -m &#39;Terraform code versioning by Jenkins&#39;&quot;&lt;/div&gt;&lt;div&gt;sh &quot;git push origin ${tagTsccQs}&quot;&lt;/div&gt;&lt;div&gt;Build jar:&lt;br&gt;./gradlew jacocoTestReport build&lt;br&gt;&lt;/div&gt;&lt;div&gt;Build docker:&lt;br&gt;docker build -t tscc_qs:${tag} .&lt;br&gt;&lt;/div&gt;&lt;div&gt;Push docker:&lt;br&gt;pushDockerImage(sdlcPreprod/USE1/EUW1/APSE1Info, ecrUrlList, tag)&lt;br&gt;&lt;/div&gt;&lt;div&gt;Rmi docker:&lt;/div&gt;&lt;div&gt;docker rmi tscc_qs:${tag}&lt;br&gt;&lt;/div&gt;&lt;/span&gt;" style="text;html=1;resizable=0;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="320" y="450" width="690" height="240" as="geometry" />
         </mxCell>
         <mxCell id="0JbA15NXs6ea4f9-UekJ-3" value="" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.git_repository;" vertex="1" parent="1">
-          <mxGeometry x="120" y="171" width="50" height="50" as="geometry" />
+          <mxGeometry x="120" y="444" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="0JbA15NXs6ea4f9-UekJ-5" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn2.iconfinder.com/data/icons/vivid/48/building-128.png" vertex="1" parent="1">
+          <mxGeometry x="96" y="150" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0JbA15NXs6ea4f9-UekJ-7" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#B0084D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.run_command;" vertex="1" parent="1">
+          <mxGeometry x="96" y="290" width="78" height="55" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
