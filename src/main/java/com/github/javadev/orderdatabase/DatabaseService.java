@@ -2,7 +2,6 @@ package com.github.javadev.orderdatabase;
 
 import com.github.underscore.Function;
 import com.github.underscore.lodash.U;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -286,8 +285,8 @@ public class DatabaseService {
     }
 
     private void checkExceptionAndCreateTable(final Exception se, Connection conn) {
-        if (se instanceof MySQLSyntaxErrorException) {
-            String detailMessage = ((MySQLSyntaxErrorException) se).getMessage();
+        if (se instanceof SQLException) {
+            String detailMessage = ((SQLException) se).getMessage();
             if (detailMessage.contains("orderdata' doesn't exist")) {
                 try {
                     createTable(conn);

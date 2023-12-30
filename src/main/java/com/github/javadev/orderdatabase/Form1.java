@@ -1,6 +1,7 @@
 package com.github.javadev.orderdatabase;
 
 import com.github.underscore.*;
+import com.github.underscore.Optional;
 import com.github.underscore.lodash.U;
 import java.awt.Component;
 import java.awt.Container;
@@ -19,15 +20,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -670,7 +663,7 @@ public class Form1 extends javax.swing.JFrame {
             cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec, iv);
 
             byte[] encrypted = cipher.doFinal(value.getBytes("UTF-8"));
-            return javax.xml.bind.DatatypeConverter.printBase64Binary(encrypted);
+            return Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception ex) {
             return "";
         }
@@ -684,7 +677,7 @@ public class Form1 extends javax.swing.JFrame {
             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, skeySpec, iv);
 
-            byte[] original = cipher.doFinal(javax.xml.bind.DatatypeConverter.parseBase64Binary(encrypted));
+            byte[] original = cipher.doFinal(Base64.getDecoder().decode(encrypted));
 
             final String decrypted = new String(original, "UTF-8");
             if (!encrypted.isEmpty() && decrypted.isEmpty()) {
