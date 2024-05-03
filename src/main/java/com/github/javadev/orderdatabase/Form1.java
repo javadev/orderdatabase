@@ -1,8 +1,7 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.*;
 import com.github.underscore.Optional;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -25,6 +24,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComboBox;
@@ -303,7 +307,7 @@ public class Form1 extends javax.swing.JFrame {
     }
 
     private void fillComboBoxModel(String key, JComboBox jComboBox) {
-        fillComboBoxModel(key, jComboBox, Optional.<String>absent());
+        fillComboBoxModel(key, jComboBox, Optional.<String>empty());
     }
 
     private void fillComboBoxModel(String key, JComboBox jComboBox, Optional<String> defaultValue) {
@@ -395,7 +399,7 @@ public class Form1 extends javax.swing.JFrame {
 
     private void fillComboBoxSelectedItem(JComboBox jComboBox, String data,
             String dictKey) {
-        fillComboBoxSelectedItem(jComboBox, data, dictKey, Optional.<String>absent());
+        fillComboBoxSelectedItem(jComboBox, data, dictKey, Optional.<String>empty());
     }
 
     private void fillComboBoxSelectedItem(JComboBox jComboBox, String data,
@@ -1103,7 +1107,7 @@ public class Form1 extends javax.swing.JFrame {
                                 && !comment) {
                             idNumber = false;
                             break;
-                        };
+                        }
                     }
                    return idNumber;
                 }
@@ -2332,7 +2336,7 @@ public class Form1 extends javax.swing.JFrame {
             return;
         }
         Optional<Map<String, Object>> product = database.get("productData") == null
-                ? Optional.<Map<String, Object>>absent()
+                ? Optional.<Map<String, Object>>empty()
                 : U.find((List<Map<String, Object>>) database.get("productData"),
                 new Predicate<Map<String, Object>>() {
             public boolean test(Map<String, Object> f) {

@@ -1,10 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.BiFunction;
-import com.github.underscore.Function;
-import com.github.underscore.Predicate;
-import com.github.underscore.Supplier;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import javax.swing.table.AbstractTableModel;
 
 public class NewJDialog9 extends javax.swing.JDialog {

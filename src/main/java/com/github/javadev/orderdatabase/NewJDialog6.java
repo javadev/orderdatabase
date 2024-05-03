@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 
 public class NewJDialog6 extends javax.swing.JDialog {
     private final String pass;
@@ -153,7 +153,7 @@ public class NewJDialog6 extends javax.swing.JDialog {
         if (!jTextField1.getText().isEmpty() && !jTextField1.getText().matches("[A-Z]+[0-9]+.*?[a-z]+.*")) {
             jLabel1.setText("Неверный новый пароль!");
             return;
-        };
+        }
         if (jTextField1.getText().trim().equals(pass)) {
             jLabel1.setText("Неверный новый пароль!");
             return;

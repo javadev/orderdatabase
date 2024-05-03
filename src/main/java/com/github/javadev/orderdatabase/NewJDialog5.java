@@ -1,11 +1,11 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Function;
-import com.github.underscore.Supplier;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 

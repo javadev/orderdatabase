@@ -6,7 +6,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.firebase.security.token.TokenGenerator;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;

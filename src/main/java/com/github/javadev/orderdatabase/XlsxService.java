@@ -1,7 +1,7 @@
 package com.github.javadev.orderdatabase;
 
 import com.github.moneytostr.MoneyToStr;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

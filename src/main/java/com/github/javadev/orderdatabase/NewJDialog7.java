@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

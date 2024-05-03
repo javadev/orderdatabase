@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Log {
-    private enum MessageType { DEBUG, INFO, WARN, ERROR };
+    private enum MessageType { DEBUG, INFO, WARN, ERROR }
 
     public static void debug(String param) {
         log(MessageType.DEBUG, param);
