@@ -1,7 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Function;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class DatabaseService {
     private static final List<String> FIELD_NAMES = Arrays.asList(

@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
