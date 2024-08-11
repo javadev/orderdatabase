@@ -1,13 +1,13 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.Function;
-import com.github.underscore.Predicate;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javax.swing.table.AbstractTableModel;
 
 public class NewJDialog1 extends javax.swing.JDialog {

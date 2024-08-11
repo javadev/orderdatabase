@@ -1,7 +1,7 @@
 package com.github.javadev.orderdatabase;
 
 import com.github.moneytostr.MoneyToStr;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -150,7 +150,7 @@ public class XlsxService {
         }
         FileInputStream stream;
         try {
-            stream = new FileInputStream(new File(xlsxPath));
+            stream = new FileInputStream(xlsxPath);
             XSSFWorkbook book = new XSSFWorkbook(stream);
             XSSFSheet sheet = book.getSheetAt(0);
             int cellIndex = 0;
@@ -171,7 +171,7 @@ public class XlsxService {
                 }
             }
             stream.close();
-            try (FileOutputStream outputStream = new FileOutputStream(new File(xlsxPath))) {
+            try (FileOutputStream outputStream = new FileOutputStream(xlsxPath)) {
                 book.write(outputStream);
             }
         } catch (FileNotFoundException ex) {
@@ -221,7 +221,7 @@ public class XlsxService {
         }
         FileInputStream stream;
         try {
-            stream = new FileInputStream(new File(xlsxPath));
+            stream = new FileInputStream(xlsxPath);
             XSSFWorkbook book = new XSSFWorkbook(stream);
             XSSFSheet sheet = book.getSheetAt(1);
             fillCell(sheet, 7, 9, (String) data.get("orderNumber"));
@@ -282,7 +282,7 @@ public class XlsxService {
                 fillCell(sheet, 20, 40, "0");
             }
             stream.close();
-            try (FileOutputStream outputStream = new FileOutputStream(new File(xlsxPath))) {
+            try (FileOutputStream outputStream = new FileOutputStream(xlsxPath)) {
                 book.write(outputStream);
             }
         } catch (FileNotFoundException ex) {

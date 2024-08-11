@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 
 public class NewJDialog8 extends javax.swing.JDialog {
     private boolean isApproved;
@@ -179,11 +179,11 @@ public class NewJDialog8 extends javax.swing.JDialog {
         if (jTextField1.getText().replaceAll("\\s+", "").length() < 3) {
             jLabel3.setText("Неверное имя!");
             return;
-        };
+        }
         if (!jTextField2.getText().matches("[A-Z]+[0-9]+.*?[a-z]+.*")) {
             jLabel3.setText("Неверный пароль!");
             return;
-        };
+        }
         setVisible(false);
         isApproved = true;
     }//GEN-LAST:event_jButton1ActionPerformed

@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -284,7 +284,7 @@ public class NewJDialog3 extends javax.swing.JDialog {
         int selectedIndex = jTable1.getSelectionModel().getAnchorSelectionIndex();
         this.productData.remove(selectedIndex);
         jTable1.setModel(new MyModel(this.productData));
-        if (productData.size() > 0) {
+        if (!productData.isEmpty()) {
             int newSelectedIndex = Math.min(selectedIndex, productData.size() - 1);
             jTable1.setRowSelectionInterval(newSelectedIndex, newSelectedIndex);
         } else {

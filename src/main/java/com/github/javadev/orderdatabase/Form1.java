@@ -1,8 +1,8 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.*;
 import com.github.underscore.Optional;
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
+import java.util.function.Function;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -14,6 +14,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +26,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComboBox;
@@ -69,7 +73,7 @@ public class Form1 extends javax.swing.JFrame {
         if (Files.exists(path)) {
             try {
                 database.putAll((Map<String, Object>) U.fromJson(
-                    new String(Files.readAllBytes(path), "UTF-8")));
+                    new String(Files.readAllBytes(path), StandardCharsets.UTF_8)));
             } catch (IOException ex) {
                 Log.error(ex, null);
             }
@@ -101,17 +105,17 @@ public class Form1 extends javax.swing.JFrame {
         fillComboBoxModel("searchData", jComboBox4);
         fillComboBoxModel("countryData", jComboBox7, Optional.of("Россия"));
         fillComboBoxModel("cityData", jComboBox8, Optional.of("Москва"));
-        useMySql = database.get("useMySql") == null ? false : (Boolean) database.get("useMySql");
+        useMySql = database.get("useMySql") != null && (Boolean) database.get("useMySql");
         hostName = (String) database.get("hostName");
         dbName = (String) database.get("dbName");
         user = (String) database.get("user");
         pass = database.get("pass") == null ? null
                 : decrypt(((String) database.get("pass")));
-        useXlsx = database.get("useXlsx") == null ? true : (Boolean) database.get("useXlsx");
+        useXlsx = database.get("useXlsx") == null || (Boolean) database.get("useXlsx");
         xlsxPath = (String) database.get("xlsxPath");
         ((JTextComponent) jComboBox4.getEditor().getEditorComponent()).setText((String) database.get("searchDataText"));
-        showDbNumber = database.get("showDbNumber") == null ? false : (Boolean) database.get("showDbNumber");
-        useFirebase = database.get("useFirebase") == null ? false : (Boolean) database.get("useFirebase");
+        showDbNumber = database.get("showDbNumber") != null && (Boolean) database.get("showDbNumber");
+        useFirebase = database.get("useFirebase") != null && (Boolean) database.get("useFirebase");
         firebaseAppName = (String) database.get("firebaseAppName");
         firebaseToken = database.get("firebaseToken") == null ? null
                 : decrypt(((String) database.get("firebaseToken")));
@@ -175,7 +179,7 @@ public class Form1 extends javax.swing.JFrame {
                     jTable.setModel(new MyProductModel(list));
                     setColumnWidth(jTable, columnWidth);
                     addJTable2Listener(jTable);
-                    if (list.size() > 0) {
+                    if (!list.isEmpty()) {
                         int newSelectedIndex = Math.min(selectedIndex, list.size() - 1);
                         jTable.setRowSelectionInterval(newSelectedIndex, newSelectedIndex);
                     }
@@ -303,7 +307,7 @@ public class Form1 extends javax.swing.JFrame {
     }
 
     private void fillComboBoxModel(String key, JComboBox jComboBox) {
-        fillComboBoxModel(key, jComboBox, Optional.<String>absent());
+        fillComboBoxModel(key, jComboBox, Optional.<String>empty());
     }
 
     private void fillComboBoxModel(String key, JComboBox jComboBox, Optional<String> defaultValue) {
@@ -395,7 +399,7 @@ public class Form1 extends javax.swing.JFrame {
 
     private void fillComboBoxSelectedItem(JComboBox jComboBox, String data,
             String dictKey) {
-        fillComboBoxSelectedItem(jComboBox, data, dictKey, Optional.<String>absent());
+        fillComboBoxSelectedItem(jComboBox, data, dictKey, Optional.<String>empty());
     }
 
     private void fillComboBoxSelectedItem(JComboBox jComboBox, String data,
@@ -656,13 +660,13 @@ public class Form1 extends javax.swing.JFrame {
     
     public static String encrypt(String value) {
         try {
-            javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
-            javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
+            javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes(StandardCharsets.UTF_8));
+            javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes(StandardCharsets.UTF_8), "AES");
 
             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec, iv);
 
-            byte[] encrypted = cipher.doFinal(value.getBytes("UTF-8"));
+            byte[] encrypted = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception ex) {
             return "";
@@ -671,17 +675,17 @@ public class Form1 extends javax.swing.JFrame {
  
     public static String decrypt(String encrypted) {
         try {
-            javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes("UTF-8"));
-            javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes("UTF-8"), "AES");
+            javax.crypto.spec.IvParameterSpec iv = new javax.crypto.spec.IvParameterSpec("PWJB6205kuou(!@-".getBytes(StandardCharsets.UTF_8));
+            javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec("KYMT5802hccx$#(+".getBytes(StandardCharsets.UTF_8), "AES");
 
             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, skeySpec, iv);
 
             byte[] original = cipher.doFinal(Base64.getDecoder().decode(encrypted));
 
-            final String decrypted = new String(original, "UTF-8");
+            final String decrypted = new String(original, StandardCharsets.UTF_8);
             if (!encrypted.isEmpty() && decrypted.isEmpty()) {
-                return new String(xor(encrypted.getBytes("UTF-8"), "UTF-8".getBytes("UTF-8")), "UTF-8");
+                return new String(xor(encrypted.getBytes(StandardCharsets.UTF_8), "UTF-8".getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
             }
             return decrypted;
         } catch (Exception ex) {
@@ -900,7 +904,7 @@ public class Form1 extends javax.swing.JFrame {
 
     private void saveDatabase() {
         try {
-            Files.write(Paths.get("./database.json"), U.toJson(database).getBytes("UTF-8"));
+            Files.write(Paths.get("./database.json"), U.toJson(database).getBytes(StandardCharsets.UTF_8));
         } catch (IOException ex) {
             Log.error(ex, null);
         }
@@ -1103,7 +1107,7 @@ public class Form1 extends javax.swing.JFrame {
                                 && !comment) {
                             idNumber = false;
                             break;
-                        };
+                        }
                     }
                    return idNumber;
                 }
@@ -1206,9 +1210,9 @@ public class Form1 extends javax.swing.JFrame {
     public void writeDataFile(String fileName) {
         try {
             if (fileName.endsWith(".xml")) {
-                Files.write(Paths.get(fileName), U.toXml(foundOrders).getBytes("UTF-8"));
+                Files.write(Paths.get(fileName), U.toXml(foundOrders).getBytes(StandardCharsets.UTF_8));
             } else if (fileName.endsWith(".json")) {
-                Files.write(Paths.get(fileName), U.toJson(foundOrders).getBytes("UTF-8"));
+                Files.write(Paths.get(fileName), U.toJson(foundOrders).getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException ex) {
             Log.error(ex, null);
@@ -2332,7 +2336,7 @@ public class Form1 extends javax.swing.JFrame {
             return;
         }
         Optional<Map<String, Object>> product = database.get("productData") == null
-                ? Optional.<Map<String, Object>>absent()
+                ? Optional.<Map<String, Object>>empty()
                 : U.find((List<Map<String, Object>>) database.get("productData"),
                 new Predicate<Map<String, Object>>() {
             public boolean test(Map<String, Object> f) {
@@ -2692,7 +2696,7 @@ public class Form1 extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

@@ -1,6 +1,6 @@
 package com.github.javadev.orderdatabase;
 
-import com.github.underscore.lodash.U;
+import com.github.underscore.U;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -313,7 +313,7 @@ public class NewJDialog7 extends javax.swing.JDialog {
         int selectedIndex = jTable1.getSelectionModel().getAnchorSelectionIndex();
         this.userData.remove(selectedIndex);
         jTable1.setModel(new MyModel(this.userData));
-        if (userData.size() > 0) {
+        if (!userData.isEmpty()) {
             int newSelectedIndex = Math.min(selectedIndex, userData.size() - 1);
             jTable1.setRowSelectionInterval(newSelectedIndex, newSelectedIndex);
         } else {
